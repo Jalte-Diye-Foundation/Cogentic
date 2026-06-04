@@ -2,7 +2,7 @@
 
 **Cognitive Agentic AI System for Social Education**
 
-<img width="460" alt="Gemini_Generated_Cogentic_Image" src="https://github.com/Jalte-Diye-Foundation/Cogentic/blob/main/images/Cogentic.jpg" />
+<img width="760" alt="Gemini_Generated_Cogentic_Image" src="https://github.com/Jalte-Diye-Foundation/Cogentic/blob/main/images/Cogentic.jpg" />
 
 ---
 
