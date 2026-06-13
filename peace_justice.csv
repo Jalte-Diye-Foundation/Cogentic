@@ -1,43 +1,135 @@
-Date,Event,Quote
-Jun 16,Day of the African Child,A child's right to peace is older than any border.
-Jun 17,,Peace is not the absence of conflict but the presence of understanding.
-Jun 19,,Harmony begins when we stop competing and start completing each other.
-Jun 20,World Refugee Day,No human is illegal; only borders are invented; humanity is real.
-Jun 21,International Day of Yoga,Inner stillness is the first seed of outer peace.
-Jun 23,,A peaceful world is built one conversation at a time.
-Jun 26,,Sow seeds of peace; harvest a better tomorrow.
-Jun 28,,Peace travels fastest on the wings of education.
-Jun 30,,The language of peace is spoken by all who listen.
-Jul 2,,Every act of kindness is a vote for peace.
-Jul 4,,A calm voice in a storm is the bravest sound.
-Jul 8,,Where understanding grows war finds no soil.
-Jul 11,,Peace is humanity's greatest shared achievement.
-Jul 17,World Day for International Justice,Justice is the art of seeing the human in every accusation.
-Jul 22,,We are all human before we are anything else.
-Jul 25,,Empathy is the bridge between me and you.
-Jul 29,,To serve others is to find your highest self.
-Jul 30,International Day of Friendship,Friendship across a divide is a peace treaty signed with laughter.
-Aug 3,,Every life carries a story worth hearing.
-Aug 6,,In the eyes of a stranger find a friend.
-Aug 9,Indigenous Peoples' Day,An indigenous language saved is a worldview that survives.
-Aug 14,,Compassion costs nothing and changes everything.
-Aug 19,World Humanitarian Day,Humanity is not a passport it is a calling.
-Aug 22,,Feel the pain of others and you will heal the world.
-Aug 26,,Humanity is not a nationality; it is a calling.
-Aug 29,,One human family infinite stories.
-Sep 1,,The measure of a society is how it treats its most vulnerable.
-Sep 5,International Day of Charity,Charity without justice is a bandage; justice without charity is cold.
-Sep 9,,Empower a woman; empower a generation.
-Sep 13,,A woman's potential knows no boundary.
-Sep 15,International Day of Democracy,Democracy dies when the first citizen stops listening.
-Sep 19,,Equal opportunity is not a privilege; it is a right.
-Sep 21,International Day of Peace,Peace is not a pause in fighting it is the permanent refusal to start.
-Sep 25,,Women in STEM light the way for all of us.
-Sep 29,,The world gets better when all voices lead.
-Oct 2,International Day of Non-Violence,Non-violence is not passivity it is the courage to absorb hatred and return love.
-Oct 6,,Behind every barrier broken is a braver world.
-Oct 11,Day of the Girl Child,A girl who learns to say 'no' changes the grammar of the world.
-Oct 16,,Silence a woman; silence half the world.
-Oct 20,,She who learns leads.
-Oct 24,UN Day,One flag cannot hold humanity but one charter can.
-Oct 30,,Courage has no gender.
+Date,Event,Heading,Quote
+Jun 16,Day of the African Child,The Oldest Right,"A child’s right to peace is older than any border. (event quote)","On this day we remember: every treaty signed in a capital means nothing if a child in a village still sleeps afraid."
+Jun 17,,Presence of Understanding,"Peace is not the absence of conflict but the presence of understanding.","Two enemies who sit and truly listen have already won half the war."
+Jun 19,,Completing Each Other,"Harmony begins when we stop competing and start completing each other.","Your weakness is my strength – and together we are not balanced, we are unstoppable."
+Jun 20,World Refugee Day,No Human Is Illegal,"No human is illegal – only borders are invented; humanity is real. (event quote)","Refugees do not leave their dignity at the shoreline – they carry it, soaked but unbroken, into every new land."
+Jun 21,International Day of Yoga,The First Seed,"Inner stillness is the first seed of outer peace. (event quote)","Yoga reminds us: a world at war begins with a heart at war with itself."
+Jun 23,,One Conversation at a Time,"A peaceful world is built one conversation at a time.","No peace treaty was ever signed without a first, awkward, barely audible sentence of goodwill."
+Jun 26,,Sow Seeds of Peace,"Sow seeds of peace; harvest a better tomorrow.","The apple tree you plant today will shade a child who has never known your bitterness."
+Jun 28,,Wings of Education,"Peace travels fastest on the wings of education.","An ignorant man picks up a stone; an educated man picks up a phone to call for dialogue."
+Jun 30,,Spoken by All Who Listen,"The language of peace is spoken by all who listen.","Silence is not empty – it is the most crowded space, filled with things we are too afraid to say."
+Jul 2,,A Vote for Peace,"Every act of kindness is a vote for peace.","In a world that often rewards cruelty, a gentle word is a revolutionary ballot."
+Jul 4,,The Bravest Sound,"A calm voice in a storm is the bravest sound.","Anyone can shout – it takes a warrior to whisper reason into chaos."
+Jul 8,,No Soil for War,"Where understanding grows, war finds no soil.","Hatred is a weed – it cannot survive where empathy has already taken root."
+Jul 11,,Shared Achievement,"Peace is humanity’s greatest shared achievement.","We remember the wars we lost, but we forget the peace we built – today we remember that too."
+Jul 17,World Day for International Justice,Seeing the Human,"Justice is the art of seeing the human in every accusation. (event quote)","A fair trial is not a gift – it is the proof that a society has not yet abandoned its own soul."
+Jul 22,,Before Anything Else,"We are all human before we are anything else.","Your passport, your god, your flag – these are costumes. Underneath, the same fragile heart beats."
+Jul 25,,The Bridge,"Empathy is the bridge between me and you.","Cross it often, and the gap you feared becomes the path you walk together every day."
+Jul 29,,Highest Self,"To serve others is to find your highest self.","Ego asks 'what do I get?' – service answers 'I have already received the chance to help.'"
+Jul 30,International Day of Friendship,A Peace Treaty Signed with Laughter,"Friendship across a divide is a peace treaty signed with laughter. (event quote)","Today we celebrate the friends who should have been enemies – and chose not to be."
+Aug 3,,A Story Worth Hearing,"Every life carries a story worth hearing.","The person you ignored today has survived storms you cannot imagine – and their silence is not emptiness."
+Aug 6,,Find a Friend,"In the eyes of a stranger, find a friend.","The unfamiliar is just a memory you haven’t made yet – reach out and begin."
+Aug 9,Indigenous Peoples’ Day,A Worldview That Survives,"An indigenous language saved is a worldview that survives. (event quote)","When a language dies, we do not just lose words – we lose entire ways of dreaming."
+Aug 14,,Changes Everything,"Compassion costs nothing and changes everything.","The smallest kindness – a held door, a patient ear – can reroute a life that was veering toward despair."
+Aug 19,World Humanitarian Day,A Calling,,"Humanity is not a passport – it is a calling. (event quote)","Aid workers do not cross borders to save 'others' – they cross because the word 'other' has no meaning in their hearts."
+Aug 22,,Heal the World,"Feel the pain of others and you will heal the world.","Pity watches from the shore; empathy jumps in and learns to swim."
+Aug 26,,Not a Nationality,"Humanity is not a nationality; it is a calling.","The only flag that should never be lowered is the one that reads 'we belong to each other'."
+Aug 29,,Infinite Stories,"One human family, infinite stories.","Your neighbour’s grandmother might have sung a lullaby in a language you have never heard – and it was beautiful."
+Sep 1,,Measure of a Society,"The measure of a society is how it treats its most vulnerable.","Economic growth without care for the elderly, the sick, the poor is not progress – it is polished indifference."
+Sep 5,International Day of Charity,Bandage or Cure,"Charity without justice is a bandage; justice without charity is cold. (event quote)","Give today, but also demand a world where giving is less necessary – that is true charity."
+Sep 9,,Empower a Generation,"Empower a woman; empower a generation.","When she rises, she does not rise alone – she pulls her children, her neighbours, and her future under her arm."
+Sep 13,,No Boundary,"A woman’s potential knows no boundary.","The only ceiling that exists is the one we keep rebuilding – take down a brick today."
+Sep 15,International Day of Democracy,When Listening Stops,"Democracy dies when the first citizen stops listening. (event quote)","Elections are not enough – a living democracy needs neighbours who argue with love and vote with courage."
+Sep 19,,A Right, Not a Privilege,"Equal opportunity is not a privilege; it is a right.","Fairness does not mean giving everyone the same thing – it means giving each what they truly need to stand."
+Sep 21,International Day of Peace,The Permanent Refusal,"Peace is not a pause in fighting – it is the permanent refusal to start. (event quote)","On this day, let us not simply stop – let us choose to never begin the next war."
+Sep 25,,Light the Way,"Women in STEM light the way for all of us.","A girl who solves a math problem today may solve world hunger tomorrow – if we let her stay in the room."
+Sep 29,,All Voices Lead,"The world gets better when all voices lead.","A table missing half its chairs cannot produce a full decision – invite everyone."
+Oct 2,International Day of Non-Violence,The Courage to Absorb,"Non‑violence is not passivity – it is the courage to absorb hatred and return love. (event quote)","Gandhi taught us: you can break a stone with a stone, or you can melt it with patience – one builds graves, the other builds gardens."
+Oct 6,,A Braver World,"Behind every barrier broken is a braver world.","Every time a woman walks through a door that was once locked, she holds it open for the next ten."
+Oct 11,Day of the Girl Child,Changing the Grammar,"A girl who learns to say ‘no’ changes the grammar of the world. (event quote)","Today we protect girls not because they are vulnerable, but because they are powerful – and power must be nurtured."
+Oct 16,,Silence Half the World,"Silence a woman; silence half the world.","When you ignore her voice, you do not keep the peace – you bury the wisdom that could have prevented the next war."
+Oct 20,,She Who Learns,"She who learns, leads.","Education is not a ladder for her alone – it is a bridge that carries everyone behind her."
+Oct 24,UN Day,One Charter,"One flag cannot hold humanity, but one charter can. (event quote)","The United Nations is not perfect – but it is the imperfect table where we all agreed to sit."
+Oct 30,,Courage Has No Gender,"Courage has no gender.","Bravery does not check your ID – it only asks if you are willing to stand up for someone smaller than you."
+Jan 2,,The First Step,"Peace is not a destination – it is the way you walk.","Walk gently, and you will arrive already at peace."
+Jan 6,,The Shared Burden,"Justice is not a gift you give to the weak – it is a debt you owe to the strong.","Pay your debts."
+Jan 10,,The Quiet Word,"A single honest word can break a wall of lies.","Speak it, even if your voice trembles."
+Jan 14,,The Long Table,"At the table of humanity, there are no head seats – only side by side.","Pull up a chair for everyone."
+Jan 18,,The Open Hand,"An open hand is harder to strike than a closed fist.","Keep your palms up."
+Jan 22,,The Silent Witness,"To witness injustice and say nothing is to become its accomplice.","Your voice is the only weapon you need."
+Jan 26,,The Shared Story,"Every conflict is a story of hurt – and every peace is a story of listening.","Tell the second story."
+Jan 30,,The Broken Circle,"A circle that excludes one is a broken chain.","Link every link – no one left out."
+Feb 3,,The Small Kindness,"A single act of kindness is a stone dropped in still water – the ripples go on forever.","Drop your stone today."
+Feb 7,,The Unfinished Sentence,"Peace is not a period – it is a comma, a pause before the next difficult conversation.","Keep talking."
+Feb 11,International Day of Women and Girls in Science,The Unseen Equation,"A girl in a lab coat is a formula for a more peaceful world. (event quote)","When women solve problems, they solve for everyone – not just for themselves."
+Feb 15,,The Quiet Courage,"Courage is not the absence of fear – it is fear that has said its prayers.","Say your prayers, then act."
+Feb 19,,The Shared Mirror,"When you look at another, you see a mirror – treat it kindly.","What you break in them, you break in yourself."
+Feb 23,,The Open Gate,"A wall keeps out enemies – but also keeps in friends.","Build gates, not walls."
+Feb 27,,The Silent Apology,"The hardest words are 'I was wrong' – but they are also the most healing.","Say them before it is too late."
+Mar 3,,The Long Walk,"Peace is a long walk – take it one step at a time.","Do not look for shortcuts; the walk is the point."
+Mar 7,,The Shared Table,"At the table of peace, everyone brings a dish – even your enemy.","Taste it before you refuse it."
+Mar 11,,The Quiet Listener,"The best peacemakers are the best listeners.","Turn down your voice; turn up your ears."
+Mar 15,,The Broken Sword,"A sword can be beaten into a ploughshare – but only if you are willing to put down the hammer.","Put it down today."
+Mar 19,,The Shared Breath,"Two enemies breathing the same air – that is the beginning of peace.","Notice the air you share."
+Mar 23,,The Open Window,"When you open a window, you let in fresh air – and maybe a fresh perspective.","Open the window of your mind."
+Mar 27,,The Silent Treaty,"Every handshake is a treaty – honour it.","Your word is your bond."
+Mar 31,,The Shared Song,"A song sung together cannot be sung in anger.","Sing with your enemy – you might find harmony."
+Apr 4,,The Quiet Dawn,"Every dawn is a ceasefire – a promise that the night is over.","Keep that promise through the day."
+Apr 8,,The Broken Chain,"Injustice anywhere is a broken link in the chain of humanity.","Fix the link – do not just polish the others."
+Apr 12,,The Shared Burden,"Carrying a burden alone is heavy – carrying it together is light.","Offer your shoulder."
+Apr 16,,The Open Door,"A door closed is a door to misunderstanding.","Open it, even if you are afraid of what is on the other side."
+Apr 20,,The Silent Vow,"A vow for peace is not made with words – it is made with daily acts.","Act peace, every day."
+Apr 24,,The Shared Light,"Light is the opposite of darkness – but also of ignorance.","Be a light for someone today."
+Apr 28,,The Quiet Question,"The question 'what do you need?' is more powerful than 'what do you want?'.","Ask it – and listen to the answer."
+May 2,,The Broken Promise,"A promise of peace is a seed – water it, or it dies.","Do not let it dry."
+May 6,,The Shared Hope,"Hope is not a feeling – it is a discipline.","Practice it every morning."
+May 10,,The Open Heart,"A heart that is closed is a prison.","Unlock it – the key is empathy."
+May 14,,The Silent Walk,"Walking beside someone in silence can be louder than a speech.","Take that walk."
+May 18,,The Shared Dream,"A dream of peace is not enough – you need a plan.","Make the plan, then dream bigger."
+May 22,International Day for Biological Diversity,The Peace of the Forest,"Biodiversity is not just an ecology – it is a peace treaty between species. (event quote)","When we protect all life, we protect the conditions for our own peace."
+May 26,,The Quiet Soldier,"The bravest soldier is the one who lays down their arms.","Courage is not killing – it is choosing not to."
+May 30,,The Shared Meal,"Breaking bread with an enemy is the first step to making a friend.","Share your bread."
+Jun 3,,The Open Road,"The road to peace is paved with uncomfortable conversations.","Walk it anyway – the destination is worth it."
+Jun 7,,The Silent Scream,"Every act of violence begins with a scream not heard.","Learn to hear the quiet screams."
+Jun 11,,The Shared Earth,"We all stand on the same earth – it does not choose sides.","Neither should we."
+Jun 15,,The Broken Clock,"Time does not heal all wounds – but truth and time together can.","Tell the truth, then wait."
+Jun 19,,The Shared Sky,"The sky above us is the same – no borders, no checkpoints.","Look up together."
+Jun 23,,The Quiet Hero,"The hero is not the one who fights – it is the one who stops fighting.","Be that hero."
+Jun 27,,The Shared Pain,"Pain shared is pain halved – and also understood.","Share your pain, listen to theirs."
+Jul 1,,The Open Book,"History is an open book – read it honestly, or repeat its mistakes.","Read carefully."
+Jul 5,,The Silent Treaty,"Every ceasefire is a promise – keep it, even when it is hard.","Hard is not impossible."
+Jul 9,,The Shared Future,"The future belongs to those who build peace today.","Lay a brick every hour."
+Jul 13,,The Quiet Rebuild,"After the war, the hardest work is not rebuilding walls – it is rebuilding trust.","Start with a single honest sentence."
+Jul 17,,The Shared Name,"We have many names – but one name we all share: human.","Use that name first."
+Jul 21,,The Open Gate,"A gate left open is an invitation.","Invite your enemy in – they might bring tea."
+Jul 25,,The Silent Promise,"A promise of peace is not a contract – it is a living thing.","Feed it daily."
+Jul 29,,The Shared Breath,"Breathing the same air is the first act of peace.","Notice it – and be grateful."
+Aug 2,,The Quiet Dawn,"Every sunrise is a chance to start again.","Start again, even if you failed yesterday."
+Aug 6,,The Broken Circle,"A circle that excludes is not a circle – it is a line.","Close the circle – include everyone."
+Aug 10,,The Shared Weight,"Weight shared is weight lightened.","Carry someone else’s burden for a while."
+Aug 14,,The Open Heart,"A heart that forgives is a heart that is free.","Forgive – not for them, for you."
+Aug 18,,The Silent Song,"The song of peace has no words – only actions.","Sing it with your hands."
+Aug 22,,The Shared Dream,"Dreaming of peace is not childish – it is the only grown‑up thing left.","Dream big, then act."
+Aug 26,,The Quiet Soldier,"The soldier who plants a tree has won a greater victory.","Plant a tree today."
+Aug 30,,The Shared Meal,"A shared meal is a shared truce – even if only for an hour.","Extend that hour."
+Sep 3,,The Open Door,"When you open your door, you open your heart.","Do it – the world is waiting."
+Sep 7,,The Silent Vow,"A vow of non‑violence is not passivity – it is active courage.","Take the vow today."
+Sep 11,,The Shared Pain,"Pain is the universal language – learn to speak it.","Then learn to heal it."
+Sep 15,International Day of Democracy,The Smallest Vote,"A vote is not just a right – it is a brick in the wall against tyranny. (event quote)","Today, remember: democracy is not a spectator sport – it is a full‑contact martial art of the mind."
+Sep 19,,The Quiet Listener,"The best leader is the best listener.","Listen – then act."
+Sep 23,,The Shared Light,"Lighting a candle for peace is good – but lighting a fire for justice is better.","Do both."
+Sep 27,,The Open Hand,"An open hand can hold a flower or a stone – choose the flower.","Choose every time."
+Oct 1,International Day of Older Persons,The Elders' Peace,"Every elder has a library of wars survived – listen, and you will learn peace. (event quote)","The old do not need your pity – they need your ear."
+Oct 5,,The Silent Treaty,"Every kind word is a treaty signed without ink.","Sign many treaties."
+Oct 9,,The Shared Sky,"The sky does not care about your passport.","Neither should you."
+Oct 13,,The Quiet Dawn,"The dawn after a war is the most beautiful – because it is a promise.","Keep the promise."
+Oct 17,International Day for the Eradication of Poverty,The Peace of Full Bellies,"There is no peace with an empty stomach. (event quote)","Eradicating poverty is not charity – it is the most effective peace programme ever designed."
+Oct 21,,The Shared Breath,"Breathe in – you are alive. Breathe out – someone else is, too.","Share that breath."
+Oct 25,,The Open Road,"The road to peace is paved with small steps – take one now.","Do not wait for a grand plan."
+Oct 29,,The Silent Song,"The song of peace is sung in silence – by the mother who forgives, the father who stays.","Sing it."
+Nov 2,,The Shared Hope,"Hope is the anchor of peace – without it, we drift.","Drop your anchor."
+Nov 6,,The Quiet Soldier,"The bravest soldier is the one who says 'enough'.","Say it – today."
+Nov 10,,The Shared Meal,"A meal shared with a stranger is a meal shared with a future friend.","Set an extra plate."
+Nov 14,,The Open Heart,"A heart that holds a grudge is a prison – unlock it.","The key is forgiveness."
+Nov 18,,The Silent Treaty,"Every apology is a treaty – accept it, or war continues.","Accept it."
+Nov 22,,The Shared Dream,"Dream of a world where your enemy sleeps peacefully.","Then work to make it real."
+Nov 26,,The Quiet Dawn,"Every morning is a ceasefire – honour it.","Do not reload."
+Nov 30,,The Shared Breath,"Breathing is the first peace – do not take it for granted.","Breathe with intention."
+Dec 4,,The Open Door,"A door opened to a refugee is a door opened to peace.","Open it wide."
+Dec 8,,The Silent Vow,"Vow to speak only words that heal.","Then speak them, even when it is hard."
+Dec 12,,The Shared Light,"A single act of kindness is a lighthouse in a storm.","Be that lighthouse."
+Dec 16,,The Quiet Listener,"Listen to the child who is afraid – they are telling you about the next war.","Prevent it by hearing them."
+Dec 20,,The Shared Meal,"Bread broken together is a treaty that cannot be unmade.","Bake more bread."
+Dec 24,,The Silent Night,"On the night before Christmas, remember: peace began in a stable.","Humility is the mother of peace."
+Dec 28,,The Shared Hope,"Hope is not a season – it is a decision.","Decide today."
+Dec 31,,The Year's End,"As the year ends, ask: did I make peace? If not, start tomorrow.","Tomorrow is the first day of the rest of your peace.”
