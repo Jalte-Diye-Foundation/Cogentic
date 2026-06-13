@@ -52,6 +52,75 @@ This stage serves as a foundation for future research and development.
 
 ---
 
+## Getting Started
+
+Follow these steps to set up the current prototype locally and generate quote-based images.
+
+### Prerequisites
+
+- Python 3.9 or newer
+- `pip` for installing Python packages
+- Git for cloning the repository
+
+The image generation scripts use [Pillow](https://pypi.org/project/pillow/) and read quote data from CSV files included in the repository.
+
+### Installation
+
+```bash
+git clone https://github.com/Jalte-Diye-Foundation/Cogentic.git
+cd Cogentic
+python -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+python -m pip install --upgrade pip
+python -m pip install pillow
+```
+
+If a `requirements.txt` file is added later, install dependencies with:
+
+```bash
+python -m pip install -r requirements.txt
+```
+
+### Running the Project
+
+The current prototype contains two quote image generation pipelines:
+
+```bash
+python quotes_batch_background1.py
+python quotes_batch_background2.py
+```
+
+Each script reads quote and explanation text from `quotes.csv`, overlays the text on its configured background image, and writes generated images to an output directory:
+
+- `quotes_batch_background1.py` uses `background1.png` and writes to `Background1/`
+- `quotes_batch_background2.py` uses `background2.png` and writes to `Background2/`
+
+You can edit the script-level `CONFIG` values to change the input CSV, background image, fonts, text sizes, colors, margins, and output layout.
+
+### Project Structure
+
+```text
+Cogentic/
+├── README.md                         # Project overview and setup guide
+├── Gy.py                             # Placeholder for the future Cogentic AI core
+├── quotes_batch_background1.py       # Quote image pipeline for background1.png
+├── quotes_batch_background2.py       # Quote image pipeline for background2.png
+├── quotes.csv                        # Default quote and explanation dataset
+├── *.csv                             # Topic-specific quote datasets
+├── background1.png, background2.png  # Source background images
+├── Background1/, Background2/        # Generated image outputs
+├── images/                           # README and project images
+└── Raleway-VariableFont_wght.ttf     # Font used by the image scripts
+```
+
+### Contributing
+
+1. Check the open issues and comment on the issue you want to work on.
+2. Create a focused branch, for example `docs/update-readme` or `fix/image-output`.
+3. Keep changes small, documented, and aligned with the project vision.
+4. Run the relevant script or validation before opening a pull request.
+5. Open a pull request with a clear summary, testing notes, and any screenshots or generated examples when helpful.
+
 ## Research Objectives
 
 Cogentic seeks to investigate the following questions:
