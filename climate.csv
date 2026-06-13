@@ -1,32 +1,124 @@
-Date,Event,Quote
-Jun 22,,The earth does not belong to us; we belong to the earth.
-Jun 25,,Plant a tree; plant hope.
-Jun 27,,Every drop of water is a drop of life.
-Jul 3,,A greener world is a more peaceful world.
-Jul 6,,Sustainability is love made practical.
-Jul 9,,The forest speaks if only we listen.
-Jul 14,,Small hands big change; every child can heal the earth.
-Jul 18,,Clean air is not a luxury; it is a right.
-Jul 23,,Waste less love more.
-Jul 28,World Nature Conservation Day,To conserve nature is to write a letter of apology to the future and then seal it with action.
-Aug 2,,Future generations are watching how we treat their inheritance.
-Aug 5,,Biodiversity is the insurance policy of life on earth.
-Aug 11,,The ocean remembers everything we throw into it.
-Aug 15,,Renewable energy is not idealism; it is arithmetic.
-Aug 20,,A sustainable future is a future with a future.
-Aug 23,,Rivers don't ask where you're from before they quench your thirst.
-Aug 27,,The sky belongs to no one and to everyone.
-Sep 3,,Walk gently; the earth remembers your footprints.
-Sep 6,,Conservation is an act of love for the future.
-Sep 11,,Children deserve a planet as beautiful as the one we were given.
-Sep 16,World Ozone Day,A single layer of air holds the difference between a world and a wasteland.
-Sep 20,World Cleanup Day,Picking up one piece of litter is a vote for the world you want to live in.
-Sep 23,,Nature is not a resource; it is our home.
-Sep 27,,Biodiversity lost is a library burned.
-Sep 30,,The earth has enough for everyone's need but not for everyone's greed.
-Oct 3,,Every time you walk on grass remember you are walking on a lung.
-Oct 7,,Climate change is a math problem and we are running out of chalk.
-Oct 12,,The only green that matters is the one we leave behind.
-Oct 18,,Water is the first medicine.
-Oct 23,,A dead forest cannot sign a peace treaty.
-Oct 26,,Renewable energy is energy that doesn't ask for forgiveness.
+Date,Event,Heading,Quote
+Jun 22,,We Belong to the Earth,"The earth does not belong to us; we belong to the earth.","We are not owners – we are guests, and every good guest leaves the house cleaner than they found it."
+Jun 25,,Plant Hope,"Plant a tree; plant hope.","A sapling asks nothing of the future except a little patience – and gives back a century of shade."
+Jun 27,,Drop of Life,"Every drop of water is a drop of life.","There is no high civilisation without a clean river – guard your water as you guard your own blood."
+Jul 3,,A More Peaceful World,"A greener world is a more peaceful world.","Drought breeds anger; floods breed blame – climate action is conflict prevention in overalls."
+Jul 6,,Love Made Practical,"Sustainability is love made practical.","Recycling is not a chore – it is a love letter written to your grandchildren."
+Jul 9,,Listen to the Forest,"The forest speaks if only we listen.","The ring count on a stump is not a number – it is a diary of every summer and every silent cry."
+Jul 14,,Big Change,"Small hands, big change – every child can heal the earth.","A child who plants a seed learns that they are not too small to matter."
+Jul 18,,A Right, Not a Luxury,"Clean air is not a luxury; it is a right.","No child should have to choose between attending school and breathing without pain."
+Jul 23,,Love More,"Waste less, love more.","The landfill does not need your leftovers – your neighbour might."
+Jul 28,World Nature Conservation Day,A Letter to the Future,"To conserve nature is to write a letter of apology to the future – and then seal it with action. (event quote)","Conservation Day reminds us: apologies without change are just noise. Plant, protect, restore."
+Aug 2,,Their Inheritance,"Future generations are watching how we treat their inheritance.","They will not judge us by our GDP – they will judge us by the temperature of their summers."
+Aug 5,,Insurance Policy,"Biodiversity is the insurance policy of life on earth.","Every extinct species is a burned library – and we keep setting fires."
+Aug 11,,The Ocean Remembers,"The ocean remembers everything we throw into it.","The plastic bottle you tossed in 1995 is now a mosaic in a turtle’s stomach – the sea has a long memory."
+Aug 15,,Not Idealism, Arithmetic,"Renewable energy is not idealism; it is arithmetic.","The sun and wind do not send invoices – the only bill we pay is the one for our own delay."
+Aug 20,,A Future with a Future,"A sustainable future is a future with a future.","Any development that destroys tomorrow’s water is not development – it is theft."
+Aug 23,,Rivers Don't Ask,"Rivers don’t ask where you’re from before they quench your thirst.","Water does not discriminate – it gives itself to the just and the unjust alike. We should learn from it."
+Aug 27,,Belongs to Everyone,"The sky belongs to no one and to everyone.","The carbon molecule you release today will circle the earth for centuries – your freedom ends where the atmosphere begins."
+Sep 3,,Earth Remembers,"Walk gently; the earth remembers your footprints.","Leave a mark that does not need to be erased – walk as if you will return tomorrow."
+Sep 6,,Love for the Future,"Conservation is an act of love for the future.","You may never meet the child who drinks from the spring you saved – but that does not make your love less real."
+Sep 11,,A Beautiful Planet,"Children deserve a planet as beautiful as the one we were given.","We did not earn this earth – we borrowed it. Return it with interest in the form of clean air."
+Sep 16,World Ozone Day,A Single Layer,"A single layer of air holds the difference between a world and a wasteland. (event quote)","The Montreal Protocol proved that humanity can heal – if we decide to act as one species."
+Sep 20,World Cleanup Day,Vote for the World,"Picking up one piece of litter is a vote for the world you want to live in. (event quote)","Cleanup Day is not about perfection – it is about telling the earth 'I am still trying'."
+Sep 23,,Our Home,"Nature is not a resource; it is our home.","You do not negotiate with your living room – you care for it. Extend that courtesy to the outdoors."
+Sep 27,,A Library Burned,"Biodiversity lost is a library burned.","We have not yet read the book of the golden toad – and now it is ash."
+Sep 30,,Enough for Everyone,"The earth has enough for everyone’s need, but not for everyone’s greed.","Hunger is not a production problem – it is a distribution problem wrapped in indifference."
+Oct 3,,Walking on a Lung,"Every time you walk on grass, remember you are walking on a lung.","Soil breathes. Let it."
+Oct 7,,Running Out of Chalk,"Climate change is a math problem – and we are running out of chalk.","The equations are clear: every fraction of a degree we delay is a mountain of suffering we choose."
+Oct 12,,The Green That Matters,"The only green that matters is the one we leave behind.","Not your portfolio – the actual leaves, the actual moss, the actual oxygen."
+Oct 18,,First Medicine,"Water is the first medicine.","Before the first hospital, there was a clean spring. Let us not forget that pharmacy."
+Oct 23,,Cannot Sign a Treaty,"A dead forest cannot sign a peace treaty.","You cannot negotiate with a desert – once the trees are gone, only silence remains."
+Oct 26,,Doesn't Ask for Forgiveness,"Renewable energy is energy that doesn’t ask for forgiveness.","The sun will never apologise for shining – and neither should we for using it."
+Jan 3,,The First Footprint,"Every step you take leaves a mark – make it a green one.","Walk as if the earth is watching – because it is."
+Jan 7,,The Shared River,"A river does not ask for permission – it gives life to all.","Defend it as you defend your own blood."
+Jan 11,,The Silent Forest,"A forest is not a resource – it is a community of ancient souls.","Listen to them before they are gone."
+Jan 15,,The Open Sky,"The sky is the only roof we all share – keep it clean.","Every factory chimney is a hole in that roof."
+Jan 19,,The Small Seed,"A single seed in the ground is a promise to the future.","Plant it – you may not see the tree, but someone will."
+Jan 23,,The Wasted Feast,"Every plate of food thrown away is a slap to the farmer and a drought to the future.","Eat mindfully – waste less."
+Jan 27,,The Quiet Ocean,"The ocean is not a dump – it is the heart of the planet.","Do not give it a heart attack."
+Jan 31,,The Shared Breath,"The air you breathe was once breathed by dinosaurs – do not ruin it now.","Be a good ancestor."
+Feb 4,,The Broken Thermostat,"The planet has a fever – and we are the virus.","Be the antibiotic, not the disease."
+Feb 8,,The Last Bee,"A world without bees is a world without flowers – and without us.","Protect the pollinators – they are the unpaid labour of life."
+Feb 12,,The Open Field,"Every acre of concrete is a gravestone for a meadow.","Build up, not out – let the earth breathe."
+Feb 16,,The Silent Glacier,"A glacier is a time capsule – when it melts, the story is lost.","Keep the story frozen."
+Feb 20,,The Shared Shore,"The shore is where land meets sea – and where our care must meet our action.","Clean a beach today – even if it is just a bucket of plastic."
+Feb 24,,The Quiet Current,"The Gulf Stream is not a myth – it is a lifeline.","Do not cut it by heating the planet."
+Feb 28,,The Open Compost,"Compost is not waste – it is the earth’s way of saying 'thank you for returning the favour'.","Compost your scraps; it is the smallest miracle you can perform."
+Mar 4,,The Small Light,"Turn off a light – save a star.","Every kilowatt saved is a star that keeps shining for our grandchildren."
+Mar 8,International Women's Day,The Woman Who Plants Trees,"A woman who plants a tree plants oxygen for ten generations. (event quote)","Empower her – and the earth heals itself."
+Mar 12,,The Broken Pipe,"Every leaking tap is a drought somewhere else.","Fix it – water is the new gold, and gold cannot be drunk."
+Mar 16,,The Shared Car,"A car with one person is a coffin for the climate – fill it, or leave it.","Share your ride; the planet will thank you."
+Mar 20,,The Silent Reef,"A coral reef is a city under water – when it dies, the city falls silent.","Listen to the silence – then act before it is total."
+Mar 24,,The Open Window,"Opening a window instead of turning on the AC is a small act of rebellion.","Rebel daily."
+Mar 28,,The Wrapped Gift,"Every plastic wrapper is a gift that never stops giving – to the ocean.","Refuse the gift – bring your own bag."
+Mar 31,,The Shared Harvest,"Food grown locally is a love letter to the climate.","Read it and eat it."
+Apr 4,,The Quiet Tire,"A bicycle is a machine of peace – for the earth and for your body.","Ride it – the only emission is endorphins."
+Apr 8,,The Broken Bottle,"A glass bottle recycled is a mountain spared.","Recycle – it is the least violent act of mining."
+Apr 12,,The Shared Shade,"A tree’s shade is free air conditioning – plant more.","The best technology is already growing."
+Apr 16,,The Open Rain,"Rainwater is a gift – catch it, don’t drain it.","A barrel is a bank account for dry days."
+Apr 20,,The Silent Chimney,"Every smokestack is a cough from the earth.","Cough with it – then demand a cure."
+Apr 24,,The Shared Tread,"A shoe’s sole is a tiny tyre – walk more, drive less.","Your feet are the original zero‑emission vehicle."
+Apr 28,,The Quiet Watt,"Solar panels are not ugly – they are the most beautiful promise we can make.","Put them on every roof."
+May 2,,The Open Garden,"A garden is a protest against the asphalt.","Dig it – even a window box is a bullet fired at the concrete."
+May 6,,The Broken Chain,"A single‑use plastic is a chain that binds the future.","Break the chain – refuse it."
+May 10,,The Shared Cup,"A reusable cup is a small circle of kindness.","Carry it – the planet will sip with you."
+May 14,,The Silent Fan,"A ceiling fan uses less energy than a life of regret.","Spin it – and turn down the thermostat."
+May 18,,The Open Map,"The map of a sustainable future is drawn in pencil – erase and redraw.","Keep drawing; the first draft is never perfect."
+May 22,International Day for Biological Diversity,The Orchestra of Life,"Biodiversity is not a luxury – it is the orchestra, and we are just one instrument. (event quote)","When species go silent, the music stops – and we are left with noise."
+May 26,,The Quiet Tide,"The tide does not negotiate – it rises with the heat.","Lower the heat, or learn to swim."
+May 30,,The Shared Loaf,"Bread made from local grain is a loaf of climate justice.","Buy local – your fork is a voting booth."
+Jun 3,,The Open Spigot,"Every tap turned off while brushing saves a river.","Turn it off – the fish will thank you."
+Jun 7,,The Broken Light,"An LED bulb is a small sun that lasts for years.","Change your bulbs – it is the easiest heroism."
+Jun 11,,The Shared Cloth,"A cloth bag is a flag of a better world.","Fly it every time you shop."
+Jun 15,,The Silent Engine,"An electric motor is a whisper – a petrol engine is a scream.","Whisper – the future is quiet."
+Jun 19,,The Open Sky,"The sky is not a ceiling – it is a floor we are breaking.","Stop breaking it – seal the cracks."
+Jun 23,,The Quiet Compost,"Compost is a dark magic – it turns rot into roses.","Learn the magic – it is free."
+Jun 27,,The Shared Well,"A well that runs dry is a village that dies.","Recharge the earth – let rain soak in, not run off."
+Jul 1,,The Broken Thermostat,"The planet’s thermostat is broken – and we are the repair people.","Pick up a tool – not a fossil fuel."
+Jul 5,,The Open Window,"A breeze is free – air conditioning is a debt.","Owe less – open a window."
+Jul 9,,The Silent Glacier,"A glacier’s meltwater is a clock ticking – listen to the ticks.","Each tick is a child’s future slipping away."
+Jul 13,,The Shared Shore,"The shore is the planet’s edge – do not push it further.","Protect the coast – it is the skin of the earth."
+Jul 17,,The Quiet Current,"The current of the ocean is a bloodstream – do not poison it.","Plastic is a poison – stop the injection."
+Jul 21,,The Open Field,"A solar field is a field of hope.","Cover the desert with panels – turn sand into power."
+Jul 25,,The Shared Harvest,"Harvest the sun, the wind, the water – they are free.","The only cost is our will – and that is free, too."
+Jul 29,,The Silent Foot,"A footstep on grass is a prayer – a tyre on grass is a wound.","Pray with your feet – walk on paths."
+Aug 2,,The Open Rain,"Rain is the sky’s gift – do not pave it away.","Let it soak – your grandchildren will drink it."
+Aug 6,,The Broken Bottle,"A bottle in the ocean is a message in a bottle – but the message is despair.","Send a different message – recycle."
+Aug 10,,The Shared Shade,"The shade of a tree is a library of cool air.","Read it – then plant another tree."
+Aug 14,,The Quiet Chimney,"Every chimney is a gravestone for a polar bear.","Stop digging graves – stop burning."
+Aug 18,,The Open Garden,"A garden is a small rebellion against the heat.","Rebel – plant some tomatoes."
+Aug 22,,The Shared Tread,"A bike tyre leaves no scar – a car tyre leaves a wound.","Heal the wound – ride a bike."
+Aug 26,,The Silent Fan,"A fan is a gentle breeze – an AC is a hurricane of energy.","Choose the breeze."
+Aug 30,,The Open Map,"The map of a green future is in your hands – draw it.","Every choice is a line on that map."
+Sep 3,,The Quiet Watt,"A watt saved is a watt earned – and the earth pays interest.","Save watts – the interest is a cooler planet."
+Sep 7,,The Shared Cup,"A reusable cup is a small promise – keep it.","The planet is watching your promises."
+Sep 11,,The Open Spigot,"Water is life – do not let it drip away.","Every drop is a vote for your children’s future."
+Sep 15,,The Silent Engine,"An electric car is a mouse – a diesel is a lion.","Drive the mouse – the lion is extinct."
+Sep 19,,The Shared Loaf,"Local bread is a loaf of low carbon – eat it with joy.","Your joy is the planet’s joy."
+Sep 23,,The Quiet Compost,"Compost is alchemy – turn waste into gold.","Be an alchemist – it is easy."
+Sep 27,,The Open Sky,"The sky is not a dumping ground – it is our blanket.","Do not set the blanket on fire."
+Oct 1,,The Broken Thermostat,"The earth’s fever is rising – be the doctor, not the virus.","Prescribe renewables – take the medicine daily."
+Oct 5,,The Shared Well,"A shared well is a shared destiny – protect it.","Every well that goes dry is a war that begins."
+Oct 9,,The Open Field,"A field of wind turbines is a field of dancers.","Let them dance – the wind is free."
+Oct 13,,The Silent Glacier,"A glacier’s retreat is a retreat from reason.","Stop the retreat – stop the heat."
+Oct 17,,The Quiet Current,"The ocean’s current is a highway of life – do not pave it with plastic.","Keep the highway clear."
+Oct 21,,The Shared Shore,"The shore is a meeting place – meet it with respect.","Leave only footprints – take only memories."
+Oct 25,,The Open Rain,"Rain is the sky’s tears – do not make it cry more.","Dry your tears – stop the warming."
+Oct 29,,The Broken Bottle,"A bottle recycled is a bottle that never tortures a turtle.","Recycle – the turtle has no voice."
+Nov 2,,The Shared Shade,"A tree’s shade is a gift – give it back by planting more.","Plant a tree today – sit in its shade tomorrow."
+Nov 6,,The Quiet Chimney,"Every smokestack is a lie – it says 'progress' but means 'destruction'.","Call the lie – shut it down."
+Nov 10,,The Open Garden,"A garden is a classroom – the teacher is the earth.","Enrol today – the tuition is free."
+Nov 14,,The Shared Tread,"A walk in the woods is a prayer – a drive through them is a curse.","Pray with your feet."
+Nov 18,,The Silent Fan,"A fan is a friend – an AC is a frenemy.","Keep your friends close – keep your AC closed."
+Nov 22,,The Open Map,"The map of a liveable future is being redrawn – be the cartographer.","Draw lines of wind and sun, not coal and oil."
+Nov 26,,The Quiet Watt,"Every solar panel is a thank‑you note to the sun.","Write many notes – the sun reads them all."
+Nov 30,,The Shared Cup,"A reusable cup is a love letter to the sea.","Write that letter every day."
+Dec 4,,The Open Spigot,"A dripping tap is a slow scream – fix it.","The scream stops when you turn the washer."
+Dec 8,,The Silent Engine,"An engine that hums is a lullaby – one that roars is a nightmare.","Choose lullabies."
+Dec 12,,The Shared Loaf,"Bread from a local bakery is a loaf of climate love.","Love the climate – eat local."
+Dec 16,,The Quiet Compost,"Compost is the earth’s way of saying 'thank you for not wasting'.","Be thanked – compost everything you can."
+Dec 20,,The Open Sky,"The sky is not a limit – it is a responsibility.","Keep it blue – for the children who will look up."
+Dec 24,,The Shared Well,"A well that never runs dry is a miracle – do not waste miracles.","Conserve water – you are not a miracle worker."
+Dec 28,,The Quiet Current,"The current of change is slow – but it is moving.","Push it – your hands are strong."
+Dec 31,,The Year's End,"As the year ends, ask: did I cool the earth? If not, start tomorrow.","Tomorrow is the first day of the rest of the planet.”
