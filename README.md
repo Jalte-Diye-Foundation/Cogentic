@@ -36,33 +36,122 @@ Cogentic is an evolving research and development project that combines:
 - Human-centered design principles
 - Responsible AI and ethical governance frameworks
 
-The project explores how artificial intelligence can be used not only to generate content, but also to assist in identifying information that may contribute positively to individual learning and societal well-being.
+The daily pipeline generates a theme-specific quote, evaluates it with an AI quality loop, falls back to curated CSV content when needed, and renders a poster image ready for publication.
 
 ---
 
-## Current Progress
+## Architecture Diagram
 
-The current prototype includes a Python-based system capable of:
-
-- Generating images from quotes and text prompts
-- Producing educational and value-oriented visual content
-- Automating portions of the content creation workflow
-
-This stage serves as a foundation for future research and development.
+```text
+┌─────────────────────────────────────────────────────────────────────┐
+│                         main.py / daily_runner                       │
+└───────────────────────────────┬─────────────────────────────────────┘
+                                │
+        ┌───────────────────────┼───────────────────────┐
+        ▼                       ▼                       ▼
+┌───────────────┐      ┌────────────────┐      ┌──────────────────┐
+│ content/      │      │ content/       │      │ content/         │
+│ generator.py  │─────▶│ evaluator.py   │      │ fallback.py      │
+│ (Gemini)      │      │ (Quality loop) │      │ (CSV + dedupe)   │
+└───────────────┘      └────────────────┘      └──────────────────┘
+                                │
+                                ▼
+                     ┌──────────────────────┐
+                     │ rendering/           │
+                     │ poster_generator.py  │
+                     │ (PIL overlay)        │
+                     └──────────┬───────────┘
+                                ▼
+                     ┌──────────────────────┐
+                     │ output/YYYY-MM-DD/   │
+                     │ poster.jpg           │
+                     └──────────────────────┘
+```
 
 ---
 
-## Getting Started
+## Pipeline Flow
 
-Follow these steps to set up the current prototype locally and generate quote-based images.
+```mermaid
+flowchart TD
+    A[Start Daily Pipeline] --> B[Random Theme Selection]
+    B --> C[Random Background from Theme Folder]
+    C --> D[Generate Quote via Gemini]
+    D --> E{Quote Already Used?}
+    E -->|Yes| F[Retry up to 3 times]
+    E -->|No| G[AI Quality Evaluation]
+    G --> H{Score >= 7?}
+    H -->|Yes| I[Mark Quote Used]
+    H -->|No| F
+    F -->|Attempts exhausted| J[Load Unused CSV Quote]
+    F -->|Retry| D
+    J --> I
+    I --> K[Render Poster with PIL]
+    K --> L[Save to output/YYYY-MM-DD/poster.jpg]
+    L --> M[Write logs/cogentic.log]
+```
+
+**Step-by-step:**
+
+1. Randomly select one of four themes: Peace & Justice, Health & Mindfulness, Social Education, Climate & Environment.
+2. Randomly select a background image from that theme's folder under `themes/`.
+3. Generate `{ "quote": "...", "explanation": "..." }` using Gemini.
+4. Evaluate content; pass if score is **7 or higher**.
+5. Retry up to **3 times** if rejected or duplicate.
+6. If still rejected, load an unused quote from the theme's CSV fallback file.
+7. Render the final poster using existing PIL layout logic.
+8. Save to `output/YYYY-MM-DD/poster.jpg` and log all steps to `logs/cogentic.log`.
+
+---
+
+## Folder Structure
+
+```text
+Cogentic/
+├── main.py                          # Daily pipeline entry point
+├── config.json                      # Runtime configuration (no hardcoded values)
+├── requirements.txt                 # Python dependencies
+├── used_quotes_log.txt              # Duplicate prevention log
+│
+├── content/
+│   ├── generator.py                 # Gemini quote generation
+│   ├── evaluator.py                 # AI quality evaluation
+│   └── fallback.py                  # CSV fallback + used-quote tracking
+│
+├── rendering/
+│   └── poster_generator.py          # PIL poster rendering
+│
+├── scheduler/
+│   └── daily_runner.py              # Full daily pipeline orchestration
+│
+├── themes/
+│   ├── peace/                       # Peace & Justice backgrounds
+│   ├── health/                      # Health & Mindfulness backgrounds
+│   ├── education/                   # Social Education backgrounds
+│   └── climate/                     # Climate & Environment backgrounds
+│
+├── output/                          # Generated posters by date
+├── logs/                            # Application logs
+│
+├── .github/workflows/
+│   └── daily_content.yml            # GitHub Actions automation
+│
+├── test .py                         # Original prototype (preserved)
+├── quotes_batch_background1.py      # Batch poster script (preserved)
+├── quotes_batch_background2.py      # Batch poster script (preserved)
+├── *.csv                            # Theme fallback quote datasets
+└── README.md
+```
+
+---
+
+## How To Run
 
 ### Prerequisites
 
-- Python 3.9 or newer
+- Python 3.11 or newer
 - `pip` for installing Python packages
-- Git for cloning the repository
-
-The image generation scripts use [Pillow](https://pypi.org/project/pillow/) and read quote data from CSV files included in the repository.
+- A Gemini API key from [Google AI Studio](https://aistudio.google.com/)
 
 ### Installation
 
@@ -70,163 +159,159 @@ The image generation scripts use [Pillow](https://pypi.org/project/pillow/) and 
 git clone https://github.com/Jalte-Diye-Foundation/Cogentic.git
 cd Cogentic
 python -m venv .venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+source .venv/bin/activate          # Windows: .venv\Scripts\activate
 python -m pip install --upgrade pip
-python -m pip install pillow
-```
-
-If a `requirements.txt` file is added later, install dependencies with:
-
-```bash
 python -m pip install -r requirements.txt
 ```
 
-### Running the Project
+### Configure Gemini API
 
-The current prototype contains two quote image generation pipelines:
+Set your API key as an environment variable before running the pipeline:
+
+**Linux / macOS:**
+
+```bash
+export GEMINI_API_KEY="your-api-key-here"
+```
+
+**Windows (PowerShell):**
+
+```powershell
+$env:GEMINI_API_KEY = "your-api-key-here"
+```
+
+The key is read from the environment variable named in `config.json` (`gemini.api_key_env`, default: `GEMINI_API_KEY`). Never commit API keys to the repository.
+
+### Run the Daily Pipeline
+
+```bash
+python main.py
+```
+
+On success, output is written to:
+
+```text
+output/2026-06-22/poster.jpg
+```
+
+Logs are written to `logs/cogentic.log`.
+
+### Run Legacy Scripts (Still Supported)
+
+The original batch image generators remain available:
 
 ```bash
 python quotes_batch_background1.py
 python quotes_batch_background2.py
+python "test .py"
 ```
-
-Each script reads quote and explanation text from `quotes.csv`, overlays the text on its configured background image, and writes generated images to an output directory:
-
-- `quotes_batch_background1.py` uses `background1.png` and writes to `Background1/`
-- `quotes_batch_background2.py` uses `background2.png` and writes to `Background2/`
-
-You can edit the script-level `CONFIG` values to change the input CSV, background image, fonts, text sizes, colors, margins, and output layout.
-
-### Project Structure
-
-```text
-Cogentic/
-├── README.md                         # Project overview and setup guide
-├── Gy.py                             # Placeholder for the future Cogentic AI core
-├── quotes_batch_background1.py       # Quote image pipeline for background1.png
-├── quotes_batch_background2.py       # Quote image pipeline for background2.png
-├── quotes.csv                        # Default quote and explanation dataset
-├── *.csv                             # Topic-specific quote datasets
-├── background1.png, background2.png  # Source background images
-├── Background1/, Background2/        # Generated image outputs
-├── images/                           # README and project images
-└── Raleway-VariableFont_wght.ttf     # Font used by the image scripts
-```
-
-### Contributing
-
-1. Check the open issues and comment on the issue you want to work on.
-2. Create a focused branch, for example `docs/update-readme` or `fix/image-output`.
-3. Keep changes small, documented, and aligned with the project vision.
-4. Run the relevant script or validation before opening a pull request.
-5. Open a pull request with a clear summary, testing notes, and any screenshots or generated examples when helpful.
-
-## Research Objectives
-
-Cogentic seeks to investigate the following questions:
-
-- How can AI assist in promoting educational and socially beneficial content?
-- How can content quality be evaluated using computational methods?
-- How can recommendation systems incorporate human-centered objectives in addition to engagement metrics?
-- What governance mechanisms are necessary for responsible AI-assisted content selection?
 
 ---
 
-## Future Roadmap
+## How To Configure
 
-### 1. Content Generation
+All runtime settings live in `config.json`:
 
-Develop systems capable of generating content related to:
+| Section | Purpose |
+|---------|---------|
+| `gemini.model` | Gemini model name |
+| `gemini.api_key_env` | Environment variable for the API key |
+| `quality.passing_score` | Minimum evaluation score (default: 7) |
+| `quality.max_retries` | Generation retry count (default: 3) |
+| `paths.output_dir` | Poster output directory |
+| `paths.log_file` | Log file path |
+| `paths.used_quotes_log` | Duplicate prevention log |
+| `themes` | Theme folders, CSV fallbacks, and poster layouts |
+| `poster` | Fonts, layout zones, and output filename |
+| `emergency_failsafe` | Hardcoded last-resort quote |
 
-- Education
-- Social awareness
-- Ethical reflection
-- Personal development
-- Community engagement
-
-### 2. Content Evaluation
-
-Explore AI-assisted methods for assessing:
-
-- Relevance
-- Quality
-- Educational value
-- Potential social impact
-
-while maintaining human oversight and review.
-
-### 3. Intelligent Content Selection
-
-Investigate methods for prioritizing content that may:
-
-- Encourage critical thinking
-- Promote constructive dialogue
-- Support social cohesion
-- Facilitate learning and reflection
-
-### 4. Responsible Content Delivery
-
-Design systems that aim to:
-
-- Reduce exposure to low-quality information
-- Minimize amplification of misinformation
-- Promote evidence-informed content
-- Support healthier digital engagement patterns
+Edit `config.json` to change models, thresholds, paths, or layout without modifying Python code.
 
 ---
 
-## Planned System Architecture
+## How GitHub Actions Works
 
-```text
-                ┌────────────────────┐
-                │  Generative AI     │
-                │ (Text + Image)     │
-                └────────┬───────────┘
-                         │
-                         ▼
-                ┌────────────────────┐
-                │ Content Evaluation │
-                │ Quality Assessment │
-                └────────┬───────────┘
-                         │
-                         ▼
-                ┌────────────────────┐
-                │ Decision Support   │
-                │ Selection Engine   │
-                └────────┬───────────┘
-                         │
-                         ▼
-                ┌────────────────────┐
-                │ Delivery System    │
-                │ User Experience    │
-                └────────────────────┘
+Workflow file: `.github/workflows/daily_content.yml`
+
+| Trigger | Schedule |
+|---------|----------|
+| Automatic | Every day at **09:00 AM IST** (03:30 UTC) |
+| Manual | `workflow_dispatch` from the Actions tab |
+
+**What the workflow does:**
+
+1. Checks out the repository
+2. Sets up Python 3.11 and installs dependencies from `requirements.txt`
+3. Runs `python main.py` with `GEMINI_API_KEY` from repository secrets
+4. Uploads the generated poster from `output/` as a workflow artifact
+
+**Required repository secret:**
+
+| Secret | Description |
+|--------|-------------|
+| `GEMINI_API_KEY` | Your Google Gemini API key |
+
+Add it under **Settings → Secrets and variables → Actions → New repository secret**.
+
+---
+
+## How New Themes Can Be Added
+
+1. **Add a theme folder** under `themes/`, for example `themes/wellness/`, and place one or more background images (`bg1.jpg`, `bg2.png`, etc.) inside it.
+
+2. **Add a CSV fallback file** at the repository root (or update the path in config), for example `wellness.csv`, with columns including `Quote` and `Caption`.
+
+3. **Register the theme in `config.json`:**
+
+```json
+"Wellness & Growth": {
+  "folder": "themes/wellness",
+  "csv_fallback": "wellness.csv",
+  "layout": "left_explanation"
+}
 ```
+
+4. **Choose a poster layout** from `poster.layouts` in `config.json`:
+   - `left_explanation` — explanation in the bottom-left zone (from `quotes_batch_background1.py`)
+   - `right_explanation` — explanation on the right side (from `quotes_batch_background2.py`)
+
+5. Run `python main.py` to verify theme selection, generation, and rendering.
+
+---
+
+## Duplicate Prevention
+
+File: `used_quotes_log.txt`
+
+Every accepted Gemini quote and every CSV fallback quote is appended to this log. Before accepting generated content, the pipeline checks whether the quote was used previously. Duplicate Gemini outputs are rejected and retried.
+
+---
+
+## Logging
+
+File: `logs/cogentic.log`
+
+The pipeline logs:
+
+- Theme and background selection
+- Generation attempts and draft quotes
+- Evaluation scores and reasoning
+- CSV fallback usage
+- Poster creation success or failure
+- Errors with stack traces
 
 ---
 
 ## Technology Stack
 
-### Current
-
-- Python
-- Generative AI Models
-- Natural Language Processing (NLP)
-- Image Generation Pipelines
-
-### Planned
-
-- Agentic AI Systems
-- Recommendation Systems
-- Explainable AI (XAI)
-- Human Feedback Mechanisms
-- Reinforcement Learning
-- Content Evaluation Frameworks
+- Python 3.11
+- Google Gemini API (`google-genai`)
+- Pillow (PIL) for poster rendering
+- GitHub Actions for daily automation
 
 ---
 
 ## Core Principles
-
-The project is guided by the following principles:
 
 - Human-centered AI
 - Transparency and accountability
@@ -234,33 +319,6 @@ The project is guided by the following principles:
 - Educational value
 - Social benefit
 - Continuous evaluation and improvement
-
----
-
-## Challenges
-
-The project acknowledges several important challenges:
-
-- Defining and measuring content quality
-- Bias in AI-generated outputs
-- Subjectivity of ethical judgments
-- Transparency of recommendation systems
-- User autonomy and freedom of choice
-- Governance and accountability of AI systems
-
----
-
-## Contribution
-
-We welcome contributors interested in:
-
-- Artificial Intelligence and Machine Learning
-- Human-Computer Interaction
-- Responsible AI
-- Content Design
-- Educational Technology
-- Ethics and Governance Frameworks
-- System Architecture
 
 ---
 
@@ -288,4 +346,4 @@ The project does not claim to determine objective ethical truth, social value, o
 
 ## Final Thought
 
-> “The future of artificial intelligence should be measured not only by what it can automate, but also by how responsibly it serves humanity.”
+> "The future of artificial intelligence should be measured not only by what it can automate, but also by how responsibly it serves humanity."
