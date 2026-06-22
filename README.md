@@ -1,106 +1,98 @@
-# Cogentic
+# Cogentic AI
 
 **Cognitive Agentic AI System for Social Education**
 
-<img width="760" alt="Gemini_Generated_Cogentic_Image" src="https://github.com/Jalte-Diye-Foundation/Cogentic/blob/main/images/Cogentic.jpg" />
+Cogentic AI is an automated content publishing system for the [Jalte Diye Foundation](https://github.com/Jalte-Diye-Foundation). It generates fresh educational and social-impact content daily, evaluates quality with AI, renders poster images, updates website assets, and prepares LinkedIn publishing — all orchestrated through a production Python pipeline and GitHub Actions.
 
 ---
 
 ## Vision
 
-Cogentic is a purpose-driven artificial intelligence initiative focused on promoting ethical, educational, and socially beneficial digital content.
-
-In an increasingly complex information ecosystem, the project aims to explore how AI systems can assist in the creation, evaluation, and delivery of content that supports learning, critical thinking, empathy, and responsible citizenship.
-
-The long-term vision is to develop AI systems that prioritize human well-being, informed decision-making, and positive social impact alongside technological advancement.
-
----
+Cogentic explores how agentic AI can create, evaluate, and deliver content that supports learning, empathy, and responsible citizenship. The long-term goal is AI systems that prioritize human well-being and positive social impact alongside technological capability.
 
 ## Mission
 
-- Promote meaningful, educational, and socially constructive content
-- Encourage self-awareness, empathy, and social responsibility
-- Explore AI systems aligned with human-centered values
-- Support healthier and more intentional content consumption
-- Investigate responsible approaches to AI-assisted content curation
+- Generate meaningful, educational, and socially constructive daily content
+- Evaluate every post for relevance, grammar, educational value, social impact, and originality
+- Deliver content to the foundation website and social channels automatically
+- Maintain human-centered values, transparency, and responsible AI practices
 
 ---
 
-## What is Cogentic?
-
-Cogentic is an evolving research and development project that combines:
-
-- Generative AI for content creation
-- AI-assisted content evaluation and quality assessment
-- Agentic systems for decision support and content selection
-- Human-centered design principles
-- Responsible AI and ethical governance frameworks
-
-The daily pipeline generates a theme-specific quote, evaluates it with an AI quality loop, falls back to curated CSV content when needed, and renders a poster image ready for publication.
-
----
-
-## Architecture Diagram
+## Architecture
 
 ```text
-┌─────────────────────────────────────────────────────────────────────┐
-│                         main.py / daily_runner                       │
-└───────────────────────────────┬─────────────────────────────────────┘
-                                │
-        ┌───────────────────────┼───────────────────────┐
-        ▼                       ▼                       ▼
-┌───────────────┐      ┌────────────────┐      ┌──────────────────┐
-│ content/      │      │ content/       │      │ content/         │
-│ generator.py  │─────▶│ evaluator.py   │      │ fallback.py      │
-│ (Gemini)      │      │ (Quality loop) │      │ (CSV + dedupe)   │
-└───────────────┘      └────────────────┘      └──────────────────┘
-                                │
-                                ▼
-                     ┌──────────────────────┐
-                     │ rendering/           │
-                     │ poster_generator.py  │
-                     │ (PIL overlay)        │
-                     └──────────┬───────────┘
-                                ▼
-                     ┌──────────────────────┐
-                     │ output/YYYY-MM-DD/   │
-                     │ poster.jpg           │
-                     └──────────────────────┘
+User / GitHub Actions Scheduler
+        ↓
+Cogentic AI Engine (main.py)
+        ↓
+Theme Selection
+        ↓
+Gemini Generation
+        ↓
+Quality Evaluation
+        ↓
+CSV Fallback (if needed)
+        ↓
+Poster Generator (PIL)
+        ↓
+Website Asset Update
+        ↓
+LinkedIn Publishing
+        ↓
+Analytics (future)
+```
+
+```mermaid
+flowchart TD
+    A[GitHub Actions / Manual Run] --> B[main.py]
+    B --> C[Random Theme Selection]
+    C --> D[Random Background Image]
+    D --> E[Gemini Content Generation]
+    E --> F{Quality Score >= 7?}
+    F -->|No| G[Retry up to 3 times]
+    G --> E
+    F -->|Yes| H[Render Poster with PIL]
+    G -->|Exhausted| I[CSV Fallback]
+    I --> H
+    H --> J[output/YYYY-MM-DD/poster.jpg]
+    J --> K[website_assets/latest/]
+    K --> L[LinkedIn Publisher]
+    L --> M[Logs + Artifacts]
 ```
 
 ---
 
 ## Pipeline Flow
 
-```mermaid
-flowchart TD
-    A[Start Daily Pipeline] --> B[Random Theme Selection]
-    B --> C[Random Background from Theme Folder]
-    C --> D[Generate Quote via Gemini]
-    D --> E{Quote Already Used?}
-    E -->|Yes| F[Retry up to 3 times]
-    E -->|No| G[AI Quality Evaluation]
-    G --> H{Score >= 7?}
-    H -->|Yes| I[Mark Quote Used]
-    H -->|No| F
-    F -->|Attempts exhausted| J[Load Unused CSV Quote]
-    F -->|Retry| D
-    J --> I
-    I --> K[Render Poster with PIL]
-    K --> L[Save to output/YYYY-MM-DD/poster.jpg]
-    L --> M[Write logs/cogentic.log]
-```
+| Stage | Module | Description |
+|-------|--------|-------------|
+| 1. Theme Selection | `scheduler/daily_runner.py` | Randomly picks from six themes: Peace & Justice, Climate & Environment, Quality Education, Health & Mindfulness, Women Empowerment, Foundation Events |
+| 2. Background Selection | `scheduler/daily_runner.py` | Randomly selects a background image from the theme folder under `themes/` |
+| 3. Content Generation | `content/generator.py` | Gemini generates `{ quote, explanation, caption, hashtags }` as JSON |
+| 4. Quality Evaluation | `content/evaluator.py` | AI scores content on relevance, grammar, educational value, social impact, and originality (minimum **7/10**) |
+| 5. Retry Loop | `scheduler/daily_runner.py` | Up to **3 retries** if score is too low or quote is duplicate |
+| 6. CSV Fallback | `content/fallback.py` | Loads unused quotes from theme-specific CSV files when Gemini fails |
+| 7. Poster Rendering | `rendering/poster_generator.py` | Overlays quote and explanation on background using existing PIL layouts |
+| 8. Output Save | `scheduler/daily_runner.py` | Saves to `output/YYYY-MM-DD/poster.jpg` and `metadata.json` |
+| 9. Website Update | `website_assets/update_assets.py` | Copies poster and metadata to `website_assets/latest/` |
+| 10. LinkedIn Publishing | `publishing/linkedin_publisher.py` | Prepares post from latest assets; publishes when token is configured |
+| 11. Logging | `logs/cogentic.log` | Records every stage, score, fallback, and error |
 
-**Step-by-step:**
+---
 
-1. Randomly select one of four themes: Peace & Justice, Health & Mindfulness, Social Education, Climate & Environment.
-2. Randomly select a background image from that theme's folder under `themes/`.
-3. Generate `{ "quote": "...", "explanation": "..." }` using Gemini.
-4. Evaluate content; pass if score is **7 or higher**.
-5. Retry up to **3 times** if rejected or duplicate.
-6. If still rejected, load an unused quote from the theme's CSV fallback file.
-7. Render the final poster using existing PIL layout logic.
-8. Save to `output/YYYY-MM-DD/poster.jpg` and log all steps to `logs/cogentic.log`.
+## Technology Stack
+
+| Technology | Role |
+|------------|------|
+| **Python 3.11+** | Core pipeline language and orchestration |
+| **Google Gemini API** | Content generation and AI quality evaluation |
+| **Pillow (PIL)** | Poster image rendering with text overlays |
+| **GitHub Actions** | Daily automated execution at 09:00 AM IST |
+| **LinkedIn API** | Social publishing (integration-ready) |
+| **Website Integration** | Static asset delivery via `website_assets/latest/` |
+| **JSON** | Configuration (`config.json`) and metadata schemas |
+| **CSV** | Curated fallback quote datasets per theme |
 
 ---
 
@@ -108,39 +100,43 @@ flowchart TD
 
 ```text
 Cogentic/
-├── main.py                          # Daily pipeline entry point
-├── config.json                      # Runtime configuration (no hardcoded values)
-├── requirements.txt                 # Python dependencies
-├── used_quotes_log.txt              # Duplicate prevention log
+├── main.py                          # Full pipeline entry point
+├── config.json                      # All runtime configuration
+├── requirements.txt
+├── .env.example                     # Environment variable template
 │
 ├── content/
-│   ├── generator.py                 # Gemini quote generation
+│   ├── generator.py                 # Gemini content generation
 │   ├── evaluator.py                 # AI quality evaluation
-│   └── fallback.py                  # CSV fallback + used-quote tracking
+│   └── fallback.py                  # CSV fallback + deduplication
 │
 ├── rendering/
 │   └── poster_generator.py          # PIL poster rendering
 │
 ├── scheduler/
-│   └── daily_runner.py              # Full daily pipeline orchestration
+│   └── daily_runner.py              # Pipeline orchestration
+│
+├── website_assets/
+│   ├── latest/                      # Latest poster + metadata for website
+│   ├── update_assets.py             # Website asset updater
+│   └── README.md                    # Frontend integration guide
+│
+├── publishing/
+│   └── linkedin_publisher.py        # LinkedIn publishing (API-ready)
 │
 ├── themes/
 │   ├── peace/                       # Peace & Justice backgrounds
+│   ├── climate/                     # Climate & Environment backgrounds
+│   ├── education/                   # Quality Education backgrounds
 │   ├── health/                      # Health & Mindfulness backgrounds
-│   ├── education/                   # Social Education backgrounds
-│   └── climate/                     # Climate & Environment backgrounds
+│   ├── women/                       # Women Empowerment backgrounds
+│   └── events/                      # Foundation Events backgrounds
 │
-├── output/                          # Generated posters by date
-├── logs/                            # Application logs
+├── output/                          # Generated posters by date (gitignored)
+├── logs/                            # Application logs (gitignored)
 │
-├── .github/workflows/
-│   └── daily_content.yml            # GitHub Actions automation
-│
-├── test .py                         # Original prototype (preserved)
-├── quotes_batch_background1.py      # Batch poster script (preserved)
-├── quotes_batch_background2.py      # Batch poster script (preserved)
-├── *.csv                            # Theme fallback quote datasets
-└── README.md
+└── .github/workflows/
+    └── daily_content.yml            # Daily automation workflow
 ```
 
 ---
@@ -150,8 +146,8 @@ Cogentic/
 ### Prerequisites
 
 - Python 3.11 or newer
-- `pip` for installing Python packages
-- A Gemini API key from [Google AI Studio](https://aistudio.google.com/)
+- A [Gemini API key](https://aistudio.google.com/)
+- Optional: LinkedIn access token for publishing
 
 ### Installation
 
@@ -164,126 +160,140 @@ python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 ```
 
-### Configure Gemini API
+### Set API Keys
 
-Set your API key as an environment variable before running the pipeline:
+Copy the environment template and fill in your keys:
+
+```bash
+cp .env.example .env
+```
 
 **Linux / macOS:**
 
 ```bash
-export GEMINI_API_KEY="your-api-key-here"
+export GEMINI_API_KEY="your-gemini-api-key"
+export LINKEDIN_ACCESS_TOKEN="your-linkedin-token"   # optional
 ```
 
 **Windows (PowerShell):**
 
 ```powershell
-$env:GEMINI_API_KEY = "your-api-key-here"
+$env:GEMINI_API_KEY = "your-gemini-api-key"
+$env:LINKEDIN_ACCESS_TOKEN = "your-linkedin-token"   # optional
 ```
 
-The key is read from the environment variable named in `config.json` (`gemini.api_key_env`, default: `GEMINI_API_KEY`). Never commit API keys to the repository.
+Never commit `.env` or API keys to the repository.
 
-### Run the Daily Pipeline
+### Run the Pipeline
+
+**Step 1 — Generate content and poster:**
 
 ```bash
 python main.py
 ```
 
-On success, output is written to:
+**Step 2 — Update website assets:**
+
+```bash
+python website_assets/update_assets.py
+```
+
+**Step 3 — Publish to LinkedIn (optional):**
+
+```bash
+python publishing/linkedin_publisher.py
+```
+
+On success:
 
 ```text
 output/2026-06-22/poster.jpg
+output/2026-06-22/metadata.json
+website_assets/latest/poster.jpg
+website_assets/latest/metadata.json
+logs/cogentic.log
 ```
 
-Logs are written to `logs/cogentic.log`.
-
-### Run Legacy Scripts (Still Supported)
-
-The original batch image generators remain available:
-
-```bash
-python quotes_batch_background1.py
-python quotes_batch_background2.py
-python "test .py"
-```
+Individual modules can also be imported programmatically from `scheduler.daily_runner`, `website_assets.update_assets`, and `publishing.linkedin_publisher`.
 
 ---
 
-## How To Configure
+## GitHub Actions
 
-All runtime settings live in `config.json`:
-
-| Section | Purpose |
-|---------|---------|
-| `gemini.model` | Gemini model name |
-| `gemini.api_key_env` | Environment variable for the API key |
-| `quality.passing_score` | Minimum evaluation score (default: 7) |
-| `quality.max_retries` | Generation retry count (default: 3) |
-| `paths.output_dir` | Poster output directory |
-| `paths.log_file` | Log file path |
-| `paths.used_quotes_log` | Duplicate prevention log |
-| `themes` | Theme folders, CSV fallbacks, and poster layouts |
-| `poster` | Fonts, layout zones, and output filename |
-| `emergency_failsafe` | Hardcoded last-resort quote |
-
-Edit `config.json` to change models, thresholds, paths, or layout without modifying Python code.
-
----
-
-## How GitHub Actions Works
-
-Workflow file: `.github/workflows/daily_content.yml`
+Workflow: `.github/workflows/daily_content.yml`
 
 | Trigger | Schedule |
 |---------|----------|
-| Automatic | Every day at **09:00 AM IST** (03:30 UTC) |
+| Automatic | Every day at **09:00 AM IST** (03:30 UTC cron) |
 | Manual | `workflow_dispatch` from the Actions tab |
 
-**What the workflow does:**
+**Workflow steps:**
 
-1. Checks out the repository
-2. Sets up Python 3.11 and installs dependencies from `requirements.txt`
-3. Runs `python main.py` with `GEMINI_API_KEY` from repository secrets
-4. Uploads the generated poster from `output/` as a workflow artifact
+1. Checkout repository
+2. Set up Python 3.11
+3. Install dependencies from `requirements.txt`
+4. Run `python main.py` with `GEMINI_API_KEY` from secrets
+5. Run website asset update
+6. Run LinkedIn publishing with `LINKEDIN_ACCESS_TOKEN` from secrets
+7. Display pipeline logs
+8. Upload `output/` and `website_assets/` as artifacts
 
-**Required repository secret:**
+**Required repository secrets:**
 
-| Secret | Description |
-|--------|-------------|
-| `GEMINI_API_KEY` | Your Google Gemini API key |
+| Secret | Required | Description |
+|--------|----------|-------------|
+| `GEMINI_API_KEY` | Yes | Google Gemini API key |
+| `LINKEDIN_ACCESS_TOKEN` | No | LinkedIn OAuth access token |
 
-Add it under **Settings → Secrets and variables → Actions → New repository secret**.
+Add secrets under **Settings → Secrets and variables → Actions**.
 
 ---
 
-## How New Themes Can Be Added
+## Website Integration
 
-1. **Add a theme folder** under `themes/`, for example `themes/wellness/`, and place one or more background images (`bg1.jpg`, `bg2.png`, etc.) inside it.
+The website at [reallyrealeducation.org/posts.html](https://reallyrealeducation.org/posts.html) can consume the latest AI-generated post from:
 
-2. **Add a CSV fallback file** at the repository root (or update the path in config), for example `wellness.csv`, with columns including `Quote` and `Caption`.
-
-3. **Register the theme in `config.json`:**
-
-```json
-"Wellness & Growth": {
-  "folder": "themes/wellness",
-  "csv_fallback": "wellness.csv",
-  "layout": "left_explanation"
-}
+```text
+website_assets/latest/poster.jpg
+website_assets/latest/metadata.json
 ```
 
-4. **Choose a poster layout** from `poster.layouts` in `config.json`:
-   - `left_explanation` — explanation in the bottom-left zone (from `quotes_batch_background1.py`)
-   - `right_explanation` — explanation on the right side (from `quotes_batch_background2.py`)
+See [website_assets/README.md](website_assets/README.md) for frontend fetch examples and the metadata schema.
 
-5. Run `python main.py` to verify theme selection, generation, and rendering.
+**Future support:** CMS API, cloud storage (S3/GCS), CDN delivery, and database-backed post archives.
 
 ---
 
-## Duplicate Prevention
+## LinkedIn Integration
 
-File: `used_quotes_log.txt`
+`publishing/linkedin_publisher.py` reads the latest poster and metadata, builds a social caption, and prepares the LinkedIn API call.
 
-Every accepted Gemini quote and every CSV fallback quote is appended to this log. Before accepting generated content, the pipeline checks whether the quote was used previously. Duplicate Gemini outputs are rejected and retried.
+When `LINKEDIN_ACCESS_TOKEN` is not set, the pipeline logs:
+
+```text
+LinkedIn publishing skipped: token not configured
+```
+
+The pipeline continues without crashing.
+
+When a token is configured, the module is ready for the LinkedIn Images API and UGC Posts API integration.
+
+---
+
+## Configuration
+
+All runtime values live in `config.json` — no hardcoded paths, themes, or thresholds in Python:
+
+| Section | Purpose |
+|---------|---------|
+| `gemini` | Model name and API key environment variable |
+| `quality` | Passing score (7), max retries (3), retry delay |
+| `paths` | Output, logs, website asset directories |
+| `website` | Metadata filename, poster filename, source label |
+| `linkedin` | Access token env var and API base URL |
+| `themes` | Theme folders, CSV fallbacks, poster layouts |
+| `poster` | Fonts, layout zones, output quality |
+| `emergency_failsafe` | Last-resort quote if all fallbacks fail |
 
 ---
 
@@ -293,57 +303,40 @@ File: `logs/cogentic.log`
 
 The pipeline logs:
 
-- Theme and background selection
-- Generation attempts and draft quotes
-- Evaluation scores and reasoning
+- Execution start and completion
+- Selected theme and background
+- Gemini generation response (quote, caption, hashtags)
+- Evaluation score and reasoning
 - CSV fallback usage
-- Poster creation success or failure
-- Errors with stack traces
+- Poster output path
+- Website asset update status
+- LinkedIn publishing status
+- Errors with full stack traces
 
 ---
 
-## Technology Stack
+## Future Improvements
 
-- Python 3.11
-- Google Gemini API (`google-genai`)
-- Pillow (PIL) for poster rendering
-- GitHub Actions for daily automation
-
----
-
-## Core Principles
-
-- Human-centered AI
-- Transparency and accountability
-- Responsible innovation
-- Educational value
-- Social benefit
-- Continuous evaluation and improvement
+- **Database** — persistent post history and analytics queries
+- **Analytics** — engagement tracking across website and LinkedIn
+- **CMS API** — push content to a headless CMS
+- **Agentic workflows** — multi-agent content planning and scheduling
+- **Vector database** — semantic deduplication and theme-aware retrieval
 
 ---
 
 ## About Jalte Diye Foundation
 
-Jalte Diye Foundation works toward:
-
-- Social awareness
-- Education
-- Ethical development
-- Community engagement
-- Human values and social cohesion
-
-Cogentic represents one effort to explore how emerging technologies can be applied in ways that contribute positively to individuals and society.
+Jalte Diye Foundation works toward social awareness, education, ethical development, community engagement, and human values. Cogentic represents one effort to apply emerging AI responsibly for positive social impact.
 
 ---
 
 ## Disclaimer
 
-Cogentic is an experimental research and development initiative.
-
-The project does not claim to determine objective ethical truth, social value, or human well-being. Any AI-assisted evaluations or recommendations should be interpreted as supportive tools operating under human oversight rather than authoritative judgments.
+Cogentic is an experimental research and development initiative. AI-assisted evaluations are supportive tools under human oversight, not authoritative judgments of ethical truth or social value.
 
 ---
 
-## Final Thought
+## License
 
-> "The future of artificial intelligence should be measured not only by what it can automate, but also by how responsibly it serves humanity."
+See [LICENSE](LICENSE) for details.

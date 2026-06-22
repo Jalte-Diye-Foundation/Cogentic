@@ -4,6 +4,7 @@ from scheduler.daily_runner import run_daily_pipeline
 
 
 def main() -> None:
+    """Run the daily content pipeline: theme, generation, evaluation, poster."""
     run_daily_pipeline()
 
 
