@@ -1,0 +1,8 @@
+2026-06-22 17:04:49 | INFO | scheduler.daily_runner | Starting daily Cogentic content pipeline.
+2026-06-22 17:04:49 | INFO | scheduler.daily_runner | Selected theme: Women Empowerment
+2026-06-22 17:04:49 | INFO | scheduler.daily_runner | Selected background: D:\New folder\Cogentic\themes/women\bg1.jpg
+2026-06-22 17:05:28,853 | INFO | __main__ | LinkedIn publishing skipped: token not configured
+2026-06-22 17:05:28,854 | INFO | __main__ | LinkedIn publishing step finished: skipped
+2026-06-22 17:07:11,820 | INFO | __main__ | Website asset updated: D:\New folder\Cogentic\output\2026-06-22\poster.jpg -> D:\New folder\Cogentic\website_assets/latest\poster.jpg
+2026-06-22 17:07:11,825 | INFO | __main__ | Website metadata written: D:\New folder\Cogentic\website_assets/latest\metadata.json
+2026-06-22 17:07:11,828 | INFO | __main__ | Website asset update completed.
