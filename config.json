@@ -3,86 +3,194 @@
     "model": "gemini-2.5-flash",
     "api_key_env": "GEMINI_API_KEY"
   },
+
   "quality": {
     "passing_score": 7,
     "max_retries": 3,
     "retry_delay_seconds": 2
   },
+
   "paths": {
     "output_dir": "output",
     "logs_dir": "logs",
     "log_file": "logs/cogentic.log",
-    "used_quotes_log": "used_quotes_log.txt"
+    "used_quotes_log": "used_quotes_log.txt",
+    "website_assets_dir": "website_assets",
+    "website_latest_dir": "website_assets/latest"
   },
+
+  "website": {
+    "metadata_filename": "metadata.json",
+    "poster_filename": "poster.jpg",
+    "source_label": "Cogentic AI",
+    "image_url_path": "latest/poster.jpg"
+  },
+
+  "linkedin": {
+    "access_token_env": "LINKEDIN_ACCESS_TOKEN",
+    "api_base_url": "https://api.linkedin.com/v2"
+  },
+
+
   "themes": {
+
     "Peace & Justice": {
-      "folder": "themes/peace",
-      "csv_fallback": "peace_justice.csv",
-      "layout": "left_explanation"
-    },
-    "Health & Mindfulness": {
-      "folder": "themes/health",
-      "csv_fallback": "Event_quotes.csv",
-      "layout": "left_explanation"
-    },
-    "Social Education": {
-      "folder": "themes/education",
-      "csv_fallback": "quality_education.csv",
-      "layout": "right_explanation"
-    },
-    "Climate & Environment": {
-      "folder": "themes/climate",
-      "csv_fallback": "climate.csv",
-      "layout": "left_explanation"
+  "folder": "templates/peace",
+  "csv_fallback": "peace_justice.csv",
+  "layout": "left_explanation"
+},
+
+"Climate & Environment": {
+  "folder": "templates/climate",
+  "csv_fallback": "climate.csv",
+  "layout": "left_explanation"
+},
+
+"Quality Education": {
+  "folder": "templates/education",
+  "csv_fallback": "quality_education.csv",
+  "layout": "right_explanation"
+},
+
+"Women Empowerment": {
+  "folder": "templates/women",
+  "csv_fallback": "reduced_inequalities.csv",
+  "layout": "left_explanation"
+},
+
+"Health & Mindfulness": {
+  "folder": "templates/health",
+  "csv_fallback": "quotes.csv",
+  "layout": "left_explanation"
+},
+
+"Foundation Events": {
+  "folder": "templates/events",
+  "csv_fallback": "Event_quotes.csv",
+  "layout": "left_explanation"
     }
+
   },
+
+
   "poster": {
+
     "output_filename": "poster.jpg",
+
     "quality": 95,
-    "supported_background_extensions": [".jpg", ".jpeg", ".png", ".webp"],
+
+    "supported_background_extensions": [
+      ".jpg",
+      ".jpeg",
+      ".png",
+      ".webp"
+    ],
+
+
     "fonts": {
+
       "quote_font_name": "georgia.ttf",
+
       "explanation_font_name": "Raleway-VariableFont_wght.ttf"
+
     },
+
+
     "layouts": {
+
+
       "left_explanation": {
-        "quote_font_size": 64,
-        "explanation_font_size": 35,
+
+        "quote_font_size": 48,
+
+        "explanation_font_size": 26,
+
         "explanation_font_weight": 100,
+
         "explanation_stroke_width": 1,
+
         "explanation_letter_spacing": 1,
+
+
         "quote_color": "#3a3a3a",
+
         "explanation_color": "#555555",
-        "margin_left_ratio": 0.10,
-        "margin_right_ratio": 0.10,
-        "quote_top_ratio": 0.04,
-        "quote_bottom_ratio": 0.48,
-        "expl_right_ratio": 0.56,
-        "expl_top_ratio": 0.23,
-        "expl_bottom_ratio": 0.90,
-        "line_spacing": 15
+
+
+        "margin_left_ratio": 0.18,
+
+        "margin_right_ratio": 0.18,
+
+
+        "quote_top_ratio": 0.10,
+
+        "quote_bottom_ratio": 0.42,
+
+
+        "expl_right_ratio": 0.48,
+
+        "expl_top_ratio": 0.38,
+
+        "expl_bottom_ratio": 0.82,
+
+
+        "line_spacing": 10
+
       },
+
+
       "right_explanation": {
-        "quote_font_size": 64,
-        "explanation_font_size": 35,
+
+
+        "quote_font_size": 48,
+
+        "explanation_font_size": 26,
+
         "explanation_font_weight": 100,
+
+
         "explanation_stroke_width": 1,
+
         "explanation_letter_spacing": 1,
+
+
         "quote_color": "#3a3a3a",
+
         "explanation_color": "#000000",
-        "margin_left_ratio": 0.10,
-        "margin_right_ratio": 0.10,
-        "quote_top_ratio": 0.04,
-        "quote_bottom_ratio": 0.48,
-        "expl_left_ratio": 0.42,
-        "expl_top_ratio": 0.23,
-        "expl_bottom_ratio": 0.90,
-        "line_spacing": 20
+
+
+        "margin_left_ratio": 0.18,
+
+        "margin_right_ratio": 0.18,
+
+
+        "quote_top_ratio": 0.18,
+
+        "quote_bottom_ratio": 0.42,
+
+
+        "expl_left_ratio": 0.50,
+
+        "expl_top_ratio": 0.38,
+
+        "expl_bottom_ratio": 0.82,
+
+
+        "line_spacing": 10
+
       }
+
     }
+
   },
+
+
   "emergency_failsafe": {
+
     "quote": "The best time to plant a tree was twenty years ago. The second best time is now.",
+
     "explanation": "Every small step we take today shapes the world we live in tomorrow."
+
   }
+
 }
