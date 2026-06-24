@@ -1,17 +1,17 @@
 import os
 from PIL import Image, ImageDraw, ImageFont
 
-# --- ENGINE CONFIGURATION PARAMS (Matching quality_education_text.jpg) ---
+# --- ENGINE CONFIGURATION PARAMS (Tuned for middle space of quality_education.jpg) ---
 RENDER_CONFIG = {
     "background_path": "quality_education.jpg",
     
     # Typography Asset Configurations
-    "quote_font_name": "georgia.ttf",
-    "explanation_font_name": "Raleway-VariableFont_wght.ttf",
+    "quote_font_name": "Raleway-ExtraLight.ttf",
+    "explanation_font_name": "Raleway-ExtraLight.ttf",
 
-    "quote_font_size": 60,
-    "explanation_font_size": 32,
-    "explanation_font_weight": 300, # Clean, legible light font weight
+    "quote_font_size": 55,          # Slightly optimized sizes to prevent overlapping 
+    "explanation_font_size": 30,
+    "explanation_font_weight": 300,  # Clean, legible light font weight
 
     # Custom Color Coding
     "quote_color": "#b91c1c",        # Primary Crimson Red Accent
@@ -21,12 +21,12 @@ RENDER_CONFIG = {
     "margin_left_ratio": 0.15,
     "margin_right_ratio": 0.15,
 
-    # Vertical distribution areas to avoid clipping background graphics
-    "quote_top_ratio": 0.35,
-    "quote_bottom_ratio": 0.55,
+    # Consolidated vertical distribution bounds into the middle open space
+    "quote_top_ratio": 0.38,
+    "quote_bottom_ratio": 0.54,
     
-    "expl_top_ratio": 0.57,
-    "expl_bottom_ratio": 0.82,
+    "expl_top_ratio": 0.56,
+    "expl_bottom_ratio": 0.76,
 
     "line_spacing": 14,
 }
@@ -81,13 +81,8 @@ def block_height(lines, font, draw, line_spacing):
 # --- MAIN CALLABLE INTERFACE ---
 def render_output_image(bg_image_path, quote_text, explanation_text, output_filename="daily_quote_output.jpg"):
     """
-    Assembles generated quote text layouts safely onto the asset background layer.
-    
-    Arguments:
-        bg_image_path (str): File path to your quality_education.jpg background template.
-        quote_text (str): The quote string provided by your AI Core.
-        explanation_text (str): The multi-sentence subtext explanation.
-        output_filename (str): The targeted save path for the finalized JPG graphic.
+    Assembles generated quote text layouts safely onto the asset background layer
+    with left-aligned quotes and right-aligned explanations.
     """
     if not os.path.exists(bg_image_path):
         print(f"🚨 Rendering Cancelled: Source base image asset '{bg_image_path}' was not found.")
@@ -107,7 +102,7 @@ def render_output_image(bg_image_path, quote_text, explanation_text, output_file
     margin_right = int(W * RENDER_CONFIG["margin_right_ratio"])
     max_text_width = W - margin_left - margin_right
 
-    # Phase 1: Wrap and draw the main Quote (Centered alignment)
+    # Phase 1: Wrap and draw the main Quote (LEFT-ALIGNED)
     quote_lines = wrap_text(quote_text, quote_font, draw, max_text_width)
     q_top = int(H * RENDER_CONFIG["quote_top_ratio"])
     q_bottom = int(H * RENDER_CONFIG["quote_bottom_ratio"])
@@ -116,11 +111,11 @@ def render_output_image(bg_image_path, quote_text, explanation_text, output_file
     
     y_cursor = q_top + max(0, (q_zone_h - q_height) // 2)
     for line in quote_lines:
-        line_w = measure_text_width(line, quote_font, draw)
-        draw.text(((W - line_w) // 2, y_cursor), line, font=quote_font, fill=RENDER_CONFIG["quote_color"])
+        # Anchored to the exact left safety margin bounding block
+        draw.text((margin_left, y_cursor), line, font=quote_font, fill=RENDER_CONFIG["quote_color"])
         y_cursor += text_height(line, quote_font, draw) + RENDER_CONFIG["line_spacing"]
 
-    # Phase 2: Wrap and draw the Explanation Block (Centered alignment)
+    # Phase 2: Wrap and draw the Explanation Block (RIGHT-ALIGNED)
     expl_lines = wrap_text(explanation_text, explanation_font, draw, max_text_width)
     e_top = int(H * RENDER_CONFIG["expl_top_ratio"])
     e_bottom = int(H * RENDER_CONFIG["expl_bottom_ratio"])
@@ -130,10 +125,13 @@ def render_output_image(bg_image_path, quote_text, explanation_text, output_file
     y_cursor = e_top + max(0, (e_zone_h - e_height) // 2)
     for line in expl_lines:
         line_w = measure_text_width(line, explanation_font, draw)
-        draw.text(((W - line_w) // 2, y_cursor), line, font=explanation_font, fill=RENDER_CONFIG["explanation_color"])
+        # Shift anchor point dynamically per line width to lock trailing characters against right boundary
+        right_aligned_x = W - margin_right - line_w
+        
+        draw.text((right_aligned_x, y_cursor), line, font=explanation_font, fill=RENDER_CONFIG["explanation_color"])
         y_cursor += text_height(line, explanation_font, draw) + RENDER_CONFIG["line_spacing"]
 
     # Save Output
     img.save(output_filename, quality=95)
-    print(f"📷 Composite image rendered nicely at: '{output_filename}'")
+    print(f"📷 Composite asymmetrical image rendered nicely at: '{output_filename}'")
     return True
