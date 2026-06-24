@@ -1,7 +1,7 @@
 import os
 from PIL import Image, ImageDraw, ImageFont
 
-# --- ENGINE CONFIGURATION PARAMS (Tuned for middle space of quality_education.jpg) ---
+# --- RECONFIGURED LAYOUT PARAMS (Tuned to fit the middle open pocket safely) ---
 RENDER_CONFIG = {
     "background_path": "quality_education.jpg",
     
@@ -9,26 +9,24 @@ RENDER_CONFIG = {
     "quote_font_name": "Raleway-ExtraLight.ttf",
     "explanation_font_name": "Raleway-ExtraLight.ttf",
 
-    "quote_font_size": 55,          # Slightly optimized sizes to prevent overlapping 
-    "explanation_font_size": 30,
-    "explanation_font_weight": 300,  # Clean, legible light font weight
+    "quote_font_size": 48,           # Slightly scaled down to prevent overflowing bounds
+    "explanation_font_size": 26,
+    "explanation_font_weight": 300,  # Legible light font weight
 
     # Custom Color Coding
     "quote_color": "#b91c1c",        # Primary Crimson Red Accent
-    "explanation_color": "#9f1239",  # Deep Rose Soft Secondary Hue
+    "explanation_color": "#b91c1c",  # Deep Rose Soft Secondary Hue
 
-    # Layout Boundaries & Safe Zones (Horizontal padding)
-    "margin_left_ratio": 0.15,
-    "margin_right_ratio": 0.15,
+    # Layout Boundaries (Expanded horizontal padding to protect background illustrations)
+    "margin_left_ratio": 0.22,       # Pushes text completely clear of the graduation cap icon
+    "margin_right_ratio": 0.22,      # Pushes text clear of the right hanging icons/logos
 
-    # Consolidated vertical distribution bounds into the middle open space
-    "quote_top_ratio": 0.38,
-    "quote_bottom_ratio": 0.54,
-    
-    "expl_top_ratio": 0.56,
-    "expl_bottom_ratio": 0.76,
+    # The absolute safe vertical bounding box for the entire middle text column
+    "center_zone_top_ratio": 0.38,   # Sits safely below the "Quality Education" header square
+    "center_zone_bottom_ratio": 0.74, # Ends safely above the bottom books and lightbulb logo
 
-    "line_spacing": 14,
+    "line_spacing": 12,              # Spacing between individual lines of text
+    "block_gap": 35,                 # The exact tight gap separating the quote from explanation
 }
 
 def load_font(font_name, size, weight=None):
@@ -81,8 +79,8 @@ def block_height(lines, font, draw, line_spacing):
 # --- MAIN CALLABLE INTERFACE ---
 def render_output_image(bg_image_path, quote_text, explanation_text, output_filename="daily_quote_output.jpg"):
     """
-    Assembles generated quote text layouts safely onto the asset background layer
-    with left-aligned quotes and right-aligned explanations.
+    Assembles quotes cleanly inside the clear middle workspace.
+    Quotes are left-aligned, explanations are right-aligned, and both are stacked tightly.
     """
     if not os.path.exists(bg_image_path):
         print(f"🚨 Rendering Cancelled: Source base image asset '{bg_image_path}' was not found.")
@@ -102,30 +100,35 @@ def render_output_image(bg_image_path, quote_text, explanation_text, output_file
     margin_right = int(W * RENDER_CONFIG["margin_right_ratio"])
     max_text_width = W - margin_left - margin_right
 
-    # Phase 1: Wrap and draw the main Quote (LEFT-ALIGNED)
+    # Wrap both blocks first to calculate total structural height
     quote_lines = wrap_text(quote_text, quote_font, draw, max_text_width)
-    q_top = int(H * RENDER_CONFIG["quote_top_ratio"])
-    q_bottom = int(H * RENDER_CONFIG["quote_bottom_ratio"])
-    q_zone_h = q_bottom - q_top
-    q_height = block_height(quote_lines, quote_font, draw, RENDER_CONFIG["line_spacing"])
-    
-    y_cursor = q_top + max(0, (q_zone_h - q_height) // 2)
+    expl_lines = wrap_text(explanation_text, explanation_font, draw, max_text_width)
+
+    quote_block_h = block_height(quote_lines, quote_font, draw, RENDER_CONFIG["line_spacing"])
+    expl_block_h = block_height(expl_lines, explanation_font, draw, RENDER_CONFIG["line_spacing"])
+
+    # Total combined vertical space required by the text blocks combined
+    total_content_h = quote_block_h + RENDER_CONFIG["block_gap"] + expl_block_h
+
+    # Define safe workspace dimensions
+    zone_top = int(H * RENDER_CONFIG["center_zone_top_ratio"])
+    zone_bottom = int(H * RENDER_CONFIG["center_zone_bottom_ratio"])
+    zone_height = zone_bottom - zone_top
+
+    # Center the entire combined text block inside the blank vertical middle area
+    y_cursor = zone_top + max(0, (zone_height - total_content_h) // 2)
+
+    # Phase 1: Draw Quote Lines (LEFT-ALIGNED)
     for line in quote_lines:
-        # Anchored to the exact left safety margin bounding block
         draw.text((margin_left, y_cursor), line, font=quote_font, fill=RENDER_CONFIG["quote_color"])
         y_cursor += text_height(line, quote_font, draw) + RENDER_CONFIG["line_spacing"]
 
-    # Phase 2: Wrap and draw the Explanation Block (RIGHT-ALIGNED)
-    expl_lines = wrap_text(explanation_text, explanation_font, draw, max_text_width)
-    e_top = int(H * RENDER_CONFIG["expl_top_ratio"])
-    e_bottom = int(H * RENDER_CONFIG["expl_bottom_ratio"])
-    e_zone_h = e_bottom - e_top
-    e_height = block_height(expl_lines, explanation_font, draw, RENDER_CONFIG["line_spacing"])
+    # Remove the extra line spacing added on the final loop cycle, then add the tight block gap
+    y_cursor = (y_cursor - RENDER_CONFIG["line_spacing"]) + RENDER_CONFIG["block_gap"]
 
-    y_cursor = e_top + max(0, (e_zone_h - e_height) // 2)
+    # Phase 2: Draw Explanation Lines (RIGHT-ALIGNED)
     for line in expl_lines:
         line_w = measure_text_width(line, explanation_font, draw)
-        # Shift anchor point dynamically per line width to lock trailing characters against right boundary
         right_aligned_x = W - margin_right - line_w
         
         draw.text((right_aligned_x, y_cursor), line, font=explanation_font, fill=RENDER_CONFIG["explanation_color"])
@@ -133,5 +136,5 @@ def render_output_image(bg_image_path, quote_text, explanation_text, output_file
 
     # Save Output
     img.save(output_filename, quality=95)
-    print(f"📷 Composite asymmetrical image rendered nicely at: '{output_filename}'")
+    print(f"📷 Corrected layout image rendered beautifully at: '{output_filename}'")
     return True
