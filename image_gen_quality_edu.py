@@ -15,7 +15,7 @@ RENDER_CONFIG = {
 
     # Custom Color Coding
     "quote_color": "#b91c1c",        # Primary Crimson Red Accent
-    "explanation_color": "#b91c1c",  # Deep Rose Soft Secondary Hue
+    "explanation_color": "#b91c1c",  
 
     # Layout Boundaries (Expanded horizontal padding to protect background illustrations)
     "margin_left_ratio": 0.22,       # Pushes text completely clear of the graduation cap icon
