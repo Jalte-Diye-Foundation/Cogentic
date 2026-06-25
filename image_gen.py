@@ -8,48 +8,40 @@ THEME_REGISTRY = {
         "explanation_color": "#166534",  # Muted Pine Green
         "quote_align": "RIGHT",
         "expl_align": "LEFT",
-        "margin_left_ratio": 0.22,       # Protect left icons
-        "margin_right_ratio": 0.22,      # Protect right hanging elements
-        "center_zone_top_ratio": 0.31,   # Moved higher to optimize open space
-        "center_zone_bottom_ratio": 0.69, # Safely avoids the bottom right globe/hand icon
-        "quote_font_size": 48,
-        "explanation_font_size": 26,
+        "margin_left_ratio": 0.22,       
+        "margin_right_ratio": 0.22,      
+        "center_zone_top_ratio": 0.38,   # Unified positioning zone matching your reference script
+        "center_zone_bottom_ratio": 0.74,
     },
     "jdf_general.jpg": {
         "quote_color": "#8c6239",        # Light Brown Theme Accent
         "explanation_color": "#a17850",  # Muted Light Brown Subtext
         "quote_align": "RIGHT",
         "expl_align": "LEFT",
-        "margin_left_ratio": 0.20,
-        "margin_right_ratio": 0.20,
-        "center_zone_top_ratio": 0.30,   # Lifted higher up the canvas
-        "center_zone_bottom_ratio": 0.70, # Keeps text away from bottom elements
-        "quote_font_size": 48,
-        "explanation_font_size": 26,
+        "margin_left_ratio": 0.22,
+        "margin_right_ratio": 0.22,
+        "center_zone_top_ratio": 0.38,   
+        "center_zone_bottom_ratio": 0.74, 
     },
     "reduced_inequalities.jpg": {
         "quote_color": "#dd1c4b",        # SDG 10 Deep Magenta Crimson
         "explanation_color": "#b9123c",  
         "quote_align": "RIGHT",
         "expl_align": "LEFT",
-        "margin_left_ratio": 0.24,       # Generous padding to clear large SDG blocks
+        "margin_left_ratio": 0.22,       
         "margin_right_ratio": 0.22,
-        "center_zone_top_ratio": 0.40,   # Sits lower below the main header graphic
+        "center_zone_top_ratio": 0.38,   
         "center_zone_bottom_ratio": 0.74,
-        "quote_font_size": 46,           
-        "explanation_font_size": 25,
     },
     "quality_education.jpg": {
         "quote_color": "#b91c1c",        # SDG 4 Cherry Red
         "explanation_color": "#b91c1c",  
         "quote_align": "LEFT",
         "expl_align": "RIGHT",
-        "margin_left_ratio": 0.22,       # Protect left graduation cap icon
-        "margin_right_ratio": 0.22,      # Protect right hanging icons/logos
-        "center_zone_top_ratio": 0.38,   # Sits safely below header square
-        "center_zone_bottom_ratio": 0.74, # Ends safely above bottom books/lightbulb
-        "quote_font_size": 48,
-        "explanation_font_size": 26,
+        "margin_left_ratio": 0.22,       
+        "margin_right_ratio": 0.22,      
+        "center_zone_top_ratio": 0.38,   
+        "center_zone_bottom_ratio": 0.74, 
     },
     "peace_justice.jpg": {
         "quote_color": "#00689d",        # SDG 16 Peace Blue
@@ -57,22 +49,23 @@ THEME_REGISTRY = {
         "quote_align": "LEFT",
         "expl_align": "RIGHT",
         "margin_left_ratio": 0.22,       
-        "margin_right_ratio": 0.24,      # Avoid dove / structural scales on the right
-        "center_zone_top_ratio": 0.33,   # Lifted slightly to center better with background
-        "center_zone_bottom_ratio": 0.70, # Avoids spilling onto the balance scales
-        "quote_font_size": 48,
-        "explanation_font_size": 26,
+        "margin_right_ratio": 0.22,      
+        "center_zone_top_ratio": 0.38,
+        "center_zone_bottom_ratio": 0.74,
     }
 }
 
 GLOBAL_LAYOUT = {
     "font_name": "Raleway-ExtraLight.ttf",
+    "quote_font_size": 48,
+    "explanation_font_size": 26,
+    "explanation_font_weight": 300,  # Exact weight configuration from your working template
     "line_spacing": 12,
-    "block_gap": 35,                 # Tight structural space between elements
+    "block_gap": 35,                 
 }
 
-def load_font(font_name, size):
-    """Safely searches system paths and local folders to compile typography."""
+def load_font(font_name, size, weight=None):
+    """Safely searches system paths and local folders to compile typography with correct weight axes."""
     search_paths = [
         os.path.join(os.path.dirname(os.path.abspath(__file__)), font_name),
         os.path.join(os.path.dirname(os.path.abspath(__file__)), "fonts", font_name),
@@ -81,9 +74,16 @@ def load_font(font_name, size):
     ]
     for path in search_paths:
         try:
-            return ImageFont.truetype(path, size)
+            font = ImageFont.truetype(path, size)
+            if weight is not None and hasattr(font, "set_variation_by_axes"):
+                try: 
+                    font.set_variation_by_axes([weight])
+                except Exception: 
+                    pass
+            return font
         except (IOError, OSError):
             continue
+    print(f"⚠️ Warning: Could not find '{font_name}'. Falling back to default canvas font.")
     return ImageFont.load_default()
 
 def measure_text_width(text, font, draw):
@@ -116,10 +116,9 @@ def block_height(lines, font, draw, line_spacing):
 # --- UNIFIED COMPOSITING INTERFACE ---
 def render_output_image(bg_image_path, quote_text, explanation_text, output_filename="daily_quote_output.jpg"):
     """
-    Renders quote and explanation assets dynamically onto 1 of 5 selected backgrounds.
-    Calculates margins, colors, and text directions automatically by detecting filename keys.
+    Renders quotes and explanations cleanly onto any of the 5 background options.
+    Uses unified font specifications and adjusts alignment patterns automatically.
     """
-    # Sanitize and extract the exact asset filename from path strings
     filename_key = os.path.basename(bg_image_path).strip()
     
     if filename_key not in THEME_REGISTRY:
@@ -137,9 +136,13 @@ def render_output_image(bg_image_path, quote_text, explanation_text, output_file
     draw = ImageDraw.Draw(img)
     W, H = img.size
 
-    # Load Shared Project Typography
-    quote_font = load_font(GLOBAL_LAYOUT["font_name"], cfg["quote_font_size"])
-    explanation_font = load_font(GLOBAL_LAYOUT["font_name"], cfg["explanation_font_size"])
+    # Load shared typography with exact explicit weights matching your base code
+    quote_font = load_font(GLOBAL_LAYOUT["font_name"], GLOBAL_LAYOUT["quote_font_size"])
+    explanation_font = load_font(
+        GLOBAL_LAYOUT["font_name"], 
+        GLOBAL_LAYOUT["explanation_font_size"], 
+        GLOBAL_LAYOUT["explanation_font_weight"]
+    )
 
     # Compute Structural Boundaries
     margin_left = int(W * cfg["margin_left_ratio"])
@@ -153,15 +156,15 @@ def render_output_image(bg_image_path, quote_text, explanation_text, output_file
     quote_block_h = block_height(quote_lines, quote_font, draw, GLOBAL_LAYOUT["line_spacing"])
     expl_block_h = block_height(expl_lines, explanation_font, draw, GLOBAL_LAYOUT["line_spacing"])
 
-    # Stack both elements cleanly together to get total structural footprint
+    # Combine metrics for clean structural vertical stack handling
     total_content_h = quote_block_h + GLOBAL_LAYOUT["block_gap"] + expl_block_h
 
-    # Extract Safe Middle Pocket Ranges
+    # Extract Middle Pocket Bounds
     zone_top = int(H * cfg["center_zone_top_ratio"])
     zone_bottom = int(H * cfg["center_zone_bottom_ratio"])
     zone_height = zone_bottom - zone_top
 
-    # Dynamically find the absolute center coordinate for the text stack
+    # Calculate absolute centering coordinate position
     y_cursor = zone_top + max(0, (zone_height - total_content_h) // 2)
 
     # Phase 1: Draw Quote Lines
@@ -175,7 +178,7 @@ def render_output_image(bg_image_path, quote_text, explanation_text, output_file
         draw.text((x_pos, y_cursor), line, font=quote_font, fill=cfg["quote_color"])
         y_cursor += text_height(line, quote_font, draw) + GLOBAL_LAYOUT["line_spacing"]
 
-    # Deduct structural trailing spacing loop bleed, then drop by the layout gap
+    # Clear loop bleeding margin, then apply fixed separation spacing
     y_cursor = (y_cursor - GLOBAL_LAYOUT["line_spacing"]) + GLOBAL_LAYOUT["block_gap"]
 
     # Phase 2: Draw Explanation Lines
@@ -189,7 +192,7 @@ def render_output_image(bg_image_path, quote_text, explanation_text, output_file
         draw.text((x_pos, y_cursor), line, font=explanation_font, fill=cfg["explanation_color"])
         y_cursor += text_height(line, explanation_font, draw) + GLOBAL_LAYOUT["line_spacing"]
 
-    # Save Composite Graphic File
+    # Save Output Asset
     img.save(output_filename, quality=95)
-    print(f"📷 [{filename_key}] Composite rendered cleanly at: '{output_filename}'")
+    print(f"📷 [{filename_key}] Composite rendered beautifully at: '{output_filename}'")
     return True
