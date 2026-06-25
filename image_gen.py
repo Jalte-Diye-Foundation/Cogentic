@@ -20,8 +20,8 @@ THEME_REGISTRY = {
         "expl_align": "LEFT",
         "margin_left_ratio": 0.20,       
         "margin_right_ratio": 0.20,
-        "center_zone_top_ratio": 0.16,   # Shifted significantly higher to clear mid-lower workspace
-        "center_zone_bottom_ratio": 0.54, 
+        "center_zone_top_ratio": 0.20,   # Shifted significantly higher to clear mid-lower workspace
+        "center_zone_bottom_ratio": 0.60, 
     },
     "reduced_inequalities.jpg": {
         "quote_color": "#dd1c4b",        # SDG 10 Deep Magenta Crimson
