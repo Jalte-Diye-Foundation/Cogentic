@@ -10,8 +10,8 @@ THEME_REGISTRY = {
         "expl_align": "LEFT",
         "margin_left_ratio": 0.22,       # Protect left icons
         "margin_right_ratio": 0.22,      # Protect right hanging elements
-        "center_zone_top_ratio": 0.38,
-        "center_zone_bottom_ratio": 0.74,
+        "center_zone_top_ratio": 0.30,
+        "center_zone_bottom_ratio": 0.58,
         "quote_font_size": 48,
         "explanation_font_size": 26,
     },
@@ -20,10 +20,10 @@ THEME_REGISTRY = {
         "explanation_color": "#9f1239",  
         "quote_align": "RIGHT",
         "expl_align": "LEFT",
-        "margin_left_ratio": 0.20,
+        "margin_left_ratio": 0.28,
         "margin_right_ratio": 0.20,
-        "center_zone_top_ratio": 0.35,
-        "center_zone_bottom_ratio": 0.75,
+        "center_zone_top_ratio": 0.32,
+        "center_zone_bottom_ratio": 0.65,
         "quote_font_size": 48,
         "explanation_font_size": 26,
     },
@@ -58,10 +58,10 @@ THEME_REGISTRY = {
         "expl_align": "RIGHT",
         "margin_left_ratio": 0.22,       
         "margin_right_ratio": 0.24,      # Avoid dove / structural scales on the right
-        "center_zone_top_ratio": 0.38,
-        "center_zone_bottom_ratio": 0.74,
-        "quote_font_size": 48,
-        "explanation_font_size": 26,
+        "center_zone_top_ratio": 0.35,
+        "center_zone_bottom_ratio": 0.62,
+        "quote_font_size": 44,
+        "explanation_font_size": 24,
     }
 }
 
