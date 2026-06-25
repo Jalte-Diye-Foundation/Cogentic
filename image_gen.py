@@ -10,20 +10,20 @@ THEME_REGISTRY = {
         "expl_align": "LEFT",
         "margin_left_ratio": 0.22,       # Protect left icons
         "margin_right_ratio": 0.22,      # Protect right hanging elements
-        "center_zone_top_ratio": 0.30,
-        "center_zone_bottom_ratio": 0.58,
+        "center_zone_top_ratio": 0.31,   # Moved higher to optimize open space
+        "center_zone_bottom_ratio": 0.69, # Safely avoids the bottom right globe/hand icon
         "quote_font_size": 48,
         "explanation_font_size": 26,
     },
     "jdf_general.jpg": {
-        "quote_color": "#b91c1c",        # Standard JDF Red
-        "explanation_color": "#9f1239",  
+        "quote_color": "#8c6239",        # Light Brown Theme Accent
+        "explanation_color": "#a17850",  # Muted Light Brown Subtext
         "quote_align": "RIGHT",
         "expl_align": "LEFT",
-        "margin_left_ratio": 0.28,
+        "margin_left_ratio": 0.20,
         "margin_right_ratio": 0.20,
-        "center_zone_top_ratio": 0.32,
-        "center_zone_bottom_ratio": 0.65,
+        "center_zone_top_ratio": 0.30,   # Lifted higher up the canvas
+        "center_zone_bottom_ratio": 0.70, # Keeps text away from bottom elements
         "quote_font_size": 48,
         "explanation_font_size": 26,
     },
@@ -58,10 +58,10 @@ THEME_REGISTRY = {
         "expl_align": "RIGHT",
         "margin_left_ratio": 0.22,       
         "margin_right_ratio": 0.24,      # Avoid dove / structural scales on the right
-        "center_zone_top_ratio": 0.35,
-        "center_zone_bottom_ratio": 0.62,
-        "quote_font_size": 44,
-        "explanation_font_size": 24,
+        "center_zone_top_ratio": 0.33,   # Lifted slightly to center better with background
+        "center_zone_bottom_ratio": 0.70, # Avoids spilling onto the balance scales
+        "quote_font_size": 48,
+        "explanation_font_size": 26,
     }
 }
 
