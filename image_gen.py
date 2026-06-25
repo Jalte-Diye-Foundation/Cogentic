@@ -10,28 +10,28 @@ THEME_REGISTRY = {
         "expl_align": "LEFT",
         "margin_left_ratio": 0.22,       
         "margin_right_ratio": 0.22,      
-        "center_zone_top_ratio": 0.38,   # Unified positioning zone matching your reference script
-        "center_zone_bottom_ratio": 0.74,
+        "center_zone_top_ratio": 0.18,   # Shifted significantly higher to clear mid-lower workspace
+        "center_zone_bottom_ratio": 0.55,
     },
     "jdf_general.jpg": {
         "quote_color": "#8c6239",        # Light Brown Theme Accent
         "explanation_color": "#a17850",  # Muted Light Brown Subtext
         "quote_align": "RIGHT",
         "expl_align": "LEFT",
-        "margin_left_ratio": 0.22,
-        "margin_right_ratio": 0.22,
-        "center_zone_top_ratio": 0.38,   
-        "center_zone_bottom_ratio": 0.74, 
+        "margin_left_ratio": 0.20,       
+        "margin_right_ratio": 0.20,
+        "center_zone_top_ratio": 0.16,   # Shifted significantly higher to clear mid-lower workspace
+        "center_zone_bottom_ratio": 0.54, 
     },
     "reduced_inequalities.jpg": {
         "quote_color": "#dd1c4b",        # SDG 10 Deep Magenta Crimson
         "explanation_color": "#b9123c",  
         "quote_align": "RIGHT",
         "expl_align": "LEFT",
-        "margin_left_ratio": 0.22,       
+        "margin_left_ratio": 0.24,       
         "margin_right_ratio": 0.22,
-        "center_zone_top_ratio": 0.38,   
-        "center_zone_bottom_ratio": 0.74,
+        "center_zone_top_ratio": 0.39,   
+        "center_zone_bottom_ratio": 0.75,
     },
     "quality_education.jpg": {
         "quote_color": "#b91c1c",        # SDG 4 Cherry Red
@@ -49,9 +49,9 @@ THEME_REGISTRY = {
         "quote_align": "LEFT",
         "expl_align": "RIGHT",
         "margin_left_ratio": 0.22,       
-        "margin_right_ratio": 0.22,      
-        "center_zone_top_ratio": 0.38,
-        "center_zone_bottom_ratio": 0.74,
+        "margin_right_ratio": 0.24,      
+        "center_zone_top_ratio": 0.18,   # Shifted significantly higher to clear mid-lower workspace
+        "center_zone_bottom_ratio": 0.55,
     }
 }
 
@@ -117,7 +117,7 @@ def block_height(lines, font, draw, line_spacing):
 def render_output_image(bg_image_path, quote_text, explanation_text, output_filename="daily_quote_output.jpg"):
     """
     Renders quotes and explanations cleanly onto any of the 5 background options.
-    Uses unified font specifications and adjusts alignment patterns automatically.
+    Uses custom per-theme geometry configs to tailor positioning and alignments perfectly.
     """
     filename_key = os.path.basename(bg_image_path).strip()
     
@@ -159,12 +159,12 @@ def render_output_image(bg_image_path, quote_text, explanation_text, output_file
     # Combine metrics for clean structural vertical stack handling
     total_content_h = quote_block_h + GLOBAL_LAYOUT["block_gap"] + expl_block_h
 
-    # Extract Middle Pocket Bounds
+    # Extract Middle Pocket Bounds (Now customized individually per background theme)
     zone_top = int(H * cfg["center_zone_top_ratio"])
     zone_bottom = int(H * cfg["center_zone_bottom_ratio"])
     zone_height = zone_bottom - zone_top
 
-    # Calculate absolute centering coordinate position
+    # Calculate absolute centering coordinate position inside this theme's unique pocket
     y_cursor = zone_top + max(0, (zone_height - total_content_h) // 2)
 
     # Phase 1: Draw Quote Lines
@@ -176,9 +176,10 @@ def render_output_image(bg_image_path, quote_text, explanation_text, output_file
             x_pos = W - margin_right - line_w
 
         draw.text((x_pos, y_cursor), line, font=quote_font, fill=cfg["quote_color"])
+        # Increment using a clean line baseline step to ensure uniform line spacing
         y_cursor += text_height(line, quote_font, draw) + GLOBAL_LAYOUT["line_spacing"]
 
-    # Clear loop bleeding margin, then apply fixed separation spacing
+    # Clear loop bleeding margin, then apply fixed separation spacing block gap
     y_cursor = (y_cursor - GLOBAL_LAYOUT["line_spacing"]) + GLOBAL_LAYOUT["block_gap"]
 
     # Phase 2: Draw Explanation Lines
