@@ -1,4 +1,3 @@
-google-genai>=1.0.0
 # Image Processing and Graphic Composition
 Pillow>=10.0.0
 
