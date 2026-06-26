@@ -1,5 +1,6 @@
 import os
 from PIL import Image, ImageDraw, ImageFont
+from test import main
 
 # --- ENGINE CONFIGURATION REGISTRY FOR ALL 5 THEMES ---
 THEME_REGISTRY = {
@@ -56,7 +57,7 @@ THEME_REGISTRY = {
 }
 
 GLOBAL_LAYOUT = {
-    "font_name": "Raleway-ExtraLight.ttf",
+    "font_name": "Raleway-VariableFont_wght.ttf",
     "quote_font_size": 48,
     "explanation_font_size": 26,
     "explanation_font_weight": 300,  # Exact weight configuration from your working template
@@ -197,3 +198,38 @@ def render_output_image(bg_image_path, quote_text, explanation_text, output_file
     img.save(output_filename, quality=95)
     print(f"📷 [{filename_key}] Composite rendered beautifully at: '{output_filename}'")
     return True
+
+if __name__ == "__main__":
+    # Get generated content from test.py
+    data = main()
+
+    domain = data["domain"]
+    quote = data["quote"]
+    explanation = data["explanation"]
+
+    # Map domains to background images
+    DOMAIN_BACKGROUND_MAP = {
+    "Peace & Justice": "jalte_diye_1.jpeg",
+    "Health & Mindfulness": "jalte_diye_2.jpeg",
+    "Social Education": "jalte_diye_3.jpeg",
+    "Climate & Environment": "jalte_diye_4.jpeg",
+}
+    
+
+    bg_image = DOMAIN_BACKGROUND_MAP.get(
+        domain,
+        "jdf_general.jpg"
+    )
+
+    print(f"Domain      : {domain}")
+    print(f"Quote       : {quote}")
+    print(f"Explanation : {explanation}")
+    print(f"Background  : {bg_image}")
+
+    render_output_image(
+        bg_image_path=bg_image,
+        quote_text=quote,
+        explanation_text=explanation,
+        output_filename="daily_quote_output.jpg"
+    )
+
