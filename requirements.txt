@@ -3,3 +3,6 @@ Pillow>=10.0.0
 
 # HTTP Client for OpenRouter and GNews APIs
 requests>=2.31.0
+
+# Gemini SDK
+google-genai>=1.0.0
