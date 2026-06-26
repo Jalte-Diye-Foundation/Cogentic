@@ -5,4 +5,4 @@ Pillow>=10.0.0
 requests>=2.31.0
 
 # Gemini SDK
-google-genai
+google-genai>=1.0.0
