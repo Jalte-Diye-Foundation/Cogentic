@@ -9,6 +9,8 @@ on:
 jobs:
   generate-daily-poster:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout repository
@@ -27,6 +29,21 @@ jobs:
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: python main.py
+
+      - name: Update website assets
+        run: python website_assets/update_assets.py
+
+      - name: Commit and push updated assets
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add website_assets/latest
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          git commit -m "Update daily website assets [skip ci]"
+          git push origin "HEAD:${{ github.ref_name }}"
 
       - name: Upload generated poster
         uses: actions/upload-artifact@v4
