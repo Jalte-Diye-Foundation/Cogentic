@@ -10,6 +10,15 @@ from typing import Any
 from google import genai
 from google.genai import types
 
+HASHTAGS_MAP = {
+    "Peace & Justice": "#Cogentic #JalteDiyeFoundation #PeaceAndJustice #SocialCohesion #EthicalAI",
+    "Health & Mindfulness": "#Cogentic #JalteDiyeFoundation #Mindfulness #MentalWellbeing #HolisticHealth",
+    "Social Education": "#Cogentic #JalteDiyeFoundation #SocialEducation #CriticalThinking #QualityEducation",
+    "Climate & Environment": "#Cogentic #JalteDiyeFoundation #ClimateAction #Sustainability #EcoResponsibility",
+    "Women Empowerment": "#Cogentic #JalteDiyeFoundation #WomenEmpowerment #Equality #Inspiration",
+    "Foundation Events": "#Cogentic #JalteDiyeFoundation #CommunityImpact #SocialChange #Events"
+}
+
 logger = logging.getLogger(__name__)
 
 
@@ -52,11 +61,27 @@ class ContentGenerator:
                 ),
             )
             content = json.loads(response.text)
+
             quote = str(content.get("quote", "")).strip()
             explanation = str(content.get("explanation", "")).strip()
+
             if not quote or not explanation:
                 raise ValueError("Gemini response missing quote or explanation fields.")
-            return {"quote": quote, "explanation": explanation}
+
+            hashtags = HASHTAGS_MAP.get(theme, "")
+
+            caption = (
+                f"{quote}\n\n"
+                f"{explanation}\n\n"
+                f"{hashtags}"
+            )
+
+            return {
+                "quote": quote,
+                "explanation": explanation,
+                "caption": caption,
+                "hashtags": hashtags,
+            }
         except json.JSONDecodeError as exc:
             logger.exception("Failed to parse Gemini generation response as JSON.")
             raise ValueError("Invalid JSON returned by Gemini generation.") from exc

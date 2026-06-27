@@ -182,7 +182,7 @@ class PosterGenerator:
                 (100,y),
                 line,
                 font=quote_font,
-                fill="white"
+                fill="#2c2c2c"
             )
 
             y += 90

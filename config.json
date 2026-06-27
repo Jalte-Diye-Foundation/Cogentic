@@ -31,46 +31,43 @@
     "api_base_url": "https://api.linkedin.com/v2"
   },
 
-
-  "themes": {
-
-    "Peace & Justice": {
-  "folder": "templates/peace",
-  "csv_fallback": "peace_justice.csv",
-  "layout": "left_explanation"
-},
-
-"Climate & Environment": {
-  "folder": "templates/climate",
-  "csv_fallback": "climate.csv",
-  "layout": "left_explanation"
-},
-
-"Quality Education": {
-  "folder": "templates/education",
-  "csv_fallback": "quality_education.csv",
-  "layout": "right_explanation"
-},
-
-"Women Empowerment": {
-  "folder": "templates/women",
-  "csv_fallback": "reduced_inequalities.csv",
-  "layout": "left_explanation"
-},
-
-"Health & Mindfulness": {
-  "folder": "templates/health",
-  "csv_fallback": "quotes.csv",
-  "layout": "left_explanation"
-},
-
-"Foundation Events": {
-  "folder": "templates/events",
-  "csv_fallback": "Event_quotes.csv",
-  "layout": "left_explanation"
-    }
-
+"themes": {
+  "Peace & Justice": {
+    "folder": "themes/peace",
+    "csv_fallback": "peace_justice.csv",
+    "layout": "left_explanation"
   },
+
+  "Climate & Environment": {
+    "folder": "themes/climate",
+    "csv_fallback": "climate.csv",
+    "layout": "left_explanation"
+  },
+
+  "Quality Education": {
+    "folder": "themes/education",
+    "csv_fallback": "quality_education.csv",
+    "layout": "right_explanation"
+  },
+
+  "Women Empowerment": {
+    "folder": "themes/women",
+    "csv_fallback": "reduced_inequalities.csv",
+    "layout": "left_explanation"
+  },
+
+  "Health & Mindfulness": {
+    "folder": "themes/health",
+    "csv_fallback": "quotes.csv",
+    "layout": "left_explanation"
+  },
+
+  "Foundation Events": {
+    "folder": "themes/events",
+    "csv_fallback": "Event_quotes.csv",
+    "layout": "left_explanation"
+  }
+},
 
 
   "poster": {
@@ -91,7 +88,7 @@
 
       "quote_font_name": "georgia.ttf",
 
-      "explanation_font_name": "Raleway-VariableFont_wght.ttf"
+      "explanation_font_name": "Raleway-ExtraLight.ttf"
 
     },
 
