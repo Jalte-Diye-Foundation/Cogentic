@@ -31,29 +31,43 @@
     "api_base_url": "https://api.linkedin.com/v2"
   },
 
-
-  "themes": {
-
-    "Peace & Justice": {
-  "folder": "themes/peace"
-},
-"Climate & Environment": {
-  "folder": "themes/climate"
-},
-"Quality Education": {
-  "folder": "themes/education"
-},
-"Women Empowerment": {
-  "folder": "themes/women"
-},
-"Health & Mindfulness": {
-  "folder": "themes/health"
-},
-"Foundation Events": {
-  "folder": "themes/events"
-}
-
+"themes": {
+  "Peace & Justice": {
+    "folder": "themes/peace",
+    "csv_fallback": "peace_justice.csv",
+    "layout": "left_explanation"
   },
+
+  "Climate & Environment": {
+    "folder": "themes/climate",
+    "csv_fallback": "climate.csv",
+    "layout": "left_explanation"
+  },
+
+  "Quality Education": {
+    "folder": "themes/education",
+    "csv_fallback": "quality_education.csv",
+    "layout": "right_explanation"
+  },
+
+  "Women Empowerment": {
+    "folder": "themes/women",
+    "csv_fallback": "reduced_inequalities.csv",
+    "layout": "left_explanation"
+  },
+
+  "Health & Mindfulness": {
+    "folder": "themes/health",
+    "csv_fallback": "quotes.csv",
+    "layout": "left_explanation"
+  },
+
+  "Foundation Events": {
+    "folder": "themes/events",
+    "csv_fallback": "Event_quotes.csv",
+    "layout": "left_explanation"
+  }
+},
 
 
   "poster": {
