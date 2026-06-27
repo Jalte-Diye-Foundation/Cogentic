@@ -35,40 +35,23 @@
   "themes": {
 
     "Peace & Justice": {
-  "folder": "templates/peace",
-  "csv_fallback": "peace_justice.csv",
-  "layout": "left_explanation"
+  "folder": "themes/peace"
 },
-
 "Climate & Environment": {
-  "folder": "templates/climate",
-  "csv_fallback": "climate.csv",
-  "layout": "left_explanation"
+  "folder": "themes/climate"
 },
-
 "Quality Education": {
-  "folder": "templates/education",
-  "csv_fallback": "quality_education.csv",
-  "layout": "right_explanation"
+  "folder": "themes/education"
 },
-
 "Women Empowerment": {
-  "folder": "templates/women",
-  "csv_fallback": "reduced_inequalities.csv",
-  "layout": "left_explanation"
+  "folder": "themes/women"
 },
-
 "Health & Mindfulness": {
-  "folder": "templates/health",
-  "csv_fallback": "quotes.csv",
-  "layout": "left_explanation"
+  "folder": "themes/health"
 },
-
 "Foundation Events": {
-  "folder": "templates/events",
-  "csv_fallback": "Event_quotes.csv",
-  "layout": "left_explanation"
-    }
+  "folder": "themes/events"
+}
 
   },
 
