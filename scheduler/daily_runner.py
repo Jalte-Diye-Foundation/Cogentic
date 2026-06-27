@@ -11,6 +11,7 @@ import traceback
 from datetime import date
 from typing import Any
 
+from content.generator import ContentGenerator, HASHTAGS_MAP
 from content.evaluator import ContentEvaluator
 from content.fallback import FallbackProvider, is_quote_used, mark_quote_used
 from content.generator import ContentGenerator
@@ -190,16 +191,21 @@ def run_daily_pipeline(
         logger.info("Poster creation succeeded: %s", output_path)
 
         metadata = {
-            "date": today,
-            "theme": theme,
-            "quote": content["quote"],
-            "explanation": content["explanation"],
-            "caption": content.get("caption", ""),
-            "hashtags": content.get("hashtags", []),
-            "image": output_filename,
-            "source": "Cogentic AI",
-        }
-
+    "date": today,
+    "theme": theme,
+    "quote": content["quote"],
+    "explanation": content["explanation"],
+    "caption": (
+        content.get("caption")
+        or f'{content["quote"]}\n\n{content["explanation"]}'
+    ),
+    "hashtags": (
+        content.get("hashtags")
+        or "#Cogentic #JalteDiyeFoundation"
+    ),
+    "image": output_filename,
+    "source": "Cogentic AI",
+}
         metadata_path = os.path.join(output_dir, "metadata.json")
 
         with open(metadata_path, "w", encoding="utf-8") as f:
