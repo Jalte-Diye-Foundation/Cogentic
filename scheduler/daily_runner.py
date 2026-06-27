@@ -188,6 +188,25 @@ def run_daily_pipeline(
             layout_name=layout_name,
         )
         logger.info("Poster creation succeeded: %s", output_path)
+
+        metadata = {
+            "date": today,
+            "theme": theme,
+            "quote": content["quote"],
+            "explanation": content["explanation"],
+            "caption": content.get("caption", ""),
+            "hashtags": content.get("hashtags", []),
+            "image": output_filename,
+            "source": "Cogentic AI",
+        }
+
+        metadata_path = os.path.join(output_dir, "metadata.json")
+
+        with open(metadata_path, "w", encoding="utf-8") as f:
+            json.dump(metadata, f, indent=2, ensure_ascii=False)
+
+        logger.info("Metadata saved: %s", metadata_path)
+
     except Exception as exc:
         logger.error("Poster creation failed: %s", exc)
         logger.error("Traceback:\n%s", traceback.format_exc())
@@ -201,5 +220,6 @@ def run_daily_pipeline(
         "explanation": content["explanation"],
         "poster_path": output_path,
     }
+
     logger.info("Daily pipeline completed successfully.")
     return result
