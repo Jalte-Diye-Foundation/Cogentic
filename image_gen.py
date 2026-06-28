@@ -85,7 +85,7 @@ GLOBAL_LAYOUT = {
 }
 
 def load_font(font_name, size, weight=None):
-    """Safely searches system paths and local folders to compile typography with correct weight axes."""
+    """ Safely searches system paths and local folders to compile typography with correct weight axes."""
     search_paths = [
         os.path.join(os.path.dirname(os.path.abspath(__file__)), font_name),
         os.path.join(os.path.dirname(os.path.abspath(__file__)), "fonts", font_name),
@@ -112,7 +112,7 @@ def measure_text_width(text, font, draw):
     return bb[2] - bb[0]
 
 def wrap_text(text, font, draw, max_width):
-    """Wraps lines cleanly word-by-word so text boundaries never clip."""
+    """ Wraps lines cleanly word-by-word so text boundaries never clip."""
     words = text.split()
     lines, current = [], []
     for word in words:
@@ -143,7 +143,7 @@ def render_output_image(bg_image_path, quote_text, explanation_text,domain, outp
     
     if domain not in THEME_REGISTRY:
         print(f"⚠️ Warning: '{domain}' not directly registered. Defaulting to general layouts.")
-        cfg = THEME_REGISTRY["jdf_general."]
+        cfg = THEME_REGISTRY["jdf_general"]
     else:
         cfg = THEME_REGISTRY[domain]
 
