@@ -113,48 +113,48 @@ START_Y = {
 THEME_LAYOUT = {
     "Quality Education": {
         "quote_x": 280,
-        "quote_y": 250,
-        "quote_width": 450,
+        "quote_y": 330,
+        "quote_width": 550,
         "quote_color": "#E55B6A",
         "exp_color": "#D76A78",
     },
 
     "Women Empowerment": {
         "quote_x": 290,
-        "quote_y": 260,
-        "quote_width": 430,
+        "quote_y": 330,
+        "quote_width": 520,
         "quote_color": "#E95A7A",
         "exp_color": "#D96A88",
     },
 
     "Climate & Environment": {
-        "quote_x": 280,
-        "quote_y": 200,
-        "quote_width": 470,
+        "quote_x": 260,
+        "quote_y": 300,
+        "quote_width": 560,
         "quote_color": "#5A9E6A",
         "exp_color": "#7FA67E",
     },
 
     "Peace & Justice": {
         "quote_x": 270,
-        "quote_y": 200,
-        "quote_width": 420,
+        "quote_y": 270,
+        "quote_width": 560,
         "quote_color": "#4A8FD8",
         "exp_color": "#5A9FD8",
     },
 
     "Health & Mindfulness": {
-        "quote_x": 280,
-        "quote_y": 240,
-        "quote_width": 450,
+        "quote_x": 260,
+        "quote_y": 330,
+        "quote_width": 560,
         "quote_color": "#8C6239",
         "exp_color": "#A17850",
     },
 
     "Foundation Events": {
-        "quote_x": 280,
-        "quote_y": 240,
-        "quote_width": 450,
+        "quote_x": 260,
+        "quote_y": 330,
+        "quote_width": 560,
         "quote_color": "#8C6239",
         "exp_color": "#A17850",
     },
@@ -228,14 +228,14 @@ class PosterGenerator:
 
         quote_font = load_font(
             self.fonts["quote_font_name"],
-            30,
+            42,
             self.project_root
         )
 
 
         explanation_font = load_font(
             self.fonts["explanation_font_name"],
-            16,
+            24,
             self.project_root
         )
 
@@ -272,7 +272,13 @@ class PosterGenerator:
 
         for line in quote_lines:
 
-            x = theme["quote_x"]
+            line_width = draw.textbbox(
+                (0, 0),
+                line,
+                font=quote_font
+            )[2]
+
+            x = (image.width - line_width) // 2
 
             draw.text(
                 (x, y),
@@ -281,7 +287,7 @@ class PosterGenerator:
                 fill=theme["quote_color"]
             )
 
-            y += 45
+            y += 55
 
 
 
@@ -293,12 +299,18 @@ class PosterGenerator:
         )
 
 
-        y += 25
+        y += 50
 
 
         for line in exp_lines:
 
-            x = theme["quote_x"]
+            line_width = draw.textbbox(
+                (0, 0),
+                line,
+                font=explanation_font
+            )[2]
+
+            x = (image.width - line_width) // 2
 
             draw.text(
                 (x, y),
@@ -307,8 +319,7 @@ class PosterGenerator:
                 fill=theme["exp_color"]
             )
 
-
-            y += 24
+            y += 32
 
 
 
