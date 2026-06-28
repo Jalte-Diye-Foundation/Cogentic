@@ -4,58 +4,77 @@ from test import main
 
 # --- ENGINE CONFIGURATION REGISTRY FOR ALL 5 THEMES ---
 THEME_REGISTRY = {
-    "climate_action.jpg": {
-        "quote_color": "#15803d",        # Deep Forest Green Accent
-        "explanation_color": "#166534",  # Muted Pine Green
+    "Climate & Environment": {
+        "quote_color": "#15803d",
+        "explanation_color": "#166534",
         "quote_align": "RIGHT",
         "expl_align": "LEFT",
-        "margin_left_ratio": 0.22,       
-        "margin_right_ratio": 0.22,      
-        "center_zone_top_ratio": 0.18,   # Shifted significantly higher to clear mid-lower workspace
+        "margin_left_ratio": 0.22,
+        "margin_right_ratio": 0.22,
+        "center_zone_top_ratio": 0.18,
         "center_zone_bottom_ratio": 0.55,
     },
-    "jdf_general.jpg": {
-        "quote_color": "#8c6239",        # Light Brown Theme Accent
-        "explanation_color": "#a17850",  # Muted Light Brown Subtext
+    "Health & Mindfulness": {
+        "quote_color": "#8c6239",
+        "explanation_color": "#a17850",
         "quote_align": "RIGHT",
         "expl_align": "LEFT",
-        "margin_left_ratio": 0.20,       
+        "margin_left_ratio": 0.20,
         "margin_right_ratio": 0.20,
-        "center_zone_top_ratio": 0.20,   # Shifted significantly higher to clear mid-lower workspace
-        "center_zone_bottom_ratio": 0.60, 
+        "center_zone_top_ratio": 0.20,
+        "center_zone_bottom_ratio": 0.60,
     },
-    "reduced_inequalities.jpg": {
-        "quote_color": "#dd1c4b",        # SDG 10 Deep Magenta Crimson
-        "explanation_color": "#b9123c",  
+    "Women Empowerment": {
+        "quote_color": "#dd1c4b",
+        "explanation_color": "#b9123c",
         "quote_align": "RIGHT",
         "expl_align": "LEFT",
-        "margin_left_ratio": 0.24,       
+        "margin_left_ratio": 0.24,
         "margin_right_ratio": 0.22,
-        "center_zone_top_ratio": 0.39,   
+        "center_zone_top_ratio": 0.39,
         "center_zone_bottom_ratio": 0.75,
     },
-    "quality_education.jpg": {
-        "quote_color": "#b91c1c",        # SDG 4 Cherry Red
-        "explanation_color": "#b91c1c",  
+    "Social Education": {
+        "quote_color": "#b91c1c",
+        "explanation_color": "#b91c1c",
         "quote_align": "LEFT",
         "expl_align": "RIGHT",
-        "margin_left_ratio": 0.22,       
-        "margin_right_ratio": 0.22,      
-        "center_zone_top_ratio": 0.38,   
-        "center_zone_bottom_ratio": 0.74, 
+        "margin_left_ratio": 0.22,
+        "margin_right_ratio": 0.22,
+        "center_zone_top_ratio": 0.38,
+        "center_zone_bottom_ratio": 0.74,
     },
-    "peace_justice.jpg": {
-        "quote_color": "#00689d",        # SDG 16 Peace Blue
-        "explanation_color": "#005580",  
+    "Peace & Justice": {
+        "quote_color": "#00689d",
+        "explanation_color": "#005580",
         "quote_align": "LEFT",
         "expl_align": "RIGHT",
-        "margin_left_ratio": 0.22,       
-        "margin_right_ratio": 0.24,      
-        "center_zone_top_ratio": 0.18,   # Shifted significantly higher to clear mid-lower workspace
+        "margin_left_ratio": 0.22,
+        "margin_right_ratio": 0.24,
+        "center_zone_top_ratio": 0.18,
         "center_zone_bottom_ratio": 0.55,
-    }
+    },
+    "Foundation Events": {
+        "quote_color": "#8c6239",
+        "explanation_color": "#a17850",
+        "quote_align": "RIGHT",
+        "expl_align": "LEFT",
+        "margin_left_ratio": 0.20,
+        "margin_right_ratio": 0.20,
+        "center_zone_top_ratio": 0.20,
+        "center_zone_bottom_ratio": 0.60,
+    },
+    "jdf_general": {
+        "quote_color": "#8c6239",
+        "explanation_color": "#a17850",
+        "quote_align": "RIGHT",
+        "expl_align": "LEFT",
+        "margin_left_ratio": 0.20,
+        "margin_right_ratio": 0.20,
+        "center_zone_top_ratio": 0.20,
+        "center_zone_bottom_ratio": 0.60,
+    },
 }
-
 GLOBAL_LAYOUT = {
     "font_name": "Raleway-VariableFont_wght.ttf",
     "quote_font_size": 48,
@@ -66,7 +85,7 @@ GLOBAL_LAYOUT = {
 }
 
 def load_font(font_name, size, weight=None):
-    """Safely searches system paths and local folders to compile typography with correct weight axes."""
+    """ Safely searches system paths and local folders to compile typography with correct weight axes."""
     search_paths = [
         os.path.join(os.path.dirname(os.path.abspath(__file__)), font_name),
         os.path.join(os.path.dirname(os.path.abspath(__file__)), "fonts", font_name),
@@ -93,7 +112,7 @@ def measure_text_width(text, font, draw):
     return bb[2] - bb[0]
 
 def wrap_text(text, font, draw, max_width):
-    """Wraps lines cleanly word-by-word so text boundaries never clip."""
+    """ Wraps lines cleanly word-by-word so text boundaries never clip."""
     words = text.split()
     lines, current = [], []
     for word in words:
@@ -115,18 +134,18 @@ def block_height(lines, font, draw, line_spacing):
     return sum(text_height(line, font, draw) + line_spacing for line in lines) - line_spacing
 
 # --- UNIFIED COMPOSITING INTERFACE ---
-def render_output_image(bg_image_path, quote_text, explanation_text, output_filename="daily_quote_output.jpg"):
+def render_output_image(bg_image_path, quote_text, explanation_text,domain, output_filename="daily_quote_output.jpg"):
     """
     Renders quotes and explanations cleanly onto any of the 5 background options.
     Uses custom per-theme geometry configs to tailor positioning and alignments perfectly.
     """
     filename_key = os.path.basename(bg_image_path).strip()
     
-    if filename_key not in THEME_REGISTRY:
-        print(f"⚠️ Warning: '{filename_key}' not directly registered. Defaulting to general layouts.")
-        cfg = THEME_REGISTRY["jdf_general.jpg"]
+    if domain not in THEME_REGISTRY:
+        print(f"⚠️ Warning: '{domain}' not directly registered. Defaulting to general layouts.")
+        cfg = THEME_REGISTRY["jdf_general"]
     else:
-        cfg = THEME_REGISTRY[filename_key]
+        cfg = THEME_REGISTRY[domain]
 
     if not os.path.exists(bg_image_path):
         print(f"🚨 Rendering Cancelled: Source asset layout path '{bg_image_path}' was not found.")
@@ -209,10 +228,12 @@ if __name__ == "__main__":
 
     # Map domains to background images
     DOMAIN_BACKGROUND_MAP = {
-    "Peace & Justice": "jalte_diye_1.jpeg",
-    "Health & Mindfulness": "jalte_diye_2.jpeg",
-    "Social Education": "jalte_diye_3.jpeg",
-    "Climate & Environment": "jalte_diye_4.jpeg",
+    "Peace & Justice": "themes/peace/bg1.png",
+    "Health & Mindfulness": "themes/events/bg1.png",
+    "Social Education": "themes/education/bg1.png",
+    "Climate & Environment": "themes/climate/bg1.png",
+    "Foundation Events": "themes/events/bg1.png",
+    "Women Empowerment": "themes/women/women.png",
 }
     
 
@@ -230,6 +251,7 @@ if __name__ == "__main__":
         bg_image_path=bg_image,
         quote_text=quote,
         explanation_text=explanation,
+        domain=domain,
         output_filename="daily_quote_output.jpg"
     )
 
