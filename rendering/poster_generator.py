@@ -148,11 +148,11 @@ class PosterGenerator:
 
 
 
-        # optional dark transparent overlay
+        # light overlay only, to keep background airy like the reference design
         overlay = Image.new(
             "RGBA",
             image.size,
-            (0,0,0,80)
+            (255, 255, 255, 60)
         )
 
         image = Image.alpha_composite(
@@ -174,15 +174,19 @@ class PosterGenerator:
 
 
         y = 180
+        image_center_x = image.width // 2
 
 
         for line in quote_lines:
 
+            line_width = draw.textbbox((0, 0), line, font=quote_font)[2]
+            x = image_center_x - (line_width // 2)
+
             draw.text(
-                (100,y),
+                (x, y),
                 line,
                 font=quote_font,
-                fill="#2c2c2c"
+                fill="#7a1f2b"
             )
 
             y += 90
@@ -202,12 +206,14 @@ class PosterGenerator:
 
         for line in exp_lines:
 
+            line_width = draw.textbbox((0, 0), line, font=explanation_font)[2]
+            x = image_center_x - (line_width // 2)
 
             draw.text(
-                (100,y),
+                (x, y),
                 line,
                 font=explanation_font,
-                fill="white"
+                fill="#444444"
             )
 
 
