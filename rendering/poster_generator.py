@@ -74,7 +74,91 @@ def wrap_text(
     return lines
 
 
+THEME_COLORS = {
+    "Climate & Environment": {
+        "quote": "#6A8E5A",
+        "explanation": "#7A8C73",
+    },
+    "Peace & Justice": {
+        "quote": "#5C8DB8",
+        "explanation": "#6D8FA8",
+    },
+    "Social Education": {
+        "quote": "#D25A6E",
+        "explanation": "#A86F7B",
+    },
+    "Women Empowerment": {
+        "quote": "#dd1c4b",
+        "explanation": "#b9123c",
+    },
+    "Health & Mindfulness": {
+        "quote": "#8c6239",
+        "explanation": "#a17850",
+    },
+    "Foundation Events": {
+        "quote": "#8c6239",
+        "explanation": "#a17850",
+    },
+}
 
+START_Y = {
+    "Climate & Environment": 240,
+    "Peace & Justice": 260,
+    "Social Education": 260,
+    "Women Empowerment": 300,
+    "Health & Mindfulness": 260,
+    "Foundation Events": 260,
+}
+
+THEME_LAYOUT = {
+    "Quality Education": {
+        "quote_x": 280,
+        "quote_y": 250,
+        "quote_width": 450,
+        "quote_color": "#E55B6A",
+        "exp_color": "#D76A78",
+    },
+
+    "Women Empowerment": {
+        "quote_x": 290,
+        "quote_y": 260,
+        "quote_width": 430,
+        "quote_color": "#E95A7A",
+        "exp_color": "#D96A88",
+    },
+
+    "Climate & Environment": {
+        "quote_x": 280,
+        "quote_y": 200,
+        "quote_width": 470,
+        "quote_color": "#5A9E6A",
+        "exp_color": "#7FA67E",
+    },
+
+    "Peace & Justice": {
+        "quote_x": 270,
+        "quote_y": 200,
+        "quote_width": 420,
+        "quote_color": "#4A8FD8",
+        "exp_color": "#5A9FD8",
+    },
+
+    "Health & Mindfulness": {
+        "quote_x": 280,
+        "quote_y": 240,
+        "quote_width": 450,
+        "quote_color": "#8C6239",
+        "exp_color": "#A17850",
+    },
+
+    "Foundation Events": {
+        "quote_x": 280,
+        "quote_y": 240,
+        "quote_width": 450,
+        "quote_color": "#8C6239",
+        "exp_color": "#A17850",
+    },
+}
 class PosterGenerator:
 
 
@@ -100,8 +184,12 @@ class PosterGenerator:
         explanation,
         background_path,
         output_path,
-        layout_name
+        layout_name,
+        theme_name=None
     ):
+        print("INSIDE POSTER_GENERATOR")
+        print("Theme =", theme_name)
+        print("Layout =", layout_name)
 
 
         if not os.path.exists(background_path):
@@ -131,18 +219,23 @@ class PosterGenerator:
 
         draw = ImageDraw.Draw(image)
 
+        theme = THEME_LAYOUT.get(
+            theme_name,
+            THEME_LAYOUT["Quality Education"]
+        )
+
 
 
         quote_font = load_font(
             self.fonts["quote_font_name"],
-            70,
+            30,
             self.project_root
         )
 
 
         explanation_font = load_font(
             self.fonts["explanation_font_name"],
-            35,
+            16,
             self.project_root
         )
 
@@ -152,7 +245,7 @@ class PosterGenerator:
         overlay = Image.new(
             "RGBA",
             image.size,
-            (255, 255, 255, 60)
+            (255, 255, 255, 20)
         )
 
         image = Image.alpha_composite(
@@ -169,27 +262,26 @@ class PosterGenerator:
             quote,
             quote_font,
             draw,
-            850
+            theme["quote_width"]
         )
 
 
-        y = 180
-        image_center_x = image.width // 2
+        x = theme["quote_x"]
+        y = theme["quote_y"]
 
 
         for line in quote_lines:
 
-            line_width = draw.textbbox((0, 0), line, font=quote_font)[2]
-            x = image_center_x - (line_width // 2)
+            x = theme["quote_x"]
 
             draw.text(
                 (x, y),
                 line,
                 font=quote_font,
-                fill="#7a1f2b"
+                fill=theme["quote_color"]
             )
 
-            y += 90
+            y += 45
 
 
 
@@ -197,27 +289,26 @@ class PosterGenerator:
             explanation,
             explanation_font,
             draw,
-            850
+            theme["quote_width"]
         )
 
 
-        y += 80
+        y += 25
 
 
         for line in exp_lines:
 
-            line_width = draw.textbbox((0, 0), line, font=explanation_font)[2]
-            x = image_center_x - (line_width // 2)
+            x = theme["quote_x"]
 
             draw.text(
                 (x, y),
                 line,
                 font=explanation_font,
-                fill="#444444"
+                fill=theme["exp_color"]
             )
 
 
-            y += 50
+            y += 24
 
 
 

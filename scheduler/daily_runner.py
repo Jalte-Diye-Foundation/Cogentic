@@ -187,6 +187,7 @@ def run_daily_pipeline(
             background_path=background_path,
             output_path=output_path,
             layout_name=layout_name,
+            theme_name=theme,
         )
         logger.info("Poster creation succeeded: %s", output_path)
 
@@ -229,3 +230,5 @@ def run_daily_pipeline(
 
     logger.info("Daily pipeline completed successfully.")
     return result
+if __name__ == "__main__":
+    run_daily_pipeline()
