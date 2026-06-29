@@ -6,3 +6,52 @@
 2026-06-22 17:07:11,820 | INFO | __main__ | Website asset updated: D:\New folder\Cogentic\output\2026-06-22\poster.jpg -> D:\New folder\Cogentic\website_assets/latest\poster.jpg
 2026-06-22 17:07:11,825 | INFO | __main__ | Website metadata written: D:\New folder\Cogentic\website_assets/latest\metadata.json
 2026-06-22 17:07:11,828 | INFO | __main__ | Website asset update completed.
+2026-06-28 18:02:12,395 | INFO | __main__ | Website asset updated: E:\Cogentic-new\output\2026-06-28\poster.jpg -> E:\Cogentic-new\website_assets/latest\poster.jpg
+2026-06-28 18:02:12,395 | INFO | __main__ | Website metadata written: E:\Cogentic-new\website_assets/latest\metadata.json
+2026-06-28 18:02:12,395 | INFO | __main__ | Website asset update completed.
+2026-06-28 18:05:08,153 | INFO | __main__ | Website asset updated: E:\Cogentic-new\output\2026-06-28\poster.jpg -> E:\Cogentic-new\website_assets/latest\poster.jpg
+2026-06-28 18:05:08,153 | INFO | __main__ | Website metadata written: E:\Cogentic-new\website_assets/latest\metadata.json
+2026-06-28 18:05:08,153 | INFO | __main__ | Website asset update completed.
+2026-06-28 18:30:39 | INFO | __main__ | Starting daily Cogentic content pipeline.
+2026-06-28 18:30:39 | INFO | __main__ | Selected theme: Health & Mindfulness
+2026-06-28 18:30:39 | INFO | __main__ | Selected background: E:\Cogentic-new\themes/health\bg1.png
+2026-06-28 18:34:34 | INFO | __main__ | Starting daily Cogentic content pipeline.
+2026-06-28 18:34:34 | INFO | __main__ | Selected theme: Quality Education
+2026-06-28 18:34:34 | INFO | __main__ | Selected background: E:\Cogentic-new\themes/education\bg1.png
+2026-06-28 18:34:35 | INFO | __main__ | Generation attempt 1/3
+2026-06-28 18:34:35 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-06-28 18:34:40 | INFO | httpx | HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"
+2026-06-28 18:34:40 | INFO | __main__ | Draft quote: Quality education isn't merely about filling minds with facts; it's about igniting the inherent spark of curiosity that 
+2026-06-28 18:34:40 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-06-28 18:34:45 | INFO | httpx | HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"
+2026-06-28 18:34:45 | INFO | __main__ | Evaluation score: 9/10 | Reasoning: The content excels in all evaluated aspects. It offers a profound definition of quality education that transcends rote learning, focusing instead on igniting curiosity and empowering individuals. The language is exceptionally clear, evocative, and inspiring, with phrases like 'igniting the inherent spark' and 'sculpt a future of boundless possibilities' creating a strong emotional impact. The explanation seamlessly extends this vision, connecting it to purpose, wisdom, and a more equitable world, effectively positioning the foundation's mission. It's far from generic and delivers a powerful, aspirational message.
+2026-06-28 18:34:45 | INFO | __main__ | Content passed quality control on attempt 1.
+2026-06-28 18:34:45 | INFO | content.fallback | Marked quote as used: Quality education isn't merely about filling minds with facts; it's about igniti
+2026-06-28 18:34:45 | INFO | __main__ | Final content source: gemini
+2026-06-28 18:34:45 | INFO | __main__ | Final quote: Quality education isn't merely about filling minds with facts; it's about igniting the inherent spark of curiosity that lights up a lifetime of discovery and empowers every individual to sculpt a future of boundless possibilities.
+2026-06-28 18:34:45 | INFO | __main__ | Final explanation: At Jalte Diye Foundation, we believe this ignited spark transforms potential into purpose, equipping students not just with knowledge, but with the wisdom to innovate, question, and lead. It is this foundational investment in every mind that builds a brighter, more equitable world for all, one empowered learner at a time.
+2026-06-28 18:34:45 | INFO | rendering.poster_generator | Loading background image: E:\Cogentic-new\themes/education\bg1.png
+2026-06-28 18:34:46 | INFO | rendering.poster_generator | Poster saved: E:\Cogentic-new\output\2026-06-28\poster.jpg
+2026-06-28 18:34:46 | INFO | __main__ | Poster creation succeeded: E:\Cogentic-new\output\2026-06-28\poster.jpg
+2026-06-28 18:34:46 | INFO | __main__ | Metadata saved: E:\Cogentic-new\output\2026-06-28\metadata.json
+2026-06-28 18:34:46 | INFO | __main__ | Daily pipeline completed successfully.
+2026-06-28 18:50:59 | INFO | __main__ | Starting daily Cogentic content pipeline.
+2026-06-28 18:50:59 | INFO | __main__ | Selected theme: Women Empowerment
+2026-06-28 18:50:59 | INFO | __main__ | Selected background: E:\Cogentic-new\themes/women\women.png
+2026-06-28 18:51:00 | INFO | __main__ | Generation attempt 1/3
+2026-06-28 18:51:00 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-06-28 18:51:04 | INFO | httpx | HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"
+2026-06-28 18:51:04 | INFO | __main__ | Draft quote: Empowered women don't just break glass ceilings; they rebuild the entire structure with stronger, more inclusive foundat
+2026-06-28 18:51:04 | INFO | google_genai.models | AFC is enabled with max remote calls: 10.
+2026-06-28 18:51:09 | INFO | httpx | HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent "HTTP/1.1 200 OK"
+2026-06-28 18:51:09 | INFO | __main__ | Evaluation score: 9/10 | Reasoning: The quote is exceptionally strong, building upon a common metaphor ('glass ceilings') to introduce a more profound and transformative concept of empowerment: rebuilding societal structures with inclusivity. This elevates the discussion beyond individual achievement to systemic change, which is a powerful and advanced perspective on women's empowerment. The explanation is clear, concise, and perfectly articulates this nuanced message, reinforcing the idea of collective strength and lasting equitable change. The emotional impact is high, as it inspires a vision of proactive, collaborative action for a better future, making it far from generic.
+2026-06-28 18:51:09 | INFO | __main__ | Content passed quality control on attempt 1.
+2026-06-28 18:51:09 | INFO | content.fallback | Marked quote as used: Empowered women don't just break glass ceilings; they rebuild the entire structu
+2026-06-28 18:51:09 | INFO | __main__ | Final content source: gemini
+2026-06-28 18:51:09 | INFO | __main__ | Final quote: Empowered women don't just break glass ceilings; they rebuild the entire structure with stronger, more inclusive foundations.
+2026-06-28 18:51:09 | INFO | __main__ | Final explanation: This quote highlights that true women's empowerment transcends individual achievement, focusing instead on the collective strength to create lasting, equitable change for all. It speaks to the transformative power of women uniting to design a future where every voice is heard and every contribution valued, benefiting society as a whole.
+2026-06-28 18:51:09 | INFO | rendering.poster_generator | Loading background image: E:\Cogentic-new\themes/women\women.png
+2026-06-28 18:51:09 | INFO | rendering.poster_generator | Poster saved: E:\Cogentic-new\output\2026-06-28\poster.jpg
+2026-06-28 18:51:09 | INFO | __main__ | Poster creation succeeded: E:\Cogentic-new\output\2026-06-28\poster.jpg
+2026-06-28 18:51:09 | INFO | __main__ | Metadata saved: E:\Cogentic-new\output\2026-06-28\metadata.json
+2026-06-28 18:51:09 | INFO | __main__ | Daily pipeline completed successfully.
