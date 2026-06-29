@@ -58,9 +58,9 @@ THEME_REGISTRY = {
         "explanation_color": "#005580",
         "quote_align": "LEFT",
         "expl_align": "RIGHT",
-        "margin_left_ratio": 0.22,
+        "margin_left_ratio": 0.25,
         "margin_right_ratio": 0.24,
-        "center_zone_top_ratio": 0.18,
+        "center_zone_top_ratio": 0.20,
         "center_zone_bottom_ratio": 0.55,
     },
     "Foundation Events": {
