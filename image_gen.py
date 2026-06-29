@@ -1,7 +1,7 @@
 import os
 from PIL import Image, ImageDraw, ImageFont
 
-# --- THEME REGISTRY (keyed by theme name, not filename) ---
+# --- THEME REGISTRY (keyed by theme name) ---
 THEME_REGISTRY = {
     "Climate & Environment": {
         "quote_color": "#15803d",
@@ -26,7 +26,7 @@ THEME_REGISTRY = {
     "Women Empowerment": {
         "quote_color": "#dd1c4b",
         "explanation_color": "#b9123c",
-        "quote_align": "RIGHT",
+        "quote_align": "LEFT",
         "expl_align": "LEFT",
         "margin_left_ratio": 0.24,
         "margin_right_ratio": 0.22,
@@ -43,7 +43,7 @@ THEME_REGISTRY = {
         "center_zone_top_ratio": 0.38,
         "center_zone_bottom_ratio": 0.74,
     },
-    "Quality Education": {   # added to match config.json
+    "Quality Education": {
         "quote_color": "#b91c1c",
         "explanation_color": "#b91c1c",
         "quote_align": "LEFT",
@@ -220,6 +220,8 @@ def render_output_image(bg_image_path, quote_text, explanation_text, theme=None,
             draw.text((x_pos, y_cursor), line, font=explanation_font, fill=cfg["explanation_color"])
             y_cursor += text_height(line, explanation_font, draw) + GLOBAL_LAYOUT["line_spacing"]
 
+    # Ensure the output directory exists before saving
+    os.makedirs(os.path.dirname(output_filename), exist_ok=True)
     img.save(output_filename, quality=95)
     print(f"📷 Composite rendered beautifully at: '{output_filename}'")
     return True
