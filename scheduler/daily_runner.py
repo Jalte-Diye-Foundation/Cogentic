@@ -180,6 +180,20 @@ def run_daily_pipeline(
     output_filename = config["poster"]["output_filename"]
     output_path = os.path.join(output_dir, output_filename)
 
+    # ---- DUPLICATE CHECK ----
+    if os.path.exists(output_path):
+        logger.info(f"Poster for today ({today}) already exists at {output_path}. Skipping generation.")
+        return {
+            "theme": theme,
+            "background": background_path,
+            "content_source": content_source,
+            "quote": content["quote"],
+            "explanation": content["explanation"],
+            "poster_path": output_path,
+            "skipped": True,
+        }
+    # -------------------------
+
     try:
         poster_generator.render(
             quote=content["quote"],
@@ -187,7 +201,7 @@ def run_daily_pipeline(
             background_path=background_path,
             output_path=output_path,
             layout_name=layout_name,
-            theme=theme,               # <-- added this line
+            theme=theme,               # <-- pass the theme
         )
         logger.info("Poster creation succeeded: %s", output_path)
 
