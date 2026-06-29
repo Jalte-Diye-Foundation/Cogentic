@@ -180,33 +180,33 @@ def run_daily_pipeline(
     output_filename = config["poster"]["output_filename"]
     output_path = os.path.join(output_dir, output_filename)
 
-       try:
+    try:
         poster_generator.render(
             quote=content["quote"],
             explanation=content["explanation"],
             background_path=background_path,
             output_path=output_path,
-            layout_name=layout_name,   # kept for compatibility
-            theme=theme,               # pass the theme here
+            layout_name=layout_name,
+            theme=theme,               # <-- added this line
         )
         logger.info("Poster creation succeeded: %s", output_path)
 
         metadata = {
-    "date": today,
-    "theme": theme,
-    "quote": content["quote"],
-    "explanation": content["explanation"],
-    "caption": (
-        content.get("caption")
-        or f'{content["quote"]}\n\n{content["explanation"]}'
-    ),
-    "hashtags": (
-        content.get("hashtags")
-        or "#Cogentic #JalteDiyeFoundation"
-    ),
-    "image": output_filename,
-    "source": "Cogentic AI",
-}
+            "date": today,
+            "theme": theme,
+            "quote": content["quote"],
+            "explanation": content["explanation"],
+            "caption": (
+                content.get("caption")
+                or f'{content["quote"]}\n\n{content["explanation"]}'
+            ),
+            "hashtags": (
+                content.get("hashtags")
+                or "#Cogentic #JalteDiyeFoundation"
+            ),
+            "image": output_filename,
+            "source": "Cogentic AI",
+        }
         metadata_path = os.path.join(output_dir, "metadata.json")
 
         with open(metadata_path, "w", encoding="utf-8") as f:
