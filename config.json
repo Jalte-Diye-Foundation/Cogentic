@@ -35,37 +35,187 @@
   "Peace & Justice": {
     "folder": "themes/peace",
     "csv_fallback": "peace_justice.csv",
-    "layout": "left_explanation"
+    "layout": "left_explanation",
+    "render_overrides": {
+      "quote_font_name": "Raleway-VariableFont_wght.ttf",
+      "explanation_font_name": "Raleway-VariableFont_wght.ttf",
+      "quote_font_weight": 300,
+      "explanation_font_weight": 300,
+      "quote_color": "#167cc0",
+      "explanation_color": "#167cc0",
+      "quote_align": "LEFT",
+      "expl_align": "RIGHT",
+      "quote_font_size": 44,
+      "explanation_font_size": 28,
+      "quote_left_ratio": 0.17,
+      "quote_right_ratio": 0.85,
+      "quote_top_ratio": 0.35,
+      "quote_bottom_ratio": 0.50,
+      "expl_left_ratio": 0.17,
+      "expl_right_ratio": 0.85,
+      "expl_top_ratio": 0.50,
+      "expl_bottom_ratio": 0.70,
+      "line_spacing": 10,
+      "quote_letter_spacing": 1,
+      "explanation_letter_spacing": 1,
+      "quote_stroke_width": 0,
+      "explanation_stroke_width": 0
+    }
   },
 
   "Climate & Environment": {
     "folder": "themes/climate",
     "csv_fallback": "climate.csv",
-    "layout": "left_explanation"
+    "layout": "left_explanation",
+    "render_overrides": {
+      "quote_font_name": "Raleway-VariableFont_wght.ttf",
+      "explanation_font_name": "Raleway-VariableFont_wght.ttf",
+      "quote_font_weight": 300,
+      "explanation_font_weight": 300,
+      "quote_color": "#5a985f",
+      "explanation_color": "#5a985f",
+      "quote_align": "RIGHT",
+      "expl_align": "LEFT",
+      "quote_font_size": 44,
+      "explanation_font_size": 28,
+      "quote_left_ratio": 0.14,
+      "quote_right_ratio": 0.83,
+      "quote_top_ratio": 0.33,
+      "quote_bottom_ratio": 0.50,
+      "expl_left_ratio": 0.16,
+      "expl_right_ratio": 0.83,
+      "expl_top_ratio": 0.50,
+      "expl_bottom_ratio": 0.70,
+      "line_spacing": 10,
+      "quote_letter_spacing": 1,
+      "explanation_letter_spacing": 1,
+      "quote_stroke_width": 0,
+      "explanation_stroke_width": 0
+    }
   },
 
   "Quality Education": {
     "folder": "themes/education",
     "csv_fallback": "quality_education.csv",
-    "layout": "right_explanation"
+    "layout": "right_explanation",
+    "render_overrides": {
+      "quote_font_name": "Raleway-VariableFont_wght.ttf",
+      "explanation_font_name": "Raleway-VariableFont_wght.ttf",
+      "quote_font_weight": 300,
+      "explanation_font_weight": 300,
+      "quote_color": "#df434e",
+      "explanation_color": "#df434e",
+      "quote_align": "LEFT",
+      "expl_align": "RIGHT",
+      "quote_font_size": 44,
+      "explanation_font_size": 28,
+      "quote_left_ratio": 0.14,
+      "quote_right_ratio": 0.83,
+      "quote_top_ratio": 0.33,
+      "quote_bottom_ratio": 0.50,
+      "expl_left_ratio": 0.16,
+      "expl_right_ratio": 0.83,
+      "expl_top_ratio": 0.50,
+      "expl_bottom_ratio": 0.70,
+      "line_spacing": 10,
+      "quote_letter_spacing": 1,
+      "explanation_letter_spacing": 1,
+      "quote_stroke_width": 0,
+      "explanation_stroke_width": 0
+    }
   },
 
   "Women Empowerment": {
     "folder": "themes/women",
     "csv_fallback": "reduced_inequalities.csv",
-    "layout": "left_explanation"
+    "layout": "left_explanation",
+    "render_overrides": {
+      "quote_font_name": "Raleway-VariableFont_wght.ttf",
+      "explanation_font_name": "Raleway-VariableFont_wght.ttf",
+      "quote_font_weight": 300,
+      "explanation_font_weight": 300,
+      "quote_color": "#e45893",
+      "explanation_color": "#e45893",
+      "quote_align": "RIGHT",
+      "expl_align": "LEFT",
+      "quote_font_size": 44,
+      "explanation_font_size": 28,
+      "quote_left_ratio": 0.15,
+      "quote_right_ratio": 0.83,
+      "quote_top_ratio": 0.28,
+      "quote_bottom_ratio": 0.45,
+      "expl_left_ratio": 0.17,
+      "expl_right_ratio": 0.83,
+      "expl_top_ratio": 0.40,
+      "expl_bottom_ratio": 0.70,
+      "line_spacing": 10,
+      "quote_letter_spacing": 1,
+      "explanation_letter_spacing": 1,
+      "quote_stroke_width": 0,
+      "explanation_stroke_width": 0
+    }
   },
 
   "Health & Mindfulness": {
     "folder": "themes/health",
     "csv_fallback": "quotes.csv",
-    "layout": "left_explanation"
+    "layout": "left_explanation",
+    "render_overrides": {
+      "quote_font_name": "Raleway-VariableFont_wght.ttf",
+      "explanation_font_name": "Raleway-VariableFont_wght.ttf",
+      "quote_font_weight": 300,
+      "explanation_font_weight": 300,
+      "quote_color": "#8c6239",
+      "explanation_color": "#8c6239",
+      "quote_align": "LEFT",
+      "expl_align": "LEFT",
+      "quote_font_size": 44,
+      "explanation_font_size": 28,
+      "quote_left_ratio": 0.17,
+      "quote_right_ratio": 0.85,
+      "quote_top_ratio": 0.28,
+      "quote_bottom_ratio": 0.40,
+      "expl_left_ratio": 0.17,
+      "expl_right_ratio": 0.85,
+      "expl_top_ratio": 0.40,
+      "expl_bottom_ratio": 0.65,
+      "line_spacing": 10,
+      "quote_letter_spacing": 1,
+      "explanation_letter_spacing": 1,
+      "quote_stroke_width": 0,
+      "explanation_stroke_width": 0
+    }
   },
 
   "Foundation Events": {
     "folder": "themes/events",
     "csv_fallback": "Event_quotes.csv",
-    "layout": "left_explanation"
+    "layout": "left_explanation",
+    "render_overrides": {
+      "quote_font_name": "Raleway-VariableFont_wght.ttf",
+      "explanation_font_name": "Raleway-VariableFont_wght.ttf",
+      "quote_font_weight": 300,
+      "explanation_font_weight": 300,
+      "quote_color": "#98576f",
+      "explanation_color": "#98576f",
+      "quote_align": "LEFT",
+      "expl_align": "LEFT",
+      "quote_font_size": 44,
+      "explanation_font_size": 28,
+      "quote_left_ratio": 0.17,
+      "quote_right_ratio": 0.85,
+      "quote_top_ratio": 0.28,
+      "quote_bottom_ratio": 0.40,
+      "expl_left_ratio": 0.17,
+      "expl_right_ratio": 0.85,
+      "expl_top_ratio": 0.40,
+      "expl_bottom_ratio": 0.65,
+      "line_spacing": 10,
+      "quote_letter_spacing": 1,
+      "explanation_letter_spacing": 1,
+      "quote_stroke_width": 0,
+      "explanation_stroke_width": 0
+    }
   }
 },
 
@@ -86,9 +236,9 @@
 
     "fonts": {
 
-      "quote_font_name": "georgia.ttf",
+      "quote_font_name": "Raleway-VariableFont_wght.ttf",
 
-      "explanation_font_name": "Raleway-ExtraLight.ttf"
+      "explanation_font_name": "Raleway-VariableFont_wght.ttf"
 
     },
 
@@ -98,9 +248,9 @@
 
       "left_explanation": {
 
-        "quote_font_size": 48,
+        "quote_font_size": 44,
 
-        "explanation_font_size": 26,
+        "explanation_font_size": 28,
 
         "explanation_font_weight": 100,
 
@@ -114,9 +264,7 @@
         "explanation_color": "#555555",
 
 
-        "margin_left_ratio": 0.18,
 
-        "margin_right_ratio": 0.18,
 
 
         "quote_top_ratio": 0.10,
@@ -139,9 +287,9 @@
       "right_explanation": {
 
 
-        "quote_font_size": 48,
+        "quote_font_size": 44,
 
-        "explanation_font_size": 26,
+        "explanation_font_size": 28,
 
         "explanation_font_weight": 100,
 
@@ -156,9 +304,7 @@
         "explanation_color": "#000000",
 
 
-        "margin_left_ratio": 0.18,
 
-        "margin_right_ratio": 0.18,
 
 
         "quote_top_ratio": 0.18,
