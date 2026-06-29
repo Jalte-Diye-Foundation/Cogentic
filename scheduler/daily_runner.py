@@ -180,13 +180,14 @@ def run_daily_pipeline(
     output_filename = config["poster"]["output_filename"]
     output_path = os.path.join(output_dir, output_filename)
 
-    try:
+       try:
         poster_generator.render(
             quote=content["quote"],
             explanation=content["explanation"],
             background_path=background_path,
             output_path=output_path,
-            layout_name=layout_name,
+            layout_name=layout_name,   # kept for compatibility
+            theme=theme,               # pass the theme here
         )
         logger.info("Poster creation succeeded: %s", output_path)
 
