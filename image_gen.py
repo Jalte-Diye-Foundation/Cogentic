@@ -26,7 +26,7 @@ THEME_REGISTRY = {
     "Women Empowerment": {
         "quote_color": "#dd1c4b",
         "explanation_color": "#b9123c",
-        "quote_align": "LEFT",
+        "quote_align": "CENTER",        # <-- CENTER
         "expl_align": "LEFT",
         "margin_left_ratio": 0.24,
         "margin_right_ratio": 0.22,
@@ -46,7 +46,7 @@ THEME_REGISTRY = {
     "Quality Education": {
         "quote_color": "#b91c1c",
         "explanation_color": "#b91c1c",
-        "quote_align": "LEFT",
+        "quote_align": "CENTER",        # <-- CENTER
         "expl_align": "RIGHT",
         "margin_left_ratio": 0.22,
         "margin_right_ratio": 0.22,
@@ -58,9 +58,9 @@ THEME_REGISTRY = {
         "explanation_color": "#005580",
         "quote_align": "LEFT",
         "expl_align": "RIGHT",
-        "margin_left_ratio": 0.22,
+        "margin_left_ratio": 0.25,
         "margin_right_ratio": 0.24,
-        "center_zone_top_ratio": 0.18,
+        "center_zone_top_ratio": 0.20,
         "center_zone_bottom_ratio": 0.55,
     },
     "Foundation Events": {
@@ -80,7 +80,7 @@ THEME_REGISTRY = {
         "expl_align": "LEFT",
         "margin_left_ratio": 0.20,
         "margin_right_ratio": 0.20,
-        "center_zone_top_ratio": 0.12,
+        "center_zone_top_ratio": 0.20,
         "center_zone_bottom_ratio": 0.46,
     },
 }
@@ -112,7 +112,7 @@ def load_font(font_name, size, weight=None):
             return font
         except (IOError, OSError):
             continue
-    print(f"⚠️ Warning: Could not find '{font_name}'. Falling back to default canvas font.")
+    print(f"⚠️ Warning: Could not find '{font_name}'. Using default font.")
     return ImageFont.load_default()
 
 def measure_text_width(text, font, draw):
@@ -157,7 +157,6 @@ def render_output_image(bg_image_path, quote_text, explanation_text, theme=None,
         cfg = THEME_REGISTRY[theme]
         print(f"ℹ️ Using theme config for: {theme}")
     else:
-        # Fallback: try using the filename as key
         filename_key = os.path.basename(bg_image_path).strip()
         cfg = THEME_REGISTRY.get(filename_key, THEME_REGISTRY["jdf_general"])
         if filename_key not in THEME_REGISTRY:
@@ -170,6 +169,7 @@ def render_output_image(bg_image_path, quote_text, explanation_text, theme=None,
     img = Image.open(bg_image_path).convert("RGB")
     draw = ImageDraw.Draw(img)
     W, H = img.size
+    print(f"🖼️ Image size: {W}x{H}")  # debug
 
     quote_font = load_font(GLOBAL_LAYOUT["font_name"], GLOBAL_LAYOUT["quote_font_size"])
     explanation_font = load_font(
@@ -181,6 +181,7 @@ def render_output_image(bg_image_path, quote_text, explanation_text, theme=None,
     margin_left = int(W * cfg["margin_left_ratio"])
     margin_right = int(W * cfg["margin_right_ratio"])
     max_text_width = W - margin_left - margin_right
+    print(f"📐 Margins: left={margin_left}, right={margin_right}")
 
     clean_quote = quote_text.strip().replace("\n", " ")
     clean_expl = explanation_text.strip().replace("\n", " ")
@@ -195,13 +196,18 @@ def render_output_image(bg_image_path, quote_text, explanation_text, theme=None,
     zone_top = int(H * cfg["center_zone_top_ratio"])
     zone_bottom = int(H * cfg["center_zone_bottom_ratio"])
     zone_height = zone_bottom - zone_top
+    print(f"📦 Zone: top={zone_top}, bottom={zone_bottom}")
+
     y_cursor = zone_top + max(0, (zone_height - total_content_h) // 2)
 
-    # Draw quote
+    # Draw quote (supports LEFT, CENTER, RIGHT)
     if quote_lines:
         for line in quote_lines:
             if cfg["quote_align"] == "LEFT":
                 x_pos = margin_left
+            elif cfg["quote_align"] == "CENTER":
+                line_w = measure_text_width(line, quote_font, draw)
+                x_pos = (W - line_w) // 2
             else:  # RIGHT
                 line_w = measure_text_width(line, quote_font, draw)
                 x_pos = W - margin_right - line_w
@@ -220,7 +226,7 @@ def render_output_image(bg_image_path, quote_text, explanation_text, theme=None,
             draw.text((x_pos, y_cursor), line, font=explanation_font, fill=cfg["explanation_color"])
             y_cursor += text_height(line, explanation_font, draw) + GLOBAL_LAYOUT["line_spacing"]
 
-    # Ensure the output directory exists before saving
+    # Ensure the output directory exists
     os.makedirs(os.path.dirname(output_filename), exist_ok=True)
     img.save(output_filename, quality=95)
     print(f"📷 Composite rendered beautifully at: '{output_filename}'")
