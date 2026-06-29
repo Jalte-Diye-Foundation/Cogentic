@@ -80,7 +80,7 @@ THEME_REGISTRY = {
         "expl_align": "LEFT",
         "margin_left_ratio": 0.20,
         "margin_right_ratio": 0.20,
-        "center_zone_top_ratio": 0.12,
+        "center_zone_top_ratio": 0.20,
         "center_zone_bottom_ratio": 0.46,
     },
 }
