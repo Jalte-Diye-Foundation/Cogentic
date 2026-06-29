@@ -5,12 +5,12 @@ from test import main
 # --- ENGINE CONFIGURATION REGISTRY FOR ALL 5 THEMES ---
 THEME_REGISTRY = {
     "Climate & Environment": {
-        "quote_color": "#6A8E5A",
-        "explanation_color": "#7A8C73",
+        "quote_color": "#15803d",
+        "explanation_color": "#166534",
         "quote_align": "RIGHT",
         "expl_align": "LEFT",
         "margin_left_ratio": 0.22,
-        "margin_right_ratio": 0.22,
+        "margin_right_ratio": 0.26,
         "center_zone_top_ratio": 0.18,
         "center_zone_bottom_ratio": 0.55,
     },
@@ -21,8 +21,8 @@ THEME_REGISTRY = {
         "expl_align": "LEFT",
         "margin_left_ratio": 0.20,
         "margin_right_ratio": 0.20,
-        "center_zone_top_ratio": 0.20,
-        "center_zone_bottom_ratio": 0.60,
+        "center_zone_top_ratio": 0.08,
+        "center_zone_bottom_ratio": 0.46,
     },
     "Women Empowerment": {
         "quote_color": "#dd1c4b",
@@ -31,28 +31,28 @@ THEME_REGISTRY = {
         "expl_align": "LEFT",
         "margin_left_ratio": 0.24,
         "margin_right_ratio": 0.22,
-        "center_zone_top_ratio": 0.25,
-        "center_zone_bottom_ratio": 0.62,
+        "center_zone_top_ratio": 0.39,
+        "center_zone_bottom_ratio": 0.75,
     },
     "Social Education": {
-        "quote_color": "#D25A6E",
-        "explanation_color": "#A86F7B",
+        "quote_color": "#b91c1c",
+        "explanation_color": "#b91c1c",
         "quote_align": "LEFT",
         "expl_align": "RIGHT",
         "margin_left_ratio": 0.22,
         "margin_right_ratio": 0.22,
-        "center_zone_top_ratio": 0.24,
-        "center_zone_bottom_ratio": 0.62,
+        "center_zone_top_ratio": 0.38,
+        "center_zone_bottom_ratio": 0.74,
     },
     "Peace & Justice": {
-        "quote_color": "#5C8DB8",
-        "explanation_color": "#6D8FA8",
+        "quote_color": "#00689d",
+        "explanation_color": "#005580",
         "quote_align": "LEFT",
         "expl_align": "RIGHT",
         "margin_left_ratio": 0.22,
         "margin_right_ratio": 0.24,
-        "center_zone_top_ratio": 0.24,
-        "center_zone_bottom_ratio": 0.65,
+        "center_zone_top_ratio": 0.18,
+        "center_zone_bottom_ratio": 0.55,
     },
     "Foundation Events": {
         "quote_color": "#8c6239",
@@ -61,8 +61,8 @@ THEME_REGISTRY = {
         "expl_align": "LEFT",
         "margin_left_ratio": 0.20,
         "margin_right_ratio": 0.20,
-        "center_zone_top_ratio": 0.20,
-        "center_zone_bottom_ratio": 0.60,
+        "center_zone_top_ratio": 0.08,
+        "center_zone_bottom_ratio": 0.46,
     },
     "jdf_general": {
         "quote_color": "#8c6239",
@@ -71,12 +71,12 @@ THEME_REGISTRY = {
         "expl_align": "LEFT",
         "margin_left_ratio": 0.20,
         "margin_right_ratio": 0.20,
-        "center_zone_top_ratio": 0.20,
-        "center_zone_bottom_ratio": 0.60,
+        "center_zone_top_ratio": 0.12,
+        "center_zone_bottom_ratio": 0.46,
     },
 }
 GLOBAL_LAYOUT = {
-    "font_name": "Raleway-VariableFont_wght.ttf",
+    "font_name": "Raleway-ExtraLight.ttf",
     "quote_font_size": 36,
     "explanation_font_size": 22,
     "explanation_font_weight": 300,
@@ -134,7 +134,7 @@ def block_height(lines, font, draw, line_spacing):
     return sum(text_height(line, font, draw) + line_spacing for line in lines) - line_spacing
 
 # --- UNIFIED COMPOSITING INTERFACE ---
-def render_output_image(bg_image_path, quote_text, explanation_text,domain, output_filename="daily_quote_output.jpg"):
+def render_output_image(bg_image_path, quote_text, explanation_text, domain, output_filename="daily_quote_output.jpg"):
     """
     Renders quotes and explanations cleanly onto any of the 5 background options.
     Uses custom per-theme geometry configs to tailor positioning and alignments perfectly.
@@ -169,9 +169,13 @@ def render_output_image(bg_image_path, quote_text, explanation_text,domain, outp
     margin_right = int(W * cfg["margin_right_ratio"])
     max_text_width = W - margin_left - margin_right
 
+    # Clean input raw strings to eliminate layout-breaking boundary anomalies from APIs
+    clean_quote = quote_text.strip().replace("\n", " ")
+    clean_expl = explanation_text.strip().replace("\n", " ")
+
     # Format Word Blocks & Height Properties
-    quote_lines = wrap_text(quote_text, quote_font, draw, max_text_width)
-    expl_lines = wrap_text(explanation_text, explanation_font, draw, max_text_width)
+    quote_lines = wrap_text(clean_quote, quote_font, draw, max_text_width)
+    expl_lines = wrap_text(clean_expl, explanation_font, draw, max_text_width)
 
     quote_block_h = block_height(quote_lines, quote_font, draw, GLOBAL_LAYOUT["line_spacing"])
     expl_block_h = block_height(expl_lines, explanation_font, draw, GLOBAL_LAYOUT["line_spacing"])
@@ -189,29 +193,35 @@ def render_output_image(bg_image_path, quote_text, explanation_text,domain, outp
 
     # Phase 1: Draw Quote Lines
     for line in quote_lines:
+        cleaned_line = line.strip()  # Strip every individual wrapped iteration string
+        if not cleaned_line: continue
+        
         if cfg["quote_align"] == "LEFT":
             x_pos = margin_left
         else: # RIGHT Align
-            line_w = measure_text_width(line, quote_font, draw)
+            line_w = measure_text_width(cleaned_line, quote_font, draw)
             x_pos = W - margin_right - line_w
 
-        draw.text((x_pos, y_cursor), line, font=quote_font, fill=cfg["quote_color"])
+        draw.text((x_pos, y_cursor), cleaned_line, font=quote_font, fill=cfg["quote_color"])
         # Increment using a clean line baseline step to ensure uniform line spacing
-        y_cursor += text_height(line, quote_font, draw) + GLOBAL_LAYOUT["line_spacing"]
+        y_cursor += text_height(cleaned_line, quote_font, draw) + GLOBAL_LAYOUT["line_spacing"]
 
     # Clear loop bleeding margin, then apply fixed separation spacing block gap
     y_cursor = (y_cursor - GLOBAL_LAYOUT["line_spacing"]) + GLOBAL_LAYOUT["block_gap"]
 
     # Phase 2: Draw Explanation Lines
     for line in expl_lines:
+        cleaned_line = line.strip()  # Strip iteration step to preserve flush alignments
+        if not cleaned_line: continue
+        
         if cfg["expl_align"] == "LEFT":
             x_pos = margin_left
         else: # RIGHT Align
-            line_w = measure_text_width(line, explanation_font, draw)
+            line_w = measure_text_width(cleaned_line, explanation_font, draw)
             x_pos = W - margin_right - line_w
 
-        draw.text((x_pos, y_cursor), line, font=explanation_font, fill=cfg["explanation_color"])
-        y_cursor += text_height(line, explanation_font, draw) + GLOBAL_LAYOUT["line_spacing"]
+        draw.text((x_pos, y_cursor), cleaned_line, font=explanation_font, fill=cfg["explanation_color"])
+        y_cursor += text_height(cleaned_line, explanation_font, draw) + GLOBAL_LAYOUT["line_spacing"]
 
     # Save Output Asset
     img.save(output_filename, quality=95)
@@ -228,15 +238,14 @@ if __name__ == "__main__":
 
     # Map domains to background images
     DOMAIN_BACKGROUND_MAP = {
-    "Peace & Justice": "themes/peace/bg1.png",
-    "Health & Mindfulness": "themes/health/bg1.png",
-    "Social Education": "themes/education/bg1.png",
-    "Climate & Environment": "themes/climate/bg1.png",
-    "Foundation Events": "themes/events/bg1.png",
-    "Women Empowerment": "themes/women/women.png",
-}
+        "Peace & Justice": "themes/peace/bg1.png",
+        "Health & Mindfulness": "themes/health/bg1.png",
+        "Social Education": "themes/education/bg1.png",
+        "Climate & Environment": "themes/climate/bg1.png",
+        "Foundation Events": "themes/events/bg1.png",
+        "Women Empowerment": "themes/women/women.png",
+    }
     
-
     bg_image = DOMAIN_BACKGROUND_MAP.get(
         domain,
         "jdf_general.jpg"
@@ -254,4 +263,3 @@ if __name__ == "__main__":
         domain=domain,
         output_filename="daily_quote_output.jpg"
     )
-
