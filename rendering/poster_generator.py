@@ -10,7 +10,7 @@ from PIL import Image, ImageDraw, ImageFont
 
 logger = logging.getLogger(__name__)
 
-# ---------- THEME REGISTRY ----------
+# ---------- THEME REGISTRY (copy from your standalone script) ----------
 THEME_REGISTRY = {
     "Climate & Environment": {
         "quote_color": "#15803d",
@@ -35,7 +35,7 @@ THEME_REGISTRY = {
     "Women Empowerment": {
         "quote_color": "#dd1c4b",
         "explanation_color": "#b9123c",
-        "quote_align": "RIGHT",
+        "quote_align": "LEFT",        # <-- changed from RIGHT to LEFT
         "expl_align": "LEFT",
         "margin_left_ratio": 0.24,
         "margin_right_ratio": 0.22,
@@ -105,9 +105,8 @@ GLOBAL_LAYOUT = {
 
 # ---------- Helper functions ----------
 def load_font(font_name, size, project_root, weight=None):
-    """Searches project root, fonts folder, and system fonts."""
     search_paths = [
-        os.path.join(project_root, font_name),          # <-- This finds the font in project root
+        os.path.join(project_root, font_name),
         os.path.join(project_root, "fonts", font_name),
         os.path.join("C:/Windows/Fonts", font_name),
         font_name,
@@ -170,16 +169,11 @@ class PosterGenerator:
         explanation: str,
         background_path: str,
         output_path: str,
-        layout_name: str,          # kept for compatibility but ignored
-        theme: str | None = None,  # <-- new parameter
+        layout_name: str,          # kept for compatibility
+        theme: str | None = None,
     ) -> str:
-        """
-        Renders the quote and explanation onto the background using the
-        proven ratio-based layout from THEME_REGISTRY.
-        """
-        # 1. Determine which theme config to use
+        # Determine theme config
         if theme is None:
-            # Try to infer from background path folder name
             folder = os.path.basename(os.path.dirname(background_path))
             folder_to_theme = {
                 "climate": "Climate & Environment",
@@ -192,11 +186,9 @@ class PosterGenerator:
             theme = folder_to_theme.get(folder, "jdf_general")
             logger.info(f"Inferred theme from folder: {theme}")
 
-        # 2. Get the config from THEME_REGISTRY (fallback to jdf_general)
         cfg = THEME_REGISTRY.get(theme, THEME_REGISTRY["jdf_general"])
         logger.info(f"Using theme config for: {theme}")
 
-        # 3. Load the background image
         if not os.path.exists(background_path):
             raise FileNotFoundError(f"Background missing: {background_path}")
 
@@ -204,7 +196,6 @@ class PosterGenerator:
         W, H = img.size
         draw = ImageDraw.Draw(img)
 
-        # 4. Load fonts (using the same sizes as standalone)
         quote_font = load_font(
             GLOBAL_LAYOUT["font_name"],
             GLOBAL_LAYOUT["quote_font_size"],
@@ -217,7 +208,6 @@ class PosterGenerator:
             GLOBAL_LAYOUT["explanation_font_weight"],
         )
 
-        # 5. Compute margins and vertical zone
         margin_left = int(W * cfg["margin_left_ratio"])
         margin_right = int(W * cfg["margin_right_ratio"])
         max_text_width = W - margin_left - margin_right
@@ -226,7 +216,6 @@ class PosterGenerator:
         zone_bottom = int(H * cfg["center_zone_bottom_ratio"])
         zone_height = zone_bottom - zone_top
 
-        # 6. Clean and wrap text
         clean_quote = quote.strip().replace("\n", " ")
         clean_expl = explanation.strip().replace("\n", " ")
 
@@ -237,10 +226,8 @@ class PosterGenerator:
         expl_block_h = block_height(expl_lines, explanation_font, draw, GLOBAL_LAYOUT["line_spacing"])
         total_content_h = quote_block_h + GLOBAL_LAYOUT["block_gap"] + expl_block_h
 
-        # 7. Centre the combined block vertically inside the zone
         y_cursor = zone_top + max(0, (zone_height - total_content_h) // 2)
 
-        # 8. Draw quote
         if quote_lines:
             quote_multiline = "\n".join(quote_lines)
             if cfg["quote_align"] == "LEFT":
@@ -249,7 +236,6 @@ class PosterGenerator:
             else:
                 x_pos = W - margin_right
                 align = "right"
-
             draw.multiline_text(
                 (x_pos, y_cursor),
                 quote_multiline,
@@ -260,7 +246,6 @@ class PosterGenerator:
             )
             y_cursor += quote_block_h + GLOBAL_LAYOUT["block_gap"]
 
-        # 9. Draw explanation
         if expl_lines:
             expl_multiline = "\n".join(expl_lines)
             if cfg["expl_align"] == "LEFT":
@@ -269,7 +254,6 @@ class PosterGenerator:
             else:
                 x_pos = W - margin_right
                 align = "right"
-
             draw.multiline_text(
                 (x_pos, y_cursor),
                 expl_multiline,
@@ -279,7 +263,6 @@ class PosterGenerator:
                 spacing=GLOBAL_LAYOUT["line_spacing"],
             )
 
-        # 10. Save the final image
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
         img.save(output_path, quality=95)
         logger.info(f"Poster saved: {output_path}")
