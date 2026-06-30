@@ -26,7 +26,7 @@ THEME_REGISTRY = {
     "Women Empowerment": {
         "quote_color": "#dd1c4b",
         "explanation_color": "#b9123c",
-        "quote_align": "CENTER",        # <-- CENTER
+        "quote_align": "CENTER",
         "expl_align": "LEFT",
         "margin_left_ratio": 0.24,
         "margin_right_ratio": 0.22,
@@ -46,21 +46,21 @@ THEME_REGISTRY = {
     "Quality Education": {
         "quote_color": "#b91c1c",
         "explanation_color": "#b91c1c",
-        "quote_align": "CENTER",        # <-- CENTER
-        "expl_align": "RIGHT",
-        "margin_left_ratio": 0.22,
-        "margin_right_ratio": 0.22,
-        "center_zone_top_ratio": 0.38,
-        "center_zone_bottom_ratio": 0.74,
+        "quote_align": "LEFT",            # left-aligned to avoid right logo
+        "expl_align": "LEFT",             # both left aligned for consistency
+        "margin_left_ratio": 0.28,        # generous left margin
+        "margin_right_ratio": 0.28,       # generous right margin
+        "center_zone_top_ratio": 0.40,    # moved down slightly (adjust if needed)
+        "center_zone_bottom_ratio": 0.75,
     },
     "Peace & Justice": {
         "quote_color": "#00689d",
         "explanation_color": "#005580",
         "quote_align": "LEFT",
         "expl_align": "RIGHT",
-        "margin_left_ratio": 0.25,
+        "margin_left_ratio": 0.22,
         "margin_right_ratio": 0.24,
-        "center_zone_top_ratio": 0.20,
+        "center_zone_top_ratio": 0.18,
         "center_zone_bottom_ratio": 0.55,
     },
     "Foundation Events": {
@@ -76,12 +76,12 @@ THEME_REGISTRY = {
     "jdf_general": {
         "quote_color": "#8c6239",
         "explanation_color": "#a17850",
-        "quote_align": "RIGHT",
+        "quote_align": "CENTER",
         "expl_align": "LEFT",
-        "margin_left_ratio": 0.20,
-        "margin_right_ratio": 0.23,
-        "center_zone_top_ratio": 0.30,
-        "center_zone_bottom_ratio": 0.46,
+        "margin_left_ratio": 0.25,
+        "margin_right_ratio": 0.25,
+        "center_zone_top_ratio": 0.15,
+        "center_zone_bottom_ratio": 0.50,
     },
 }
 
@@ -146,13 +146,7 @@ def block_height(lines, font, draw, line_spacing):
     return sum(text_height(line, font, draw) + line_spacing for line in lines) - line_spacing
 
 def render_output_image(bg_image_path, quote_text, explanation_text, theme=None, output_filename="daily_quote_output.jpg"):
-    """
-    Renders the quote and explanation onto the background.
-    If theme is provided, it is used as the key in THEME_REGISTRY.
-    Otherwise, falls back to using the background filename (for backward compatibility).
-    """
-    # Determine which config to use
-    cfg = None
+    # Determine config
     if theme and theme in THEME_REGISTRY:
         cfg = THEME_REGISTRY[theme]
         print(f"ℹ️ Using theme config for: {theme}")
@@ -169,7 +163,7 @@ def render_output_image(bg_image_path, quote_text, explanation_text, theme=None,
     img = Image.open(bg_image_path).convert("RGB")
     draw = ImageDraw.Draw(img)
     W, H = img.size
-    print(f"🖼️ Image size: {W}x{H}")  # debug
+    print(f"🖼️ Image size: {W}x{H}")
 
     quote_font = load_font(GLOBAL_LAYOUT["font_name"], GLOBAL_LAYOUT["quote_font_size"])
     explanation_font = load_font(
@@ -215,7 +209,7 @@ def render_output_image(bg_image_path, quote_text, explanation_text, theme=None,
             y_cursor += text_height(line, quote_font, draw) + GLOBAL_LAYOUT["line_spacing"]
         y_cursor = (y_cursor - GLOBAL_LAYOUT["line_spacing"]) + GLOBAL_LAYOUT["block_gap"]
 
-    # Draw explanation
+    # Draw explanation (supports LEFT, RIGHT)
     if expl_lines:
         for line in expl_lines:
             if cfg["expl_align"] == "LEFT":
@@ -226,7 +220,7 @@ def render_output_image(bg_image_path, quote_text, explanation_text, theme=None,
             draw.text((x_pos, y_cursor), line, font=explanation_font, fill=cfg["explanation_color"])
             y_cursor += text_height(line, explanation_font, draw) + GLOBAL_LAYOUT["line_spacing"]
 
-    # Ensure the output directory exists
+    # Ensure output directory exists and save
     os.makedirs(os.path.dirname(output_filename), exist_ok=True)
     img.save(output_filename, quality=95)
     print(f"📷 Composite rendered beautifully at: '{output_filename}'")
