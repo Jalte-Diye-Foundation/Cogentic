@@ -50,7 +50,7 @@ THEME_REGISTRY = {
         "expl_align": "RIGHT",
         "margin_left_ratio": 0.22,
         "margin_right_ratio": 0.22,
-        "center_zone_top_ratio": 0.38,
+        "center_zone_top_ratio": 0.25,
         "center_zone_bottom_ratio": 0.74,
     },
     "Peace & Justice": {
