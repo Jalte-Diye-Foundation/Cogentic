@@ -11,10 +11,9 @@ import traceback
 from datetime import date
 from typing import Any
 
-from content.generator import ContentGenerator, HASHTAGS_MAP
+from content.generator import ContentGenerator
 from content.evaluator import ContentEvaluator
 from content.fallback import FallbackProvider, is_quote_used, mark_quote_used
-from content.generator import ContentGenerator
 from rendering.poster_generator import PosterGenerator
 
 logger = logging.getLogger(__name__)
@@ -180,7 +179,9 @@ def run_daily_pipeline(
     output_filename = config["poster"]["output_filename"]
     output_path = os.path.join(output_dir, output_filename)
 
-    # ---- DUPLICATE CHECK ----
+    # ---- FIXED DUPLICATE CHECK ----
+    # Ensure the directory exists before checking for existing file
+    os.makedirs(output_dir, exist_ok=True)
     if os.path.exists(output_path):
         logger.info(f"Poster for today ({today}) already exists at {output_path}. Skipping generation.")
         return {
@@ -192,7 +193,7 @@ def run_daily_pipeline(
             "poster_path": output_path,
             "skipped": True,
         }
-    # -------------------------
+    # -----------------------------
 
     try:
         poster_generator.render(
@@ -201,7 +202,7 @@ def run_daily_pipeline(
             background_path=background_path,
             output_path=output_path,
             layout_name=layout_name,
-            theme=theme,               # <-- pass the theme
+            theme=theme,
         )
         logger.info("Poster creation succeeded: %s", output_path)
 
