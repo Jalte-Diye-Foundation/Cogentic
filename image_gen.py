@@ -30,7 +30,7 @@ THEME_REGISTRY = {
         "expl_align": "LEFT",
         "margin_left_ratio": 0.24,
         "margin_right_ratio": 0.22,
-        "center_zone_top_ratio": 0.39,
+        "center_zone_top_ratio": 0.30,
         "center_zone_bottom_ratio": 0.75,
     },
     "Social Education": {
