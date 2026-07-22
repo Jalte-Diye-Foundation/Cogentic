@@ -169,15 +169,27 @@ def render_output_image(bg_image_path, quote_text, explanation_text, theme=None,
     img = Image.open(bg_image_path).convert("RGB")
     draw = ImageDraw.Draw(img)
     W, H = img.size
+
+    # Responsive spacing
+    line_spacing = max(8, int(H * 0.01))
+    block_gap = max(25, int(H * 0.03))
+
     print(f"🖼️ Image size: {W}x{H}")  # debug
 
-    quote_font = load_font(GLOBAL_LAYOUT["font_name"], GLOBAL_LAYOUT["quote_font_size"])
-    explanation_font = load_font(
+    # Responsive font sizes
+    quote_size = max(48, int(H * 0.05))
+    explanation_size = max(26, int(H * 0.027))
+
+    quote_font = load_font(
         GLOBAL_LAYOUT["font_name"],
-        GLOBAL_LAYOUT["explanation_font_size"],
-        GLOBAL_LAYOUT["explanation_font_weight"]
+        quote_size
     )
 
+    explanation_font = load_font(
+        GLOBAL_LAYOUT["font_name"],
+        explanation_size,
+        GLOBAL_LAYOUT["explanation_font_weight"]
+    )
     margin_left = int(W * cfg["margin_left_ratio"])
     margin_right = int(W * cfg["margin_right_ratio"])
     max_text_width = W - margin_left - margin_right
@@ -189,9 +201,9 @@ def render_output_image(bg_image_path, quote_text, explanation_text, theme=None,
     quote_lines = wrap_text(clean_quote, quote_font, draw, max_text_width)
     expl_lines = wrap_text(clean_expl, explanation_font, draw, max_text_width)
 
-    quote_block_h = block_height(quote_lines, quote_font, draw, GLOBAL_LAYOUT["line_spacing"])
-    expl_block_h = block_height(expl_lines, explanation_font, draw, GLOBAL_LAYOUT["line_spacing"])
-    total_content_h = quote_block_h + GLOBAL_LAYOUT["block_gap"] + expl_block_h
+    quote_block_h = block_height(quote_lines, quote_font, draw, line_spacing)
+    expl_block_h = block_height(expl_lines, explanation_font, draw, line_spacing)
+    total_content_h = quote_block_h + block_gap + expl_block_h
 
     zone_top = int(H * cfg["center_zone_top_ratio"])
     zone_bottom = int(H * cfg["center_zone_bottom_ratio"])
@@ -212,8 +224,8 @@ def render_output_image(bg_image_path, quote_text, explanation_text, theme=None,
                 line_w = measure_text_width(line, quote_font, draw)
                 x_pos = W - margin_right - line_w
             draw.text((x_pos, y_cursor), line, font=quote_font, fill=cfg["quote_color"])
-            y_cursor += text_height(line, quote_font, draw) + GLOBAL_LAYOUT["line_spacing"]
-        y_cursor = (y_cursor - GLOBAL_LAYOUT["line_spacing"]) + GLOBAL_LAYOUT["block_gap"]
+            y_cursor += text_height(line, quote_font, draw) + line_spacing
+        y_cursor = (y_cursor - line_spacing) + block_gap
 
     # Draw explanation
     if expl_lines:
@@ -224,7 +236,7 @@ def render_output_image(bg_image_path, quote_text, explanation_text, theme=None,
                 line_w = measure_text_width(line, explanation_font, draw)
                 x_pos = W - margin_right - line_w
             draw.text((x_pos, y_cursor), line, font=explanation_font, fill=cfg["explanation_color"])
-            y_cursor += text_height(line, explanation_font, draw) + GLOBAL_LAYOUT["line_spacing"]
+            y_cursor += text_height(line, explanation_font, draw) + line_spacing
 
     # Ensure the output directory exists
     os.makedirs(os.path.dirname(output_filename), exist_ok=True)
