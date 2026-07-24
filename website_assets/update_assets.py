@@ -43,6 +43,13 @@ def update_website_assets(
     shutil.copy2(poster_source, poster_dest)
     logger.info("Website asset updated: %s -> %s", poster_source, poster_dest)
 
+    today_str = date.today().isoformat()
+    archive_dir = os.path.join(project_root, "website_assets", "archive", today_str)
+    os.makedirs(archive_dir, exist_ok=True)
+    archive_dest = os.path.join(archive_dir, website_config["poster_filename"])
+    shutil.copy2(poster_source, archive_dest)
+    logger.info("Website asset archived: %s -> %s", poster_source, archive_dest)
+
     content = pipeline_result.get("content", {})
     today = date.today().isoformat()
     metadata = {

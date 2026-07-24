@@ -37,7 +37,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add website_assets/latest
+          git add website_assets/latest website_assets/archive
           if git diff --cached --quiet; then
             echo "No changes to commit"
             exit 0
