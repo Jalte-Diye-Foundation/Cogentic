@@ -1,0 +1,28 @@
+{
+  "01-26": {
+    "event": "Republic Day",
+    "theme": "Foundation Events",
+    "csv_row": "Republic Day"
+  },
+  "03-08": {
+    "event": "International Women's Day",
+    "theme": "Women Empowerment"
+  },
+  "04-22": {
+    "event": "Earth Day",
+    "theme": "Climate & Environment"
+  },
+  "06-21": {
+    "event": "International Yoga Day",
+    "theme": "Health & Mindfulness"
+  },
+  "08-15": {
+    "event": "Independence Day",
+    "theme": "Foundation Events",
+    "csv_row": "Independence Day"
+  },
+  "09-05": {
+    "event": "Teacher's Day",
+    "theme": "Quality Education"
+  }
+}
