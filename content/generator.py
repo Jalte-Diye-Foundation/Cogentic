@@ -44,13 +44,20 @@ class ContentGenerator:
         return self._client
 
     def get_recent_quotes(self) -> list[str]:
-        """Load recently generated quotes to avoid repetition."""
-        metadata_dir = os.path.join(self._project_root, "output")
+        """Load recently generated quotes to avoid repetition.
+
+        Reads from website_assets/archive, which is committed back to the
+        repo every day by the workflow. The local output/ folder is NOT
+        committed, so a fresh checkout always sees it empty — using it
+        here meant Gemini had no real memory of what was posted before,
+        which is part of why quotes were repeating across days.
+        """
+        archive_dir = os.path.join(self._project_root, "website_assets", "archive")
         quotes = []
 
-        if os.path.exists(metadata_dir):
+        if os.path.exists(archive_dir):
             files = sorted(
-                glob.glob(os.path.join(metadata_dir, "*", "metadata.json"))
+                glob.glob(os.path.join(archive_dir, "*", "metadata.json"))
             )
 
             for file in files[-15:]:
