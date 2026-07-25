@@ -1,28 +1,518 @@
 {
+  "01-01": {
+    "event": "New Year's Day",
+    "theme": "Foundation Events",
+    "csv_row": "New Year's Day"
+  },
+  "01-04": {
+    "event": "World Braille Day",
+    "theme": "Foundation Events",
+    "csv_row": "World Braille Day"
+  },
+  "01-10": {
+    "event": "World Hindi Day",
+    "theme": "Foundation Events",
+    "csv_row": "World Hindi Day"
+  },
+  "01-12": {
+    "event": "National Youth Day",
+    "theme": "Foundation Events",
+    "csv_row": "National Youth Day"
+  },
+  "01-13": {
+    "event": "Lohri",
+    "theme": "Foundation Events",
+    "csv_row": "Lohri"
+  },
+  "01-14": {
+    "event": "Makar Sankranti",
+    "theme": "Foundation Events",
+    "csv_row": "Makar Sankranti"
+  },
+  "01-23": {
+    "event": "Vasant Panchami",
+    "theme": "Foundation Events",
+    "csv_row": "Vasant Panchami"
+  },
+  "01-24": {
+    "event": "National Girl Child Day",
+    "theme": "Foundation Events",
+    "csv_row": "National Girl Child Day"
+  },
+  "01-25": {
+    "event": "National Voters Day",
+    "theme": "Foundation Events",
+    "csv_row": "National Voters Day"
+  },
   "01-26": {
     "event": "Republic Day",
     "theme": "Foundation Events",
     "csv_row": "Republic Day"
   },
+  "01-30": {
+    "event": "Martyrs' Day",
+    "theme": "Foundation Events",
+    "csv_row": "Martyrs' Day"
+  },
+  "02-02": {
+    "event": "World Wetlands Day",
+    "theme": "Foundation Events",
+    "csv_row": "World Wetlands Day"
+  },
+  "02-04": {
+    "event": "World Cancer Day",
+    "theme": "Foundation Events",
+    "csv_row": "World Cancer Day"
+  },
+  "02-11": {
+    "event": "International Day of Women and Girls in Science",
+    "theme": "Foundation Events",
+    "csv_row": "International Day of Women and Girls in Science"
+  },
+  "02-15": {
+    "event": "Maha Shivratri",
+    "theme": "Foundation Events",
+    "csv_row": "Maha Shivratri"
+  },
+  "02-20": {
+    "event": "World Day of Social Justice",
+    "theme": "Foundation Events",
+    "csv_row": "World Day of Social Justice"
+  },
+  "02-21": {
+    "event": "International Mother Language Day",
+    "theme": "Foundation Events",
+    "csv_row": "International Mother Language Day"
+  },
+  "02-28": {
+    "event": "National Science Day",
+    "theme": "Foundation Events",
+    "csv_row": "National Science Day"
+  },
+  "03-01": {
+    "event": "Zero Discrimination Day",
+    "theme": "Foundation Events",
+    "csv_row": "Zero Discrimination Day"
+  },
+  "03-03": {
+    "event": "World Wildlife Day",
+    "theme": "Foundation Events",
+    "csv_row": "World Wildlife Day"
+  },
+  "03-04": {
+    "event": "Holi",
+    "theme": "Foundation Events",
+    "csv_row": "Holi"
+  },
   "03-08": {
     "event": "International Women's Day",
     "theme": "Women Empowerment"
+  },
+  "03-15": {
+    "event": "World Consumer Rights Day",
+    "theme": "Foundation Events",
+    "csv_row": "World Consumer Rights Day"
+  },
+  "03-19": {
+    "event": "Gudi Padwa / Ugadi",
+    "theme": "Foundation Events",
+    "csv_row": "Gudi Padwa / Ugadi"
+  },
+  "03-20": {
+    "event": "International Day of Happiness",
+    "theme": "Foundation Events",
+    "csv_row": "International Day of Happiness"
+  },
+  "03-21": {
+    "event": "Eid-ul-Fitr",
+    "theme": "Foundation Events",
+    "csv_row": "Eid-ul-Fitr"
+  },
+  "03-22": {
+    "event": "World Water Day",
+    "theme": "Foundation Events",
+    "csv_row": "World Water Day"
+  },
+  "03-24": {
+    "event": "World Tuberculosis Day",
+    "theme": "Foundation Events",
+    "csv_row": "World Tuberculosis Day"
+  },
+  "03-26": {
+    "event": "Ram Navami",
+    "theme": "Foundation Events",
+    "csv_row": "Ram Navami"
+  },
+  "03-31": {
+    "event": "Mahavir Jayanti",
+    "theme": "Foundation Events",
+    "csv_row": "Mahavir Jayanti"
+  },
+  "04-02": {
+    "event": "World Autism Awareness Day",
+    "theme": "Foundation Events",
+    "csv_row": "World Autism Awareness Day"
+  },
+  "04-03": {
+    "event": "Good Friday",
+    "theme": "Foundation Events",
+    "csv_row": "Good Friday"
+  },
+  "04-07": {
+    "event": "World Health Day",
+    "theme": "Foundation Events",
+    "csv_row": "World Health Day"
+  },
+  "04-14": {
+    "event": "Ambedkar Jayanti",
+    "theme": "Foundation Events",
+    "csv_row": "Ambedkar Jayanti"
+  },
+  "04-19": {
+    "event": "Akshaya Tritiya",
+    "theme": "Foundation Events",
+    "csv_row": "Akshaya Tritiya"
   },
   "04-22": {
     "event": "Earth Day",
     "theme": "Climate & Environment"
   },
+  "04-23": {
+    "event": "World Book Day",
+    "theme": "Foundation Events",
+    "csv_row": "World Book Day"
+  },
+  "04-25": {
+    "event": "World Malaria Day",
+    "theme": "Foundation Events",
+    "csv_row": "World Malaria Day"
+  },
+  "05-01": {
+    "event": "Labour Day",
+    "theme": "Foundation Events",
+    "csv_row": "Labour Day"
+  },
+  "05-03": {
+    "event": "World Press Freedom Day",
+    "theme": "Foundation Events",
+    "csv_row": "World Press Freedom Day"
+  },
+  "05-08": {
+    "event": "World Red Cross Day",
+    "theme": "Foundation Events",
+    "csv_row": "World Red Cross Day"
+  },
+  "05-11": {
+    "event": "National Technology Day",
+    "theme": "Foundation Events",
+    "csv_row": "National Technology Day"
+  },
+  "05-12": {
+    "event": "International Nurses Day",
+    "theme": "Foundation Events",
+    "csv_row": "International Nurses Day"
+  },
+  "05-15": {
+    "event": "International Day of Families",
+    "theme": "Foundation Events",
+    "csv_row": "International Day of Families"
+  },
+  "05-22": {
+    "event": "International Day for Biological Diversity",
+    "theme": "Foundation Events",
+    "csv_row": "International Day for Biological Diversity"
+  },
+  "05-27": {
+    "event": "Eid al-Adha (Bakrid)",
+    "theme": "Foundation Events",
+    "csv_row": "Eid al-Adha (Bakrid)"
+  },
+  "05-31": {
+    "event": "World No Tobacco Day",
+    "theme": "Foundation Events",
+    "csv_row": "World No Tobacco Day"
+  },
+  "06-01": {
+    "event": "Global Day of Parents",
+    "theme": "Foundation Events",
+    "csv_row": "Global Day of Parents"
+  },
+  "06-05": {
+    "event": "World Environment Day",
+    "theme": "Foundation Events",
+    "csv_row": "World Environment Day"
+  },
+  "06-08": {
+    "event": "World Oceans Day",
+    "theme": "Foundation Events",
+    "csv_row": "World Oceans Day"
+  },
+  "06-12": {
+    "event": "World Day Against Child Labour",
+    "theme": "Foundation Events",
+    "csv_row": "World Day Against Child Labour"
+  },
+  "06-14": {
+    "event": "World Blood Donor Day",
+    "theme": "Foundation Events",
+    "csv_row": "World Blood Donor Day"
+  },
   "06-21": {
     "event": "International Yoga Day",
     "theme": "Health & Mindfulness"
+  },
+  "06-26": {
+    "event": "International Day Against Drug Abuse",
+    "theme": "Foundation Events",
+    "csv_row": "International Day Against Drug Abuse"
+  },
+  "07-01": {
+    "event": "National Doctors Day",
+    "theme": "Foundation Events",
+    "csv_row": "National Doctors Day"
+  },
+  "07-11": {
+    "event": "World Population Day",
+    "theme": "Foundation Events",
+    "csv_row": "World Population Day"
+  },
+  "07-15": {
+    "event": "World Youth Skills Day",
+    "theme": "Foundation Events",
+    "csv_row": "World Youth Skills Day"
+  },
+  "07-18": {
+    "event": "Nelson Mandela Day",
+    "theme": "Foundation Events",
+    "csv_row": "Nelson Mandela Day"
+  },
+  "07-28": {
+    "event": "World Hepatitis Day",
+    "theme": "Foundation Events",
+    "csv_row": "World Hepatitis Day"
+  },
+  "07-30": {
+    "event": "International Friendship Day",
+    "theme": "Foundation Events",
+    "csv_row": "International Friendship Day"
+  },
+  "08-09": {
+    "event": "International Day of Indigenous Peoples",
+    "theme": "Foundation Events",
+    "csv_row": "International Day of Indigenous Peoples"
+  },
+  "08-12": {
+    "event": "International Youth Day",
+    "theme": "Foundation Events",
+    "csv_row": "International Youth Day"
   },
   "08-15": {
     "event": "Independence Day",
     "theme": "Foundation Events",
     "csv_row": "Independence Day"
   },
+  "08-19": {
+    "event": "World Humanitarian Day",
+    "theme": "Foundation Events",
+    "csv_row": "World Humanitarian Day"
+  },
+  "08-28": {
+    "event": "Raksha Bandhan",
+    "theme": "Foundation Events",
+    "csv_row": "Raksha Bandhan"
+  },
+  "08-29": {
+    "event": "National Sports Day",
+    "theme": "Foundation Events",
+    "csv_row": "National Sports Day"
+  },
+  "09-04": {
+    "event": "Janmashtami",
+    "theme": "Foundation Events",
+    "csv_row": "Janmashtami"
+  },
   "09-05": {
     "event": "Teacher's Day",
     "theme": "Quality Education"
+  },
+  "09-08": {
+    "event": "International Literacy Day",
+    "theme": "Foundation Events",
+    "csv_row": "International Literacy Day"
+  },
+  "09-10": {
+    "event": "World Suicide Prevention Day",
+    "theme": "Foundation Events",
+    "csv_row": "World Suicide Prevention Day"
+  },
+  "09-14": {
+    "event": "Ganesh Chaturthi",
+    "theme": "Foundation Events",
+    "csv_row": "Ganesh Chaturthi"
+  },
+  "09-15": {
+    "event": "International Day of Democracy",
+    "theme": "Foundation Events",
+    "csv_row": "International Day of Democracy"
+  },
+  "09-16": {
+    "event": "World Ozone Day",
+    "theme": "Foundation Events",
+    "csv_row": "World Ozone Day"
+  },
+  "09-21": {
+    "event": "International Day of Peace",
+    "theme": "Foundation Events",
+    "csv_row": "International Day of Peace"
+  },
+  "09-28": {
+    "event": "Right to Know Day",
+    "theme": "Foundation Events",
+    "csv_row": "Right to Know Day"
+  },
+  "10-01": {
+    "event": "International Day of Older Persons",
+    "theme": "Foundation Events",
+    "csv_row": "International Day of Older Persons"
+  },
+  "10-02": {
+    "event": "Gandhi Jayanti / International Day of Non-Violence",
+    "theme": "Foundation Events",
+    "csv_row": "Gandhi Jayanti / International Day of Non-Violence"
+  },
+  "10-05": {
+    "event": "World Teachers' Day",
+    "theme": "Foundation Events",
+    "csv_row": "World Teachers' Day"
+  },
+  "10-10": {
+    "event": "World Mental Health Day",
+    "theme": "Foundation Events",
+    "csv_row": "World Mental Health Day"
+  },
+  "10-11": {
+    "event": "International Day of the Girl Child",
+    "theme": "Foundation Events",
+    "csv_row": "International Day of the Girl Child"
+  },
+  "10-13": {
+    "event": "International Day for Disaster Risk Reduction",
+    "theme": "Foundation Events",
+    "csv_row": "International Day for Disaster Risk Reduction"
+  },
+  "10-15": {
+    "event": "Global Handwashing Day",
+    "theme": "Foundation Events",
+    "csv_row": "Global Handwashing Day"
+  },
+  "10-16": {
+    "event": "World Food Day",
+    "theme": "Foundation Events",
+    "csv_row": "World Food Day"
+  },
+  "10-20": {
+    "event": "Dussehra",
+    "theme": "Foundation Events",
+    "csv_row": "Dussehra"
+  },
+  "10-24": {
+    "event": "United Nations Day",
+    "theme": "Foundation Events",
+    "csv_row": "United Nations Day"
+  },
+  "11-08": {
+    "event": "Diwali",
+    "theme": "Foundation Events",
+    "csv_row": "Diwali"
+  },
+  "11-09": {
+    "event": "Govardhan Puja",
+    "theme": "Foundation Events",
+    "csv_row": "Govardhan Puja"
+  },
+  "11-10": {
+    "event": "World Science Day for Peace and Development",
+    "theme": "Foundation Events",
+    "csv_row": "World Science Day for Peace and Development"
+  },
+  "11-11": {
+    "event": "Bhai Dooj",
+    "theme": "Foundation Events",
+    "csv_row": "Bhai Dooj"
+  },
+  "11-14": {
+    "event": "Children's Day",
+    "theme": "Foundation Events",
+    "csv_row": "Children's Day"
+  },
+  "11-16": {
+    "event": "International Day for Tolerance",
+    "theme": "Foundation Events",
+    "csv_row": "International Day for Tolerance"
+  },
+  "11-19": {
+    "event": "World Toilet Day",
+    "theme": "Foundation Events",
+    "csv_row": "World Toilet Day"
+  },
+  "11-20": {
+    "event": "Universal Children's Day",
+    "theme": "Foundation Events",
+    "csv_row": "Universal Children's Day"
+  },
+  "11-24": {
+    "event": "Guru Nanak Jayanti",
+    "theme": "Foundation Events",
+    "csv_row": "Guru Nanak Jayanti"
+  },
+  "11-25": {
+    "event": "International Day for Elimination of Violence Against Women",
+    "theme": "Foundation Events",
+    "csv_row": "International Day for Elimination of Violence Against Women"
+  },
+  "11-26": {
+    "event": "Constitution Day",
+    "theme": "Foundation Events",
+    "csv_row": "Constitution Day"
+  },
+  "12-01": {
+    "event": "World AIDS Day",
+    "theme": "Foundation Events",
+    "csv_row": "World AIDS Day"
+  },
+  "12-03": {
+    "event": "International Day of Persons with Disabilities",
+    "theme": "Foundation Events",
+    "csv_row": "International Day of Persons with Disabilities"
+  },
+  "12-05": {
+    "event": "International Volunteer Day",
+    "theme": "Foundation Events",
+    "csv_row": "International Volunteer Day"
+  },
+  "12-10": {
+    "event": "Human Rights Day",
+    "theme": "Foundation Events",
+    "csv_row": "Human Rights Day"
+  },
+  "12-11": {
+    "event": "International Mountain Day",
+    "theme": "Foundation Events",
+    "csv_row": "International Mountain Day"
+  },
+  "12-14": {
+    "event": "National Energy Conservation Day",
+    "theme": "Foundation Events",
+    "csv_row": "National Energy Conservation Day"
+  },
+  "12-20": {
+    "event": "International Human Solidarity Day",
+    "theme": "Foundation Events",
+    "csv_row": "International Human Solidarity Day"
+  },
+  "12-25": {
+    "event": "Christmas",
+    "theme": "Foundation Events",
+    "csv_row": "Christmas"
   }
 }
