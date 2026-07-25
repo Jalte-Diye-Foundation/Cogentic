@@ -50,8 +50,8 @@ def setup_logging(log_file: str) -> None:
     root_logger.addHandler(stream_handler)
 
 def load_events(project_root: str) -> dict:
-    """Load events from config/events.json."""
-    events_file = os.path.join(project_root, "config", "events.json")
+    """Load events from events.json (repo root)."""
+    events_file = os.path.join(project_root, "events.json")
 
     if not os.path.exists(events_file):
         return {}
