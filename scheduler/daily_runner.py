@@ -82,15 +82,22 @@ def select_theme(config: dict[str, Any], project_root: str):
     # Normal theme rotation
     themes = list(config["themes"].keys())
 
-    output_dir = os.path.join(project_root, config["paths"]["output_dir"])
+    # Read recent theme history from website_assets/archive, which IS
+    # committed back to the repo by the daily workflow. The local
+    # output/ folder is NOT committed, so a fresh checkout always saw
+    # it empty (aside from one leftover folder from initial setup) —
+    # meaning this "avoid repeating the last 5 themes" safeguard never
+    # actually worked, and theme (and therefore background) repeats
+    # were just down to unprotected random chance among 6 options.
+    archive_dir = os.path.join(project_root, "website_assets", "archive")
 
     recent_themes = []
 
-    if os.path.exists(output_dir):
-        folders = sorted(os.listdir(output_dir))
+    if os.path.exists(archive_dir):
+        folders = sorted(os.listdir(archive_dir))
 
         for folder in folders[-5:]:
-            metadata_path = os.path.join(output_dir, folder, "metadata.json")
+            metadata_path = os.path.join(archive_dir, folder, "metadata.json")
 
             if os.path.exists(metadata_path):
                 try:
