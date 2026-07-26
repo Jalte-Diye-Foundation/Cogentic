@@ -71,6 +71,18 @@ def update_website_assets(
         handle.write("\n")
     logger.info("Website metadata written: %s", metadata_path)
 
+    # Also save metadata.json alongside the archived poster for this date.
+    # Without this, website_assets/archive/<date>/ only ever had the
+    # image — both get_recent_quotes() and select_theme() read
+    # metadata.json from here to give the pipeline real memory of past
+    # posts, so this folder being image-only meant that memory was
+    # always empty.
+    archive_metadata_path = os.path.join(archive_dir, website_config["metadata_filename"])
+    with open(archive_metadata_path, "w", encoding="utf-8") as handle:
+        json.dump(metadata, handle, indent=2, ensure_ascii=False)
+        handle.write("\n")
+    logger.info("Archived metadata written: %s", archive_metadata_path)
+
     return {
         "poster_path": poster_dest,
         "metadata_path": metadata_path,
