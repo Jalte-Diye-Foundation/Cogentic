@@ -49,7 +49,7 @@ class FallbackProvider:
     def _resolve_path(self, relative_path: str) -> str:
         return os.path.join(self._project_root, relative_path)
 
-    def get_fallback_quote(self, theme: str) -> dict[str, str]:
+    def get_fallback_quote(self, theme: str, event: dict | None = None) -> dict[str, str]:
         """Pull an unused quote from the CSV mapped to the given theme."""
         logger.warning("Triggering CSV fallback for theme: %s", theme)
         theme_config = self._config["themes"].get(theme)
@@ -63,7 +63,8 @@ class FallbackProvider:
             return self._emergency_failsafe()
 
         used_quotes = load_used_quotes(self._used_quotes_log)
-        fallback_content = self._read_unused_csv_quote(csv_file, used_quotes)
+        event_name = event["event"] if event else None
+        fallback_content = self._read_unused_csv_quote(csv_file, used_quotes, event_name)
         if fallback_content:
             mark_quote_used(fallback_content["quote"], self._used_quotes_log)
             logger.info("Retrieved fallback quote from CSV: %s", csv_file)
@@ -73,7 +74,7 @@ class FallbackProvider:
         return self._emergency_failsafe()
 
     def _read_unused_csv_quote(
-        self, csv_file: str, used_quotes: set[str]
+        self, csv_file: str, used_quotes: set[str], event_name: str | None = None
     ) -> dict[str, str] | None:
         with open(csv_file, "r", encoding="utf-8-sig") as handle:
             reader = csv.reader(handle)
@@ -87,22 +88,41 @@ class FallbackProvider:
             caption_idx = headers.index("caption") if "caption" in headers else -1
             occasion_idx = headers.index("occasion") if "occasion" in headers else -1
 
-            for row in reader:
-                if not row or quote_idx == -1 or len(row) <= quote_idx:
-                    continue
+            all_rows = list(reader)
 
-                row_quote = row[quote_idx].strip()
-                row_explanation = ""
-                if caption_idx != -1 and len(row) > caption_idx:
-                    row_explanation = row[caption_idx].strip()
-                elif occasion_idx != -1 and len(row) > occasion_idx:
-                    row_explanation = f"Observing {row[occasion_idx].strip()}."
+        # When today has a specific event, only use rows whose occasion matches it
+        if event_name and occasion_idx != -1:
+            candidate_rows = [
+                r for r in all_rows
+                if len(r) > occasion_idx and r[occasion_idx].strip().lower() == event_name.lower()
+            ]
+            # Fall back to any row if no occasion-matched rows exist
+            if not candidate_rows:
+                logger.warning("No CSV rows for event '%s'; using generic fallback row.", event_name)
+                candidate_rows = all_rows
+        else:
+            candidate_rows = all_rows
 
-                if row_quote and row_quote not in used_quotes:
-                    return {
-                        "quote": row_quote.replace('"', ""),
-                        "explanation": row_explanation.replace('"', ""),
-                    }
+        for row in candidate_rows:
+            if not row or quote_idx == -1 or len(row) <= quote_idx:
+                continue
+
+            row_quote = row[quote_idx].strip()
+            row_explanation = ""
+            if caption_idx != -1 and len(row) > caption_idx:
+                row_explanation = row[caption_idx].strip()
+            elif occasion_idx != -1 and len(row) > occasion_idx:
+                # Only use the occasion label if it matches today's event
+                occasion_val = row[occasion_idx].strip()
+                if event_name and occasion_val.lower() == event_name.lower():
+                    row_explanation = f"Observing {occasion_val}."
+
+            if row_quote and row_quote not in used_quotes:
+                return {
+                    "quote": row_quote.replace('"', ""),
+                    "explanation": row_explanation.replace('"', ""),
+                    "long_explanation": "",
+                }
         return None
 
     def _emergency_failsafe(self) -> dict[str, str]:
@@ -110,4 +130,5 @@ class FallbackProvider:
         return {
             "quote": self._emergency["quote"],
             "explanation": self._emergency["explanation"],
+            "long_explanation": "",
         }

@@ -203,14 +203,14 @@ def generate_with_evaluation(
             "Failed to generate acceptable content after %s attempts; using CSV fallback.",
             max_retries,
         )
-        content = fallback.get_fallback_quote(theme)
+        content = fallback.get_fallback_quote(theme, today_event)
         source = "csv_fallback"
         return content, source
 
     except Exception as exc:
         logger.error("Pipeline error during generation/evaluation: %s", exc)
         logger.error("Traceback:\n%s", traceback.format_exc())
-        content = fallback.get_fallback_quote(theme)
+        content = fallback.get_fallback_quote(theme, today_event)
         source = "csv_fallback_error"
         return content, source
 

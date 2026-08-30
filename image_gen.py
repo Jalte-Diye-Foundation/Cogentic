@@ -8,28 +8,28 @@ THEME_REGISTRY = {
         "explanation_color": "#166534",
         "quote_align": "RIGHT",
         "expl_align": "LEFT",
-        "margin_left_ratio": 0.22,
-        "margin_right_ratio": 0.26,
-        "center_zone_top_ratio": 0.20,
-        "center_zone_bottom_ratio": 0.55,
+        "margin_left_ratio": 0.18,
+        "margin_right_ratio": 0.17,
+        "center_zone_top_ratio": 0.40,
+        "center_zone_bottom_ratio": 0.45,
     },
     "Health & Mindfulness": {
         "quote_color": "#8c6239",
-        "explanation_color": "#a17850",
+        "explanation_color": "#74410f",
         "quote_align": "RIGHT",
         "expl_align": "LEFT",
-        "margin_left_ratio": 0.20,
-        "margin_right_ratio": 0.20,
+        "margin_left_ratio": 0.17,
+        "margin_right_ratio": 0.17,
         "center_zone_top_ratio": 0.25,
         "center_zone_bottom_ratio": 0.46,
     },
     "Women Empowerment": {
         "quote_color": "#dd1c4b",
         "explanation_color": "#b9123c",
-        "quote_align": "CENTER",        # <-- CENTER
+        "quote_align": "RIGHT",        
         "expl_align": "LEFT",
-        "margin_left_ratio": 0.24,
-        "margin_right_ratio": 0.22,
+        "margin_left_ratio": 0.17,
+        "margin_right_ratio": 0.18,
         "center_zone_top_ratio": 0.30,
         "center_zone_bottom_ratio": 0.75,
     },
@@ -38,60 +38,62 @@ THEME_REGISTRY = {
         "explanation_color": "#b91c1c",
         "quote_align": "LEFT",
         "expl_align": "RIGHT",
-        "margin_left_ratio": 0.22,
-        "margin_right_ratio": 0.22,
+        "margin_left_ratio": 0.17,
+        "margin_right_ratio": 0.17,
         "center_zone_top_ratio": 0.38,
         "center_zone_bottom_ratio": 0.74,
     },
     "Quality Education": {
         "quote_color": "#b91c1c",
         "explanation_color": "#b91c1c",
-        "quote_align": "CENTER",        # <-- CENTER
+        "quote_align": "LEFT",        # <-- CENTER
         "expl_align": "RIGHT",
-        "margin_left_ratio": 0.22,
-        "margin_right_ratio": 0.22,
-        "center_zone_top_ratio": 0.25,
-        "center_zone_bottom_ratio": 0.74,
+        "margin_left_ratio": 0.18,
+        "margin_right_ratio": 0.17,
+        "center_zone_top_ratio": 0.30,
+        "center_zone_bottom_ratio": 0.45,
     },
     "Peace & Justice": {
         "quote_color": "#00689d",
         "explanation_color": "#005580",
         "quote_align": "LEFT",
         "expl_align": "RIGHT",
-        "margin_left_ratio": 0.25,
-        "margin_right_ratio": 0.24,
-        "center_zone_top_ratio": 0.20,
-        "center_zone_bottom_ratio": 0.55,
+        "margin_left_ratio": 0.17,
+        "margin_right_ratio": 0.18,
+        "center_zone_top_ratio": 0.40,
+        "center_zone_bottom_ratio": 0.45,
     },
     "Foundation Events": {
         "quote_color": "#8c6239",
-        "explanation_color": "#a17850",
+        "explanation_color": "#74410f",
         "quote_align": "RIGHT",
         "expl_align": "LEFT",
-        "margin_left_ratio": 0.20,
-        "margin_right_ratio": 0.20,
+        "margin_left_ratio": 0.17,
+        "margin_right_ratio": 0.17,
         "center_zone_top_ratio": 0.25,
         "center_zone_bottom_ratio": 0.46,
     },
     "jdf_general": {
         "quote_color": "#8c6239",
-        "explanation_color": "#a17850",
+        "explanation_color": "#74410f",
         "quote_align": "RIGHT",
         "expl_align": "LEFT",
-        "margin_left_ratio": 0.20,
-        "margin_right_ratio": 0.20,
+        "margin_left_ratio": 0.17,
+        "margin_right_ratio": 0.17,
         "center_zone_top_ratio": 0.25,
         "center_zone_bottom_ratio": 0.46,
     },
 }
 
 GLOBAL_LAYOUT = {
-    "font_name": "Raleway-ExtraLight.ttf",
-    "quote_font_size": 48,
-    "explanation_font_size": 26,
-    "explanation_font_weight": 300,
-    "line_spacing": 12,
-    "block_gap": 35,
+    "font_name": "Raleway-VariableFont_wght.ttf",
+    "quote_font_weight": 300,
+    "explanation_font_name": "Poppins-ExtraLight.ttf",  # variable font required for weight changes
+    "quote_font_size": 38,
+    "explanation_font_size": 28,
+    "explanation_font_weight": 200,
+    "line_spacing": 5,
+    "block_gap": 3,
 }
 
 def load_font(font_name, size, weight=None):
@@ -177,16 +179,17 @@ def render_output_image(bg_image_path, quote_text, explanation_text, theme=None,
     print(f"🖼️ Image size: {W}x{H}")  # debug
 
     # Responsive font sizes
-    quote_size = max(48, int(H * 0.05))
-    explanation_size = max(26, int(H * 0.027))
+    quote_size = max(40, int(H * 0.043))
+    explanation_size = max(28, int(H * 0.020))
 
     quote_font = load_font(
         GLOBAL_LAYOUT["font_name"],
-        quote_size
+        quote_size,
+        GLOBAL_LAYOUT["quote_font_weight"]
     )
 
     explanation_font = load_font(
-        GLOBAL_LAYOUT["font_name"],
+        GLOBAL_LAYOUT["explanation_font_name"],
         explanation_size,
         GLOBAL_LAYOUT["explanation_font_weight"]
     )
@@ -205,12 +208,15 @@ def render_output_image(bg_image_path, quote_text, explanation_text, theme=None,
     expl_block_h = block_height(expl_lines, explanation_font, draw, line_spacing)
     total_content_h = quote_block_h + block_gap + expl_block_h
 
-    zone_top = int(H * cfg["center_zone_top_ratio"])
-    zone_bottom = int(H * cfg["center_zone_bottom_ratio"])
-    zone_height = zone_bottom - zone_top
-    print(f"📦 Zone: top={zone_top}, bottom={zone_bottom}")
+    # Vertically center the combined text block in the full image regardless of content length
+    y_cursor = max(0, (H - total_content_h) // 2)
+    print(f"📦 Centered block: y_start={y_cursor}, total_h={total_content_h}")
 
-    y_cursor = zone_top + max(0, (zone_height - total_content_h) // 2)
+    # Set DEBUG_LAYOUT=1 to draw center line and margin guides on the output image
+    if os.environ.get("DEBUG_LAYOUT") == "1":
+        draw.line([(0, H // 2), (W, H // 2)], fill="red", width=2)
+        draw.line([(margin_left, 0), (margin_left, H)], fill="blue", width=2)
+        draw.line([(W - margin_right, 0), (W - margin_right, H)], fill="blue", width=2)
 
     # Draw quote (supports LEFT, CENTER, RIGHT)
     if quote_lines:
@@ -232,6 +238,9 @@ def render_output_image(bg_image_path, quote_text, explanation_text, theme=None,
         for line in expl_lines:
             if cfg["expl_align"] == "LEFT":
                 x_pos = margin_left
+            elif cfg["expl_align"] == "CENTER":
+                line_w = measure_text_width(line, explanation_font, draw)
+                x_pos = (W - line_w) // 2
             else:  # RIGHT
                 line_w = measure_text_width(line, explanation_font, draw)
                 x_pos = W - margin_right - line_w

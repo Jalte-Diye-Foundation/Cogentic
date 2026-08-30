@@ -120,9 +120,14 @@ Requirements:
 - Never repeat sentence structure.
 - Generate ONE inspirational quote.
 - Quote length: 10–20 words.
-- Generate ONE explanation.
+- Generate ONE short explanation (for the image).
 - Exactly two sentences.
 - Maximum 35 words.
+- Generate ONE detailed explanation (for the webpage).
+- 8 to 10 sentences.
+- 150 to 200 words.
+- Conversational, insightful, blog-style writing.
+- Expands on the quote and theme with real-world relevance.
 - Generate 4–6 hashtags.
 
 Return ONLY JSON.
@@ -130,6 +135,7 @@ Return ONLY JSON.
 {{
     "quote": "",
     "explanation": "",
+    "long_explanation": "",
     "hashtags": []
 }}
 """
@@ -146,6 +152,7 @@ Return ONLY JSON.
 
             quote = str(parsed.get("quote", "")).strip()
             explanation = str(parsed.get("explanation", "")).strip()
+            long_explanation = str(parsed.get("long_explanation", "")).strip()
 
             # Safety limit for quote (maximum 20 words)
             quote_words = quote.split()
@@ -156,6 +163,11 @@ Return ONLY JSON.
             explanation_words = explanation.split()
             if len(explanation_words) > 35:
                 explanation = " ".join(explanation_words[:35])
+
+            # Safety limit for long_explanation (maximum 220 words)
+            long_expl_words = long_explanation.split()
+            if len(long_expl_words) > 220:
+                long_explanation = " ".join(long_expl_words[:220])
 
             if not quote or not explanation:
                 raise ValueError(
@@ -179,6 +191,7 @@ Return ONLY JSON.
             return {
                 "quote": quote,
                 "explanation": explanation,
+                "long_explanation": long_explanation,
                 "caption": caption,
                 "hashtags": hashtags,
             }

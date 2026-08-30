@@ -59,6 +59,7 @@ def update_website_assets(
         "explanation": content.get(
             "explanation", pipeline_result.get("explanation", "")
         ),
+        "long_explanation": content.get("long_explanation", ""),
         "caption": content.get("caption", ""),
         "hashtags": content.get("hashtags", []),
         "image": website_config["image_url_path"],
