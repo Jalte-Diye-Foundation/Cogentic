@@ -6,10 +6,20 @@ import json
 import logging
 import os
 import shutil
-from datetime import date
+from datetime import datetime, timezone, timedelta
 from typing import Any
 
 logger = logging.getLogger(__name__)
+
+
+def get_ist_date_str() -> str:
+    """Return the current IST date in YYYY-MM-DD format."""
+    try:
+        import zoneinfo
+        return datetime.now(zoneinfo.ZoneInfo("Asia/Kolkata")).strftime("%Y-%m-%d")
+    except Exception:
+        ist_tz = timezone(timedelta(hours=5, minutes=30))
+        return datetime.now(ist_tz).strftime("%Y-%m-%d")
 
 
 def load_config(config_path: str) -> dict[str, Any]:
@@ -43,7 +53,7 @@ def update_website_assets(
     shutil.copy2(poster_source, poster_dest)
     logger.info("Website asset updated: %s -> %s", poster_source, poster_dest)
 
-    today_str = date.today().isoformat()
+    today_str = pipeline_result.get("date") or get_ist_date_str()
     archive_dir = os.path.join(project_root, "website_assets", "archive", today_str)
     os.makedirs(archive_dir, exist_ok=True)
     archive_dest = os.path.join(archive_dir, website_config["poster_filename"])
@@ -51,18 +61,18 @@ def update_website_assets(
     logger.info("Website asset archived: %s -> %s", poster_source, archive_dest)
 
     content = pipeline_result.get("content", {})
-    today = date.today().isoformat()
     metadata = {
-        "date": today,
+        "date": today_str,
         "theme": pipeline_result.get("theme", ""),
         "quote": content.get("quote", pipeline_result.get("quote", "")),
         "explanation": content.get(
             "explanation", pipeline_result.get("explanation", "")
         ),
-        "caption": content.get("caption", ""),
-        "hashtags": content.get("hashtags", []),
+        "caption": content.get("caption", pipeline_result.get("caption", "")),
+        "hashtags": content.get("hashtags", pipeline_result.get("hashtags", [])),
         "image": website_config["image_url_path"],
         "source": website_config["source_label"],
+        "event": pipeline_result.get("event"),
     }
 
     metadata_path = os.path.join(latest_dir, website_config["metadata_filename"])
@@ -71,12 +81,7 @@ def update_website_assets(
         handle.write("\n")
     logger.info("Website metadata written: %s", metadata_path)
 
-    # Also save metadata.json alongside the archived poster for this date.
-    # Without this, website_assets/archive/<date>/ only ever had the
-    # image — both get_recent_quotes() and select_theme() read
-    # metadata.json from here to give the pipeline real memory of past
-    # posts, so this folder being image-only meant that memory was
-    # always empty.
+    # Also save metadata.json alongside the archived poster for this date
     archive_metadata_path = os.path.join(archive_dir, website_config["metadata_filename"])
     with open(archive_metadata_path, "w", encoding="utf-8") as handle:
         json.dump(metadata, handle, indent=2, ensure_ascii=False)
@@ -108,17 +113,29 @@ def main() -> None:
         ],
     )
 
-    today = date.today().isoformat()
+    today = get_ist_date_str()
     output_dir = os.path.join(project_root, config["paths"]["output_dir"], today)
     poster_filename = config["poster"]["output_filename"]
     poster_path = os.path.join(output_dir, poster_filename)
     metadata_sidecar = os.path.join(output_dir, "metadata.json")
 
+    # If today's output folder doesn't exist yet, check the most recent output folder
+    if not os.path.exists(poster_path):
+        base_output = os.path.join(project_root, config["paths"]["output_dir"])
+        if os.path.exists(base_output):
+            subdirs = sorted([d for d in os.listdir(base_output) if os.path.isdir(os.path.join(base_output, d))])
+            if subdirs:
+                latest_subdir = subdirs[-1]
+                output_dir = os.path.join(base_output, latest_subdir)
+                poster_path = os.path.join(output_dir, poster_filename)
+                metadata_sidecar = os.path.join(output_dir, "metadata.json")
+                today = latest_subdir
+
     if not os.path.exists(poster_path):
         logger.error("Poster not found for website update: %s", poster_path)
         sys.exit(1)
 
-    pipeline_result: dict[str, Any] = {"poster_path": poster_path, "theme": ""}
+    pipeline_result: dict[str, Any] = {"poster_path": poster_path, "theme": "", "date": today}
     if os.path.exists(metadata_sidecar):
         with open(metadata_sidecar, "r", encoding="utf-8") as handle:
             sidecar = json.load(handle)

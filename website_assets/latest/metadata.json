@@ -1,10 +1,14 @@
 {
   "date": "2026-08-30",
   "theme": "Peace & Justice",
-  "quote": "Where understanding grows war finds no soil.",
-  "explanation": "Hatred is a weed it cannot survive where empathy has already taken root.",
-  "caption": "Where understanding grows war finds no soil.\n\nHatred is a weed it cannot survive where empathy has already taken root.",
-  "hashtags": "#Cogentic #JalteDiyeFoundation",
+  "quote": "Peace begins with a smile.",
+  "explanation": "A simple smile can break walls.",
+  "caption": "Peace begins with a smile.\n\nA simple smile can break walls.",
+  "hashtags": [
+    "#Peace",
+    "#Cogentic"
+  ],
   "image": "latest/poster.jpg",
-  "source": "Cogentic AI"
+  "source": "Cogentic AI",
+  "event": null
 }
