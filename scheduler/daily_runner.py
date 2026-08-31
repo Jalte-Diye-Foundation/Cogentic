@@ -6,6 +6,7 @@ import json
 import logging
 import os
 import random
+import shutil
 import time
 import traceback
 from datetime import date, datetime
@@ -215,6 +216,76 @@ def generate_with_evaluation(
         return content, source
 
 
+def reuse_existing_daily_content(
+    config: dict[str, Any],
+    project_root: str,
+    today: str,
+) -> dict[str, Any] | None:
+    """Reuse a dated poster and mark its quote used before contacting Gemini."""
+    output_dir = os.path.join(project_root, config["paths"]["output_dir"], today)
+    archive_dir = os.path.join(
+        project_root,
+        config["paths"]["website_assets_dir"],
+        "archive",
+        today,
+    )
+    poster_filename = config["poster"]["output_filename"]
+    metadata_filename = config["website"]["metadata_filename"]
+    candidates = (
+        (output_dir, False),
+        (archive_dir, True),
+    )
+
+    for content_dir, copy_to_output in candidates:
+        poster_path = os.path.join(content_dir, poster_filename)
+        if not os.path.isfile(poster_path):
+            continue
+
+        metadata_path = os.path.join(content_dir, metadata_filename)
+        if not os.path.isfile(metadata_path):
+            raise FileNotFoundError(
+                f"Existing poster has no metadata sidecar: {metadata_path}"
+            )
+
+        with open(metadata_path, "r", encoding="utf-8") as handle:
+            metadata = json.load(handle)
+        if not isinstance(metadata, dict):
+            raise ValueError(f"Existing poster metadata must be an object: {metadata_path}")
+
+        quote = str(metadata.get("quote", "")).strip()
+        if not quote:
+            raise ValueError(f"Existing poster metadata has no quote: {metadata_path}")
+
+        used_quotes_log = os.path.join(
+            project_root,
+            config["paths"]["used_quotes_log"],
+        )
+        if not is_quote_used(quote, used_quotes_log):
+            mark_quote_used(quote, used_quotes_log)
+
+        if copy_to_output:
+            os.makedirs(output_dir, exist_ok=True)
+            poster_path = os.path.join(output_dir, poster_filename)
+            shutil.copy2(os.path.join(content_dir, poster_filename), poster_path)
+            shutil.copy2(metadata_path, os.path.join(output_dir, metadata_filename))
+
+        logger.info(
+            "Poster for %s already exists at %s; reusing it without generation.",
+            today,
+            content_dir,
+        )
+        return {
+            "theme": str(metadata.get("theme", "")),
+            "content_source": "existing_poster",
+            "quote": quote,
+            "explanation": str(metadata.get("explanation", "")),
+            "poster_path": poster_path,
+            "skipped": True,
+        }
+
+    return None
+
+
 def run_daily_pipeline(
     config_path: str | None = None,
     project_root: str | None = None,
@@ -227,6 +298,11 @@ def run_daily_pipeline(
     log_file = os.path.join(project_root, config["paths"]["log_file"])
     setup_logging(log_file)
     logger.info("Starting daily Cogentic content pipeline.")
+
+    today = date.today().isoformat()
+    existing_content = reuse_existing_daily_content(config, project_root, today)
+    if existing_content:
+        return existing_content
 
     theme, today_event = select_theme(config, project_root)
     background_path, layout_name = select_background(theme, config, project_root)
@@ -249,26 +325,11 @@ def run_daily_pipeline(
     logger.info("Final quote: %s", content["quote"])
     logger.info("Final explanation: %s", content["explanation"])
 
-    today = date.today().isoformat()
     output_dir = os.path.join(project_root, config["paths"]["output_dir"], today)
     output_filename = config["poster"]["output_filename"]
     output_path = os.path.join(output_dir, output_filename)
 
-    # ---- FIXED DUPLICATE CHECK ----
-    # Ensure the directory exists before checking for existing file
     os.makedirs(output_dir, exist_ok=True)
-    if os.path.exists(output_path):
-        logger.info(f"Poster for today ({today}) already exists at {output_path}. Skipping generation.")
-        return {
-            "theme": theme,
-            "background": background_path,
-            "content_source": content_source,
-            "quote": content["quote"],
-            "explanation": content["explanation"],
-            "poster_path": output_path,
-            "skipped": True,
-        }
-    # -----------------------------
 
     try:
         poster_generator.render(

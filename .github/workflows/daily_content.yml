@@ -6,6 +6,11 @@ on:
     - cron: "30 3 * * *"
   workflow_dispatch:
 
+concurrency:
+  # A running publish must finish so it can commit its archive and quote log.
+  group: daily-content-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   generate-daily-poster:
     runs-on: ubuntu-latest
