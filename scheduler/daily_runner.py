@@ -286,6 +286,7 @@ def run_daily_pipeline(
             "theme": theme,
             "quote": content["quote"],
             "explanation": content["explanation"],
+            "long_explanation": content.get("long_explanation", ""),
             "caption": (
                 content.get("caption")
                 or f'{content["quote"]}\n\n{content["explanation"]}'

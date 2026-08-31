@@ -127,6 +127,7 @@ def main() -> None:
         pipeline_result["content"] = {
             "quote": sidecar.get("quote", ""),
             "explanation": sidecar.get("explanation", ""),
+            "long_explanation": sidecar.get("long_explanation", ""),
             "caption": sidecar.get("caption", ""),
             "hashtags": sidecar.get("hashtags", []),
         }

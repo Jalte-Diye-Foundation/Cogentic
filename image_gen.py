@@ -176,7 +176,6 @@ def render_output_image(bg_image_path, quote_text, explanation_text, theme=None,
     line_spacing = max(8, int(H * 0.01))
     block_gap = max(25, int(H * 0.03))
 
-    print(f"🖼️ Image size: {W}x{H}")  # debug
 
     # Responsive font sizes
     quote_size = max(40, int(H * 0.043))
@@ -196,7 +195,6 @@ def render_output_image(bg_image_path, quote_text, explanation_text, theme=None,
     margin_left = int(W * cfg["margin_left_ratio"])
     margin_right = int(W * cfg["margin_right_ratio"])
     max_text_width = W - margin_left - margin_right
-    print(f"📐 Margins: left={margin_left}, right={margin_right}")
 
     clean_quote = quote_text.strip().replace("\n", " ")
     clean_expl = explanation_text.strip().replace("\n", " ")
@@ -210,7 +208,6 @@ def render_output_image(bg_image_path, quote_text, explanation_text, theme=None,
 
     # Vertically center the combined text block in the full image regardless of content length
     y_cursor = max(0, (H - total_content_h) // 2)
-    print(f"📦 Centered block: y_start={y_cursor}, total_h={total_content_h}")
 
     # Set DEBUG_LAYOUT=1 to draw center line and margin guides on the output image
     if os.environ.get("DEBUG_LAYOUT") == "1":
