@@ -248,6 +248,7 @@ def run_daily_pipeline(
     logger.info("Final content source: %s", content_source)
     logger.info("Final quote: %s", content["quote"])
     logger.info("Final explanation: %s", content["explanation"])
+    logger.info("Final long explanation preview: %s", content.get("long_explanation", "")[:120])
 
     today = date.today().isoformat()
     output_dir = os.path.join(project_root, config["paths"]["output_dir"], today)
@@ -265,6 +266,7 @@ def run_daily_pipeline(
             "content_source": content_source,
             "quote": content["quote"],
             "explanation": content["explanation"],
+            "long_explanation": content.get("long_explanation", ""),
             "poster_path": output_path,
             "skipped": True,
         }
@@ -317,6 +319,7 @@ def run_daily_pipeline(
         "content_source": content_source,
         "quote": content["quote"],
         "explanation": content["explanation"],
+        "long_explanation": content.get("long_explanation", ""),
         "poster_path": output_path,
     }
 

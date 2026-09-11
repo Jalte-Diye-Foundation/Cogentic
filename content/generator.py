@@ -34,102 +34,21 @@ class ContentGenerator:
     def client(self) -> genai.Client:
         return self._client
 
-    def get_recent_quotes(self) -> list[str]:
-        """Load recently generated quotes to avoid repetition.
-
-        Reads from website_assets/archive, which is committed back to the
-        repo every day by the workflow. The local output/ folder is NOT
-        committed, so a fresh checkout always sees it empty — using it
-        here meant Gemini had no real memory of what was posted before,
-        which is part of why quotes were repeating across days.
-        """
-        archive_dir = os.path.join(self._project_root, "website_assets", "archive")
-        quotes = []
-
-        if os.path.exists(archive_dir):
-            files = sorted(
-                glob.glob(os.path.join(archive_dir, "*", "metadata.json"))
-            )
-
-            for file in files[-15:]:
-                try:
-                    with open(file, "r", encoding="utf-8") as f:
-                        data = json.load(f)
-                        quote = data.get("quote", "").strip()
-                        if quote:
-                            quotes.append(quote)
-                except Exception:
-                    logger.warning("Failed to read %s", file)
-
-        return quotes
-
-    def generate(self, theme: str, event: dict | None = None) -> dict[str, str]:
-        """Generate a quote and explanation for the given theme."""
-
-        recent_quotes = self.get_recent_quotes()
-
-        if recent_quotes:
-            recent_quotes_text = "\n".join(
-                f"- {quote}" for quote in recent_quotes
-            )
-        else:
-            recent_quotes_text = "No previous quotes available."
-
-        # NOTE: this used to be nested inside the "no recent quotes" branch
-        # above, which was both a syntax error (bad indentation) and a logic
-        # bug (event_instruction was undefined whenever recent_quotes was
-        # non-empty). It's now computed unconditionally, as intended.
-        if event:
-            event_instruction = f"""
-Today's Special Event:
-{event['event']}
-
-Generate content specifically for this event.
-
-Do NOT generate generic content.
-
-The quote, explanation and hashtags must clearly relate to {event['event']}.
-"""
-        else:
-            event_instruction = ""
-
+    def generate(self, theme: str) -> dict[str, Any]:
+        """Generate a quote, short explanation, and long explanation for the given theme."""
+        hashtags = HASHTAGS_MAP.get(theme, "#Cogentic #JalteDiyeFoundation")
         prompt = f"""
-You are the official content writer for Jalte Diye Foundation.
+    You are an expert social media copywriter and content strategist for the Jalte Diye Foundation.
+    Create original content specifically tailored to the theme: "{theme}".
 
-{event_instruction}
+    Provide:
+    1. "quote": An original, highly inspiring quote.
+    2. "explanation": A matching 2-sentence concise explanation (for poster image rendering).
+    3. "long_explanation": A detailed, 10-12 line in-depth explanation expanding on the quote and short explanation. Connect this message deeply to the vision and social education mission of the Jalte Diye Foundation, and conclude with these relevant hashtags: {hashtags}
 
-Theme:
-{theme}
-
-Previous Quotes:
-{recent_quotes_text}
-
-Requirements:
-
-- Never repeat previous quotes.
-- Never repeat wording.
-- Never repeat sentence structure.
-- Generate ONE inspirational quote.
-- Quote length: 10–20 words.
-- Generate ONE short explanation (for the image).
-- Exactly two sentences.
-- Maximum 35 words.
-- Generate ONE detailed explanation (for the webpage).
-- 8 to 10 sentences.
-- 150 to 200 words.
-- Conversational, insightful, blog-style writing.
-- Expands on the quote and theme with real-world relevance.
-- Generate 4–6 hashtags.
-
-Return ONLY JSON.
-
-{{
-    "quote": "",
-    "explanation": "",
-    "long_explanation": "",
-    "hashtags": []
-}}
-"""
+    Return ONLY a valid JSON object with this exact schema:
+    {{"quote": "...", "explanation": "...", "long_explanation": "..."}}
+    """
         try:
             response = self._client.models.generate_content(
                 model=self._model,
@@ -139,39 +58,25 @@ Return ONLY JSON.
                 ),
             )
 
-            parsed = json.loads(response.text)
-
-            quote = str(parsed.get("quote", "")).strip()
-            explanation = str(parsed.get("explanation", "")).strip()
-            long_explanation = str(parsed.get("long_explanation", "")).strip()
-
-            # Safety limit for quote (maximum 20 words)
-            quote_words = quote.split()
-            if len(quote_words) > 20:
-                quote = " ".join(quote_words[:20])
-
-            # Safety limit for explanation (maximum 35 words)
-            explanation_words = explanation.split()
-            if len(explanation_words) > 35:
-                explanation = " ".join(explanation_words[:35])
-
-            # Safety limit for long_explanation (maximum 220 words)
-            long_expl_words = long_explanation.split()
-            if len(long_expl_words) > 220:
-                long_explanation = " ".join(long_expl_words[:220])
+            quote = str(content.get("quote", "")).strip()
+            explanation = str(content.get("explanation", "")).strip()
+            long_explanation = str(content.get("long_explanation", "")).strip()
 
             if not quote or not explanation:
                 raise ValueError(
                     "Gemini response missing quote or explanation fields."
                 )
 
-            hashtags = parsed.get("hashtags", [])
+            if not long_explanation:
+                long_explanation = (
+                    f"{explanation}\n\n"
+                    f"At Jalte Diye Foundation, we believe that education and awareness under the theme of '{theme}' "
+                    f"serve as the catalyst for meaningful social change. By reflecting on this message, we empower individuals "
+                    f"and communities to drive sustainable impact.\n\n"
+                    f"{hashtags}"
+                )
 
-            # If Gemini returns hashtags as a string
-            if isinstance(hashtags, str):
-                hashtags = hashtags.split()
-
-            hashtags_text = " ".join(hashtags)
+            hashtags_list = [tag.strip() for tag in hashtags.split() if tag.strip()]
 
             caption = (
                 f"{quote}\n\n"
@@ -184,7 +89,7 @@ Return ONLY JSON.
                 "explanation": explanation,
                 "long_explanation": long_explanation,
                 "caption": caption,
-                "hashtags": hashtags,
+                "hashtags": hashtags_list,
             }
 
         except json.JSONDecodeError as exc:
