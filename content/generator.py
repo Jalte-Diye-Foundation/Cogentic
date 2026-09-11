@@ -42,15 +42,20 @@ class ContentGenerator:
     def client(self) -> genai.Client:
         return self._client
 
-    def generate(self, theme: str) -> dict[str, str]:
-        """Generate a quote and explanation for the given theme."""
+    def generate(self, theme: str) -> dict[str, Any]:
+        """Generate a quote, short explanation, and long explanation for the given theme."""
+        hashtags = HASHTAGS_MAP.get(theme, "#Cogentic #JalteDiyeFoundation")
         prompt = f"""
-    You are an expert social media copywriter for the Jalte Diye Foundation.
-    Create an original, highly inspiring quote and a matching 2-sentence explanation
-    specifically tailored to the theme: "{theme}".
+    You are an expert social media copywriter and content strategist for the Jalte Diye Foundation.
+    Create original content specifically tailored to the theme: "{theme}".
+
+    Provide:
+    1. "quote": An original, highly inspiring quote.
+    2. "explanation": A matching 2-sentence concise explanation (for poster image rendering).
+    3. "long_explanation": A detailed, 10-12 line in-depth explanation expanding on the quote and short explanation. Connect this message deeply to the vision and social education mission of the Jalte Diye Foundation, and conclude with these relevant hashtags: {hashtags}
 
     Return ONLY a valid JSON object with this exact schema:
-    {{"quote": "...", "explanation": "..."}}
+    {{"quote": "...", "explanation": "...", "long_explanation": "..."}}
     """
         try:
             response = self._client.models.generate_content(
@@ -64,11 +69,21 @@ class ContentGenerator:
 
             quote = str(content.get("quote", "")).strip()
             explanation = str(content.get("explanation", "")).strip()
+            long_explanation = str(content.get("long_explanation", "")).strip()
 
             if not quote or not explanation:
                 raise ValueError("Gemini response missing quote or explanation fields.")
 
-            hashtags = HASHTAGS_MAP.get(theme, "")
+            if not long_explanation:
+                long_explanation = (
+                    f"{explanation}\n\n"
+                    f"At Jalte Diye Foundation, we believe that education and awareness under the theme of '{theme}' "
+                    f"serve as the catalyst for meaningful social change. By reflecting on this message, we empower individuals "
+                    f"and communities to drive sustainable impact.\n\n"
+                    f"{hashtags}"
+                )
+
+            hashtags_list = [tag.strip() for tag in hashtags.split() if tag.strip()]
 
             caption = (
                 f"{quote}\n\n"
@@ -79,8 +94,9 @@ class ContentGenerator:
             return {
                 "quote": quote,
                 "explanation": explanation,
+                "long_explanation": long_explanation,
                 "caption": caption,
-                "hashtags": hashtags,
+                "hashtags": hashtags_list,
             }
         except json.JSONDecodeError as exc:
             logger.exception("Failed to parse Gemini generation response as JSON.")

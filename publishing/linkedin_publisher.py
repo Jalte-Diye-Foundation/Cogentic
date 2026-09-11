@@ -29,17 +29,20 @@ def _build_post_text(metadata: dict[str, Any]) -> str:
     caption = metadata.get("caption", "").strip()
     quote = metadata.get("quote", "").strip()
     explanation = metadata.get("explanation", "").strip()
+    long_explanation = metadata.get("long_explanation", "").strip()
     hashtags = metadata.get("hashtags", [])
 
     parts: list[str] = []
-    if caption:
+    if long_explanation:
+        parts.append(f'"{quote}"\n\n{long_explanation}')
+    elif caption:
         parts.append(caption)
     elif quote:
         parts.append(f'"{quote}"')
         if explanation:
             parts.append(explanation)
 
-    if hashtags:
+    if hashtags and not long_explanation:
         tag_line = " ".join(
             tag if tag.startswith("#") else f"#{tag.lstrip('#')}" for tag in hashtags
         )

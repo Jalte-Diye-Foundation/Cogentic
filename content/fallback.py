@@ -7,6 +7,8 @@ import logging
 import os
 from typing import Any
 
+from content.generator import HASHTAGS_MAP
+
 logger = logging.getLogger(__name__)
 
 
@@ -67,10 +69,25 @@ class FallbackProvider:
         if fallback_content:
             mark_quote_used(fallback_content["quote"], self._used_quotes_log)
             logger.info("Retrieved fallback quote from CSV: %s", csv_file)
+            fallback_content["long_explanation"] = self._build_long_explanation(
+                theme, fallback_content["quote"], fallback_content["explanation"]
+            )
             return fallback_content
 
         logger.critical("No unused quotes remain in CSV: %s", csv_file)
-        return self._emergency_failsafe()
+        return self._emergency_failsafe(theme)
+
+    def _build_long_explanation(self, theme: str, quote: str, explanation: str) -> str:
+        hashtags = HASHTAGS_MAP.get(theme, "#Cogentic #JalteDiyeFoundation")
+        return (
+            f"\"{quote}\"\n\n"
+            f"{explanation}\n\n"
+            f"At Jalte Diye Foundation, our mission revolves around spreading awareness, fostering critical thinking, and nurturing social responsibility. "
+            f"When we reflect on {theme.lower()}, every intentional action contributes toward a more informed and empathetic society. "
+            f"Through community engagement, education, and collective action, we aim to transform inspiration into measurable impact. "
+            f"This thought encourages us to take responsibility for our shared future, promoting lifelong learning, equality, and compassion.\n\n"
+            f"{hashtags}"
+        )
 
     def _read_unused_csv_quote(
         self, csv_file: str, used_quotes: set[str]
@@ -105,9 +122,12 @@ class FallbackProvider:
                     }
         return None
 
-    def _emergency_failsafe(self) -> dict[str, str]:
+    def _emergency_failsafe(self, theme: str = "Social Education") -> dict[str, str]:
         logger.warning("Using emergency hardcoded failsafe quote.")
+        quote = self._emergency["quote"]
+        explanation = self._emergency["explanation"]
         return {
-            "quote": self._emergency["quote"],
-            "explanation": self._emergency["explanation"],
+            "quote": quote,
+            "explanation": explanation,
+            "long_explanation": self._build_long_explanation(theme, quote, explanation),
         }
