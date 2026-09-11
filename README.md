@@ -2,6 +2,10 @@
 
 **Cognitive Agentic AI System for Social Education**
 
+> **New developer?** See [`ARCHITECTURE.md`](ARCHITECTURE.md) for a
+> file-by-file explanation of how this repository works, and
+> [`SRS.md`](SRS.md) for the formal Software Requirements Specification.
+
 Cogentic AI is an automated content publishing system for the [Jalte Diye Foundation](https://github.com/Jalte-Diye-Foundation). It generates fresh educational and social-impact content daily, evaluates quality with AI, renders poster images, updates website assets, and prepares LinkedIn publishing — all orchestrated through a production Python pipeline and GitHub Actions.
 
 ---
