@@ -37,6 +37,37 @@ def mark_quote_used(quote: str, log_path: str) -> None:
     logger.info("Marked quote as used: %s", normalized[:80])
 
 
+def _build_long_explanation(quote: str, explanation: str, theme: str) -> str:
+    """Synthesize a 10-12 line long_explanation when no AI-generated one exists.
+
+    Used for CSV fallback / emergency failsafe content, which have no
+    Gemini-authored long_explanation of their own.
+    """
+    quote = quote.strip()
+    explanation = explanation.strip()
+    lines = []
+    if quote:
+        lines.append(f'"{quote}"')
+    if explanation:
+        lines.append(explanation)
+    lines.append(
+        f"At Jalte Diye Foundation, this reflection on {theme.lower()} speaks directly "
+        "to the work we do every day — showing up for our community, listening first, "
+        "and turning good intentions into real, visible action."
+    )
+    lines.append(
+        "We believe lasting change comes from small, consistent efforts: a shared meal, "
+        "an open conversation, a helping hand extended without condition. Today's message "
+        "is a reminder that everyone has a part to play, no matter how small it may seem."
+    )
+    lines.append(
+        "As always, we invite you to join us — whether by volunteering, sharing this "
+        "message, or simply carrying its spirit into your own day."
+    )
+    lines.append("#Cogentic #JalteDiyeFoundation")
+    return "\n\n".join(lines)
+
+
 class FallbackProvider:
     """Provides unused quotes from theme-specific CSV files."""
 
@@ -55,23 +86,26 @@ class FallbackProvider:
         theme_config = self._config["themes"].get(theme)
         if not theme_config:
             logger.error("No theme configuration found for: %s", theme)
-            return self._emergency_failsafe()
+            return self._emergency_failsafe(theme)
 
         csv_file = self._resolve_path(theme_config["csv_fallback"])
         if not os.path.exists(csv_file):
             logger.error("Missing CSV fallback file for %s: %s", theme, csv_file)
-            return self._emergency_failsafe()
+            return self._emergency_failsafe(theme)
 
         used_quotes = load_used_quotes(self._used_quotes_log)
         event_name = event["event"] if event else None
         fallback_content = self._read_unused_csv_quote(csv_file, used_quotes, event_name)
         if fallback_content:
             mark_quote_used(fallback_content["quote"], self._used_quotes_log)
+            fallback_content["long_explanation"] = _build_long_explanation(
+                fallback_content["quote"], fallback_content["explanation"], theme
+            )
             logger.info("Retrieved fallback quote from CSV: %s", csv_file)
             return fallback_content
 
         logger.critical("No unused quotes remain in CSV: %s", csv_file)
-        return self._emergency_failsafe()
+        return self._emergency_failsafe(theme)
 
     def _read_unused_csv_quote(
         self, csv_file: str, used_quotes: set[str], event_name: str | None = None
@@ -125,10 +159,12 @@ class FallbackProvider:
                 }
         return None
 
-    def _emergency_failsafe(self) -> dict[str, str]:
+    def _emergency_failsafe(self, theme: str = "") -> dict[str, str]:
         logger.warning("Using emergency hardcoded failsafe quote.")
+        quote = self._emergency["quote"]
+        explanation = self._emergency["explanation"]
         return {
-            "quote": self._emergency["quote"],
-            "explanation": self._emergency["explanation"],
-            "long_explanation": "",
+            "quote": quote,
+            "explanation": explanation,
+            "long_explanation": _build_long_explanation(quote, explanation, theme or "hope"),
         }
