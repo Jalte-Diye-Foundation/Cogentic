@@ -1,7 +1,6 @@
 """Gemini-powered quote and explanation generation."""
 
 from __future__ import annotations
-import glob
 
 import json
 import logging
@@ -10,6 +9,15 @@ from typing import Any
 
 from google import genai
 from google.genai import types
+
+HASHTAGS_MAP = {
+    "Peace & Justice": "#Cogentic #JalteDiyeFoundation #PeaceAndJustice #SocialCohesion #EthicalAI",
+    "Health & Mindfulness": "#Cogentic #JalteDiyeFoundation #Mindfulness #MentalWellbeing #HolisticHealth",
+    "Social Education": "#Cogentic #JalteDiyeFoundation #SocialEducation #CriticalThinking #QualityEducation",
+    "Climate & Environment": "#Cogentic #JalteDiyeFoundation #ClimateAction #Sustainability #EcoResponsibility",
+    "Women Empowerment": "#Cogentic #JalteDiyeFoundation #WomenEmpowerment #Equality #Inspiration",
+    "Foundation Events": "#Cogentic #JalteDiyeFoundation #CommunityImpact #SocialChange #Events"
+}
 
 logger = logging.getLogger(__name__)
 
@@ -57,15 +65,14 @@ class ContentGenerator:
                     response_mime_type="application/json",
                 ),
             )
+            content = json.loads(response.text)
 
             quote = str(content.get("quote", "")).strip()
             explanation = str(content.get("explanation", "")).strip()
             long_explanation = str(content.get("long_explanation", "")).strip()
 
             if not quote or not explanation:
-                raise ValueError(
-                    "Gemini response missing quote or explanation fields."
-                )
+                raise ValueError("Gemini response missing quote or explanation fields.")
 
             if not long_explanation:
                 long_explanation = (
@@ -81,7 +88,7 @@ class ContentGenerator:
             caption = (
                 f"{quote}\n\n"
                 f"{explanation}\n\n"
-                f"{hashtags_text}"
+                f"{hashtags}"
             )
 
             return {
@@ -91,11 +98,9 @@ class ContentGenerator:
                 "caption": caption,
                 "hashtags": hashtags_list,
             }
-
         except json.JSONDecodeError as exc:
             logger.exception("Failed to parse Gemini generation response as JSON.")
             raise ValueError("Invalid JSON returned by Gemini generation.") from exc
-
         except Exception:
             logger.exception("Gemini content generation failed for theme: %s", theme)
             raise
