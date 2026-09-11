@@ -7,8 +7,6 @@ import logging
 import os
 from typing import Any
 
-from content.generator import HASHTAGS_MAP
-
 logger = logging.getLogger(__name__)
 
 
@@ -51,7 +49,7 @@ class FallbackProvider:
     def _resolve_path(self, relative_path: str) -> str:
         return os.path.join(self._project_root, relative_path)
 
-    def get_fallback_quote(self, theme: str) -> dict[str, str]:
+    def get_fallback_quote(self, theme: str, event: dict | None = None) -> dict[str, str]:
         """Pull an unused quote from the CSV mapped to the given theme."""
         logger.warning("Triggering CSV fallback for theme: %s", theme)
         theme_config = self._config["themes"].get(theme)
@@ -65,32 +63,18 @@ class FallbackProvider:
             return self._emergency_failsafe()
 
         used_quotes = load_used_quotes(self._used_quotes_log)
-        fallback_content = self._read_unused_csv_quote(csv_file, used_quotes)
+        event_name = event["event"] if event else None
+        fallback_content = self._read_unused_csv_quote(csv_file, used_quotes, event_name)
         if fallback_content:
             mark_quote_used(fallback_content["quote"], self._used_quotes_log)
             logger.info("Retrieved fallback quote from CSV: %s", csv_file)
-            fallback_content["long_explanation"] = self._build_long_explanation(
-                theme, fallback_content["quote"], fallback_content["explanation"]
-            )
             return fallback_content
 
         logger.critical("No unused quotes remain in CSV: %s", csv_file)
-        return self._emergency_failsafe(theme)
-
-    def _build_long_explanation(self, theme: str, quote: str, explanation: str) -> str:
-        hashtags = HASHTAGS_MAP.get(theme, "#Cogentic #JalteDiyeFoundation")
-        return (
-            f"\"{quote}\"\n\n"
-            f"{explanation}\n\n"
-            f"At Jalte Diye Foundation, our mission revolves around spreading awareness, fostering critical thinking, and nurturing social responsibility. "
-            f"When we reflect on {theme.lower()}, every intentional action contributes toward a more informed and empathetic society. "
-            f"Through community engagement, education, and collective action, we aim to transform inspiration into measurable impact. "
-            f"This thought encourages us to take responsibility for our shared future, promoting lifelong learning, equality, and compassion.\n\n"
-            f"{hashtags}"
-        )
+        return self._emergency_failsafe()
 
     def _read_unused_csv_quote(
-        self, csv_file: str, used_quotes: set[str]
+        self, csv_file: str, used_quotes: set[str], event_name: str | None = None
     ) -> dict[str, str] | None:
         with open(csv_file, "r", encoding="utf-8-sig") as handle:
             reader = csv.reader(handle)
@@ -104,30 +88,47 @@ class FallbackProvider:
             caption_idx = headers.index("caption") if "caption" in headers else -1
             occasion_idx = headers.index("occasion") if "occasion" in headers else -1
 
-            for row in reader:
-                if not row or quote_idx == -1 or len(row) <= quote_idx:
-                    continue
+            all_rows = list(reader)
 
-                row_quote = row[quote_idx].strip()
-                row_explanation = ""
-                if caption_idx != -1 and len(row) > caption_idx:
-                    row_explanation = row[caption_idx].strip()
-                elif occasion_idx != -1 and len(row) > occasion_idx:
-                    row_explanation = f"Observing {row[occasion_idx].strip()}."
+        # When today has a specific event, only use rows whose occasion matches it
+        if event_name and occasion_idx != -1:
+            candidate_rows = [
+                r for r in all_rows
+                if len(r) > occasion_idx and r[occasion_idx].strip().lower() == event_name.lower()
+            ]
+            # Fall back to any row if no occasion-matched rows exist
+            if not candidate_rows:
+                logger.warning("No CSV rows for event '%s'; using generic fallback row.", event_name)
+                candidate_rows = all_rows
+        else:
+            candidate_rows = all_rows
 
-                if row_quote and row_quote not in used_quotes:
-                    return {
-                        "quote": row_quote.replace('"', ""),
-                        "explanation": row_explanation.replace('"', ""),
-                    }
+        for row in candidate_rows:
+            if not row or quote_idx == -1 or len(row) <= quote_idx:
+                continue
+
+            row_quote = row[quote_idx].strip()
+            row_explanation = ""
+            if caption_idx != -1 and len(row) > caption_idx:
+                row_explanation = row[caption_idx].strip()
+            elif occasion_idx != -1 and len(row) > occasion_idx:
+                # Only use the occasion label if it matches today's event
+                occasion_val = row[occasion_idx].strip()
+                if event_name and occasion_val.lower() == event_name.lower():
+                    row_explanation = f"Observing {occasion_val}."
+
+            if row_quote and row_quote not in used_quotes:
+                return {
+                    "quote": row_quote.replace('"', ""),
+                    "explanation": row_explanation.replace('"', ""),
+                    "long_explanation": "",
+                }
         return None
 
-    def _emergency_failsafe(self, theme: str = "Social Education") -> dict[str, str]:
+    def _emergency_failsafe(self) -> dict[str, str]:
         logger.warning("Using emergency hardcoded failsafe quote.")
-        quote = self._emergency["quote"]
-        explanation = self._emergency["explanation"]
         return {
-            "quote": quote,
-            "explanation": explanation,
-            "long_explanation": self._build_long_explanation(theme, quote, explanation),
+            "quote": self._emergency["quote"],
+            "explanation": self._emergency["explanation"],
+            "long_explanation": "",
         }

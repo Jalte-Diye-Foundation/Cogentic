@@ -43,6 +43,13 @@ def update_website_assets(
     shutil.copy2(poster_source, poster_dest)
     logger.info("Website asset updated: %s -> %s", poster_source, poster_dest)
 
+    today_str = date.today().isoformat()
+    archive_dir = os.path.join(project_root, "website_assets", "archive", today_str)
+    os.makedirs(archive_dir, exist_ok=True)
+    archive_dest = os.path.join(archive_dir, website_config["poster_filename"])
+    shutil.copy2(poster_source, archive_dest)
+    logger.info("Website asset archived: %s -> %s", poster_source, archive_dest)
+
     content = pipeline_result.get("content", {})
     today = date.today().isoformat()
     metadata = {
@@ -52,9 +59,7 @@ def update_website_assets(
         "explanation": content.get(
             "explanation", pipeline_result.get("explanation", "")
         ),
-        "long_explanation": content.get(
-            "long_explanation", pipeline_result.get("long_explanation", "")
-        ),
+        "long_explanation": content.get("long_explanation", ""),
         "caption": content.get("caption", ""),
         "hashtags": content.get("hashtags", []),
         "image": website_config["image_url_path"],
@@ -66,6 +71,18 @@ def update_website_assets(
         json.dump(metadata, handle, indent=2, ensure_ascii=False)
         handle.write("\n")
     logger.info("Website metadata written: %s", metadata_path)
+
+    # Also save metadata.json alongside the archived poster for this date.
+    # Without this, website_assets/archive/<date>/ only ever had the
+    # image — both get_recent_quotes() and select_theme() read
+    # metadata.json from here to give the pipeline real memory of past
+    # posts, so this folder being image-only meant that memory was
+    # always empty.
+    archive_metadata_path = os.path.join(archive_dir, website_config["metadata_filename"])
+    with open(archive_metadata_path, "w", encoding="utf-8") as handle:
+        json.dump(metadata, handle, indent=2, ensure_ascii=False)
+        handle.write("\n")
+    logger.info("Archived metadata written: %s", archive_metadata_path)
 
     return {
         "poster_path": poster_dest,

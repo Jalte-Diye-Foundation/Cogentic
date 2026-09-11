@@ -8,7 +8,7 @@ import os
 import random
 import time
 import traceback
-from datetime import date
+from datetime import date, datetime
 from typing import Any
 
 from content.generator import ContentGenerator
@@ -49,12 +49,80 @@ def setup_logging(log_file: str) -> None:
     root_logger.addHandler(file_handler)
     root_logger.addHandler(stream_handler)
 
+def load_events(project_root: str) -> dict:
+    """Load events from events.json (repo root)."""
+    events_file = os.path.join(project_root, "events.json")
 
-def select_theme(config: dict[str, Any]) -> str:
+    if not os.path.exists(events_file):
+        return {}
+
+    with open(events_file, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+def get_today_event(project_root: str):
+    """Return today's event if one exists."""
+    events = load_events(project_root)
+
+    today = datetime.today().strftime("%m-%d")
+
+    return events.get(today)
+
+
+def select_theme(config: dict[str, Any], project_root: str):
+    """Select today's theme. Event days take priority."""
+
+    # Check today's event
+    today_event = get_today_event(project_root)
+
+    if today_event:
+        logger.info("Today's event: %s", today_event["event"])
+        return today_event["theme"], today_event
+
+    # Normal theme rotation
     themes = list(config["themes"].keys())
-    selected = random.choice(themes)
+
+    # Read recent theme history from website_assets/archive, which IS
+    # committed back to the repo by the daily workflow. The local
+    # output/ folder is NOT committed, so a fresh checkout always saw
+    # it empty (aside from one leftover folder from initial setup) —
+    # meaning this "avoid repeating the last 5 themes" safeguard never
+    # actually worked, and theme (and therefore background) repeats
+    # were just down to unprotected random chance among 6 options.
+    archive_dir = os.path.join(project_root, "website_assets", "archive")
+
+    recent_themes = []
+
+    if os.path.exists(archive_dir):
+        folders = sorted(os.listdir(archive_dir))
+
+        for folder in folders[-5:]:
+            metadata_path = os.path.join(archive_dir, folder, "metadata.json")
+
+            if os.path.exists(metadata_path):
+                try:
+                    with open(metadata_path, "r", encoding="utf-8") as f:
+                        data = json.load(f)
+
+                    theme = data.get("theme")
+
+                    if theme:
+                        recent_themes.append(theme)
+
+                except Exception:
+                    pass
+
+    available = [t for t in themes if t not in recent_themes]
+
+    if not available:
+        available = themes
+
+    selected = random.choice(available)
+
+    logger.info("Recent themes: %s", recent_themes)
     logger.info("Selected theme: %s", selected)
-    return selected
+
+    return selected, None
 
 
 def select_background(theme: str, config: dict[str, Any], project_root: str) -> tuple[str, str]:
@@ -89,6 +157,7 @@ def select_background(theme: str, config: dict[str, Any], project_root: str) -> 
 
 def generate_with_evaluation(
     theme: str,
+    today_event: dict | None,
     config: dict[str, Any],
     project_root: str,
     generator: ContentGenerator,
@@ -104,7 +173,7 @@ def generate_with_evaluation(
     try:
         for attempt in range(1, max_retries + 1):
             logger.info("Generation attempt %s/%s", attempt, max_retries)
-            draft = generator.generate(theme)
+            draft = generator.generate(theme, today_event)
             logger.info("Draft quote: %s", draft["quote"][:120])
 
             if is_quote_used(draft["quote"], used_quotes_log):
@@ -134,14 +203,14 @@ def generate_with_evaluation(
             "Failed to generate acceptable content after %s attempts; using CSV fallback.",
             max_retries,
         )
-        content = fallback.get_fallback_quote(theme)
+        content = fallback.get_fallback_quote(theme, today_event)
         source = "csv_fallback"
         return content, source
 
     except Exception as exc:
         logger.error("Pipeline error during generation/evaluation: %s", exc)
         logger.error("Traceback:\n%s", traceback.format_exc())
-        content = fallback.get_fallback_quote(theme)
+        content = fallback.get_fallback_quote(theme, today_event)
         source = "csv_fallback_error"
         return content, source
 
@@ -159,7 +228,33 @@ def run_daily_pipeline(
     setup_logging(log_file)
     logger.info("Starting daily Cogentic content pipeline.")
 
-    theme = select_theme(config)
+    # website_assets/archive/<date>/ IS committed back to the repo, unlike
+    # output/<date>/ which only exists within a single CI checkout. Checking
+    # output/ alone can't stop a second same-day run (e.g. a manual
+    # workflow_dispatch re-trigger) from generating a different, conflicting
+    # post — which previously caused the live site's text and poster image
+    # to disagree. Checking the archive here makes the "one post per day"
+    # rule hold across separate runs too.
+    today_str = date.today().isoformat()
+    archive_check_dir = os.path.join(project_root, "website_assets", "archive", today_str)
+    if os.path.exists(archive_check_dir) and os.listdir(archive_check_dir):
+        logger.info(
+            "Archived post for today (%s) already exists at %s. Skipping generation.",
+            today_str,
+            archive_check_dir,
+        )
+        return {
+            "theme": None,
+            "background": None,
+            "content_source": None,
+            "quote": None,
+            "explanation": None,
+            "poster_path": None,
+            "skipped": True,
+            "skip_reason": "already_archived_today",
+        }
+
+    theme, today_event = select_theme(config, project_root)
     background_path, layout_name = select_background(theme, config, project_root)
 
     generator = ContentGenerator(config, project_root)
@@ -168,12 +263,17 @@ def run_daily_pipeline(
     poster_generator = PosterGenerator(config, project_root)
 
     content, content_source = generate_with_evaluation(
-        theme, config, project_root, generator, evaluator, fallback
-    )
+    theme,
+    today_event,
+    config,
+    project_root,
+    generator,
+    evaluator,
+    fallback,
+)
     logger.info("Final content source: %s", content_source)
     logger.info("Final quote: %s", content["quote"])
     logger.info("Final explanation: %s", content["explanation"])
-    logger.info("Final long explanation preview: %s", content.get("long_explanation", "")[:120])
 
     today = date.today().isoformat()
     output_dir = os.path.join(project_root, config["paths"]["output_dir"], today)
@@ -191,7 +291,6 @@ def run_daily_pipeline(
             "content_source": content_source,
             "quote": content["quote"],
             "explanation": content["explanation"],
-            "long_explanation": content.get("long_explanation", ""),
             "poster_path": output_path,
             "skipped": True,
         }
@@ -224,6 +323,7 @@ def run_daily_pipeline(
             ),
             "image": output_filename,
             "source": "Cogentic AI",
+            "event": today_event["event"] if today_event else None,
         }
         metadata_path = os.path.join(output_dir, "metadata.json")
 
@@ -243,7 +343,6 @@ def run_daily_pipeline(
         "content_source": content_source,
         "quote": content["quote"],
         "explanation": content["explanation"],
-        "long_explanation": content.get("long_explanation", ""),
         "poster_path": output_path,
     }
 
