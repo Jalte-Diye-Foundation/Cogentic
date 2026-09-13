@@ -2,8 +2,8 @@ name: Daily Content Pipeline
 
 on:
   schedule:
-    # 09:00 AM IST = 03:30 UTC
-    - cron: "30 3 * * *"
+    # 05:00 AM IST = 23:30 UTC
+    - cron: "30 23 * * *"
   workflow_dispatch:
 
 jobs:
