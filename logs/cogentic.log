@@ -6,3 +6,40 @@
 2026-06-22 17:07:11,820 | INFO | __main__ | Website asset updated: D:\New folder\Cogentic\output\2026-06-22\poster.jpg -> D:\New folder\Cogentic\website_assets/latest\poster.jpg
 2026-06-22 17:07:11,825 | INFO | __main__ | Website metadata written: D:\New folder\Cogentic\website_assets/latest\metadata.json
 2026-06-22 17:07:11,828 | INFO | __main__ | Website asset update completed.
+2026-09-14 03:50:01 | INFO | scheduler.daily_runner | Starting daily Cogentic content pipeline.
+2026-09-14 03:50:01 | INFO | scheduler.daily_runner | Today's event: Ganesh Chaturthi
+2026-09-14 03:50:01 | INFO | scheduler.daily_runner | Selected background: C:\Users\depth\OneDrive\Documents\GitHub\Jalte-Diye-Foundation\Cogentic\themes/events\bg3.png
+2026-09-14 03:51:59 | INFO | scheduler.daily_runner | Starting daily Cogentic content pipeline.
+2026-09-14 03:51:59 | INFO | scheduler.daily_runner | Archived post for today (2026-09-12) already exists at C:\Users\depth\OneDrive\Documents\GitHub\Jalte-Diye-Foundation\Cogentic\website_assets\archive\2026-09-12. Skipping generation.
+2026-09-14 03:52:16 | INFO | scheduler.daily_runner | Starting daily Cogentic content pipeline.
+2026-09-14 03:52:16 | INFO | scheduler.daily_runner | Archived post for today (2026-09-13) already exists at C:\Users\depth\OneDrive\Documents\GitHub\Jalte-Diye-Foundation\Cogentic\website_assets\archive\2026-09-13. Skipping generation.
+2026-09-14 03:54:49 | INFO | scheduler.daily_runner | Starting daily Cogentic content pipeline.
+2026-09-14 03:54:49 | INFO | scheduler.daily_runner | Today's event: Ganesh Chaturthi
+2026-09-14 03:54:49 | INFO | scheduler.daily_runner | Selected background: C:\Users\depth\OneDrive\Documents\GitHub\Jalte-Diye-Foundation\Cogentic\themes/events\bg1.png
+2026-09-14 03:54:49 | WARNING | content.generator | Gemini API key not found (GEMINI_API_KEY). AI generation will fall back to CSV/emergency.
+2026-09-14 03:54:49 | WARNING | content.evaluator | Gemini API key not found for evaluator.
+2026-09-14 03:54:49 | INFO | scheduler.daily_runner | Generation attempt 1/3
+2026-09-14 03:54:49 | WARNING | content.generator | Gemini client is unavailable; triggering fallback.
+2026-09-14 03:54:49 | ERROR | scheduler.daily_runner | Pipeline error during generation/evaluation: Gemini API client not initialized (missing API key or init error).
+2026-09-14 03:54:49 | ERROR | scheduler.daily_runner | Traceback:
+Traceback (most recent call last):
+  File "C:\Users\depth\OneDrive\Documents\GitHub\Jalte-Diye-Foundation\Cogentic\scheduler\daily_runner.py", line 177, in generate_with_evaluation
+    draft = generator.generate(theme, today_event)
+  File "C:\Users\depth\OneDrive\Documents\GitHub\Jalte-Diye-Foundation\Cogentic\content\generator.py", line 74, in generate
+    raise RuntimeError("Gemini API client not initialized (missing API key or init error).")
+RuntimeError: Gemini API client not initialized (missing API key or init error).
+
+2026-09-14 03:54:49 | WARNING | content.fallback | Triggering CSV fallback for theme: Foundation Events
+2026-09-14 03:54:49 | INFO | content.fallback | Marked quote as used: May wisdom guide you and obstacles clear your path. Ganesh does not remove strug
+2026-09-14 03:54:49 | INFO | content.fallback | Retrieved fallback quote from CSV: C:\Users\depth\OneDrive\Documents\GitHub\Jalte-Diye-Foundation\Cogentic\Event_quotes.csv
+2026-09-14 03:54:49 | INFO | scheduler.daily_runner | Final content source: csv_fallback_error
+2026-09-14 03:54:49 | INFO | scheduler.daily_runner | Final quote: May wisdom guide you and obstacles clear your path. Ganesh does not remove struggle he gives you the clarity to move through it.
+2026-09-14 03:54:49 | INFO | scheduler.daily_runner | Final explanation: Observing Ganesh Chaturthi.
+2026-09-14 03:54:49 | INFO | rendering.poster_generator | Poster saved: C:\Users\depth\OneDrive\Documents\GitHub\Jalte-Diye-Foundation\Cogentic\output\2026-09-14\poster.jpg
+2026-09-14 03:54:49 | INFO | scheduler.daily_runner | Poster creation succeeded: C:\Users\depth\OneDrive\Documents\GitHub\Jalte-Diye-Foundation\Cogentic\output\2026-09-14\poster.jpg
+2026-09-14 03:54:49 | INFO | scheduler.daily_runner | Metadata saved: C:\Users\depth\OneDrive\Documents\GitHub\Jalte-Diye-Foundation\Cogentic\output\2026-09-14\metadata.json
+2026-09-14 03:54:49 | INFO | scheduler.daily_runner | Daily pipeline completed successfully.
+2026-09-14 03:54:49 | INFO | website_assets.update_assets | Website asset updated: C:\Users\depth\OneDrive\Documents\GitHub\Jalte-Diye-Foundation\Cogentic\output\2026-09-14\poster.jpg -> C:\Users\depth\OneDrive\Documents\GitHub\Jalte-Diye-Foundation\Cogentic\website_assets/latest\poster.jpg
+2026-09-14 03:54:49 | INFO | website_assets.update_assets | Website asset archived: C:\Users\depth\OneDrive\Documents\GitHub\Jalte-Diye-Foundation\Cogentic\output\2026-09-14\poster.jpg -> C:\Users\depth\OneDrive\Documents\GitHub\Jalte-Diye-Foundation\Cogentic\website_assets\archive\2026-09-14\poster.jpg
+2026-09-14 03:54:49 | INFO | website_assets.update_assets | Website metadata written: C:\Users\depth\OneDrive\Documents\GitHub\Jalte-Diye-Foundation\Cogentic\website_assets/latest\metadata.json
+2026-09-14 03:54:49 | INFO | website_assets.update_assets | Archived metadata written: C:\Users\depth\OneDrive\Documents\GitHub\Jalte-Diye-Foundation\Cogentic\website_assets\archive\2026-09-14\metadata.json
