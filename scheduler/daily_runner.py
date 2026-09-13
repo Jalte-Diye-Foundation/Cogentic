@@ -60,20 +60,21 @@ def load_events(project_root: str) -> dict:
         return json.load(f)
 
 
-def get_today_event(project_root: str):
+def get_today_event(project_root: str, target_date: date | None = None):
     """Return today's event if one exists."""
     events = load_events(project_root)
 
-    today = datetime.today().strftime("%m-%d")
+    d = target_date or date.today()
+    today = d.strftime("%m-%d")
 
     return events.get(today)
 
 
-def select_theme(config: dict[str, Any], project_root: str):
+def select_theme(config: dict[str, Any], project_root: str, target_date: date | None = None):
     """Select today's theme. Event days take priority."""
 
     # Check today's event
-    today_event = get_today_event(project_root)
+    today_event = get_today_event(project_root, target_date)
 
     if today_event:
         logger.info("Today's event: %s", today_event["event"])
@@ -218,6 +219,7 @@ def generate_with_evaluation(
 def run_daily_pipeline(
     config_path: str | None = None,
     project_root: str | None = None,
+    target_date: date | str | None = None,
 ) -> dict[str, Any]:
     """Execute the full daily content pipeline and return run metadata."""
     project_root = project_root or os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -228,6 +230,14 @@ def run_daily_pipeline(
     setup_logging(log_file)
     logger.info("Starting daily Cogentic content pipeline.")
 
+    if isinstance(target_date, str):
+        today_date = date.fromisoformat(target_date)
+    elif isinstance(target_date, date):
+        today_date = target_date
+    else:
+        today_date = date.today()
+    today_str = today_date.isoformat()
+
     # website_assets/archive/<date>/ IS committed back to the repo, unlike
     # output/<date>/ which only exists within a single CI checkout. Checking
     # output/ alone can't stop a second same-day run (e.g. a manual
@@ -235,7 +245,6 @@ def run_daily_pipeline(
     # post — which previously caused the live site's text and poster image
     # to disagree. Checking the archive here makes the "one post per day"
     # rule hold across separate runs too.
-    today_str = date.today().isoformat()
     archive_check_dir = os.path.join(project_root, "website_assets", "archive", today_str)
     if os.path.exists(archive_check_dir) and os.listdir(archive_check_dir):
         logger.info(
@@ -244,6 +253,7 @@ def run_daily_pipeline(
             archive_check_dir,
         )
         return {
+            "date": today_str,
             "theme": None,
             "background": None,
             "content_source": None,
@@ -254,7 +264,7 @@ def run_daily_pipeline(
             "skip_reason": "already_archived_today",
         }
 
-    theme, today_event = select_theme(config, project_root)
+    theme, today_event = select_theme(config, project_root, today_date)
     background_path, layout_name = select_background(theme, config, project_root)
 
     generator = ContentGenerator(config, project_root)
@@ -263,20 +273,19 @@ def run_daily_pipeline(
     poster_generator = PosterGenerator(config, project_root)
 
     content, content_source = generate_with_evaluation(
-    theme,
-    today_event,
-    config,
-    project_root,
-    generator,
-    evaluator,
-    fallback,
-)
+        theme,
+        today_event,
+        config,
+        project_root,
+        generator,
+        evaluator,
+        fallback,
+    )
     logger.info("Final content source: %s", content_source)
     logger.info("Final quote: %s", content["quote"])
     logger.info("Final explanation: %s", content["explanation"])
 
-    today = date.today().isoformat()
-    output_dir = os.path.join(project_root, config["paths"]["output_dir"], today)
+    output_dir = os.path.join(project_root, config["paths"]["output_dir"], today_str)
     output_filename = config["poster"]["output_filename"]
     output_path = os.path.join(output_dir, output_filename)
 
@@ -284,13 +293,17 @@ def run_daily_pipeline(
     # Ensure the directory exists before checking for existing file
     os.makedirs(output_dir, exist_ok=True)
     if os.path.exists(output_path):
-        logger.info(f"Poster for today ({today}) already exists at {output_path}. Skipping generation.")
+        logger.info(f"Poster for today ({today_str}) already exists at {output_path}. Skipping generation.")
         return {
+            "date": today_str,
             "theme": theme,
             "background": background_path,
             "content_source": content_source,
             "quote": content["quote"],
             "explanation": content["explanation"],
+            "long_explanation": content.get("long_explanation", ""),
+            "caption": content.get("caption", ""),
+            "hashtags": content.get("hashtags", []),
             "poster_path": output_path,
             "skipped": True,
         }
@@ -308,7 +321,7 @@ def run_daily_pipeline(
         logger.info("Poster creation succeeded: %s", output_path)
 
         metadata = {
-            "date": today,
+            "date": today_str,
             "theme": theme,
             "quote": content["quote"],
             "explanation": content["explanation"],
@@ -338,11 +351,15 @@ def run_daily_pipeline(
         raise
 
     result = {
+        "date": today_str,
         "theme": theme,
         "background": background_path,
         "content_source": content_source,
         "quote": content["quote"],
         "explanation": content["explanation"],
+        "long_explanation": content.get("long_explanation", ""),
+        "caption": content.get("caption", ""),
+        "hashtags": content.get("hashtags", []),
         "poster_path": output_path,
     }
 

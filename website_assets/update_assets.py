@@ -43,7 +43,7 @@ def update_website_assets(
     shutil.copy2(poster_source, poster_dest)
     logger.info("Website asset updated: %s -> %s", poster_source, poster_dest)
 
-    today_str = date.today().isoformat()
+    today_str = pipeline_result.get("date") or date.today().isoformat()
     archive_dir = os.path.join(project_root, "website_assets", "archive", today_str)
     os.makedirs(archive_dir, exist_ok=True)
     archive_dest = os.path.join(archive_dir, website_config["poster_filename"])
@@ -51,17 +51,20 @@ def update_website_assets(
     logger.info("Website asset archived: %s -> %s", poster_source, archive_dest)
 
     content = pipeline_result.get("content", {})
-    today = date.today().isoformat()
+    quote_val = content.get("quote") or pipeline_result.get("quote", "")
+    expl_val = content.get("explanation") or pipeline_result.get("explanation", "")
+    long_expl_val = content.get("long_explanation") or pipeline_result.get("long_explanation", "")
+    caption_val = content.get("caption") or pipeline_result.get("caption", "")
+    hashtags_val = content.get("hashtags") or pipeline_result.get("hashtags", [])
+
     metadata = {
-        "date": today,
+        "date": today_str,
         "theme": pipeline_result.get("theme", ""),
-        "quote": content.get("quote", pipeline_result.get("quote", "")),
-        "explanation": content.get(
-            "explanation", pipeline_result.get("explanation", "")
-        ),
-        "long_explanation": content.get("long_explanation", ""),
-        "caption": content.get("caption", ""),
-        "hashtags": content.get("hashtags", []),
+        "quote": quote_val,
+        "explanation": expl_val,
+        "long_explanation": long_expl_val,
+        "caption": caption_val,
+        "hashtags": hashtags_val,
         "image": website_config["image_url_path"],
         "source": website_config["source_label"],
     }

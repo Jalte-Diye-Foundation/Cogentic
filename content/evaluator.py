@@ -26,10 +26,14 @@ class ContentEvaluator:
             api_key_env = gemini_config.get("api_key_env", "GEMINI_API_KEY")
             api_key = os.environ.get(api_key_env)
             if not api_key:
-                raise ValueError(
-                    f"Gemini API key not found. Set the {api_key_env} environment variable."
-                )
-            self._client = genai.Client(api_key=api_key)
+                logger.warning("Gemini API key not found for evaluator.")
+                self._client = None
+            else:
+                try:
+                    self._client = genai.Client(api_key=api_key)
+                except Exception as exc:
+                    logger.warning("Failed to initialize Gemini evaluator client: %s", exc)
+                    self._client = None
         self._model = config["gemini"]["model"]
         self._passing_score = config["quality"]["passing_score"]
 
@@ -39,6 +43,8 @@ class ContentEvaluator:
 
     def evaluate(self, theme: str, content: dict[str, str]) -> dict[str, Any]:
         """Score content on alignment, clarity, and emotional impact."""
+        if self._client is None:
+            raise RuntimeError("Gemini API client unavailable for evaluation.")
         prompt = f"""
     You are a strict Quality Control Editor for a social education foundation.
     Evaluate the following quote and explanation based on its alignment with the theme "{theme}",

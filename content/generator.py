@@ -24,10 +24,14 @@ class ContentGenerator:
         api_key_env = gemini_config.get("api_key_env", "GEMINI_API_KEY")
         api_key = os.environ.get(api_key_env)
         if not api_key:
-            raise ValueError(
-                f"Gemini API key not found. Set the {api_key_env} environment variable."
-            )
-        self._client = genai.Client(api_key=api_key)
+            logger.warning("Gemini API key not found (%s). AI generation will fall back to CSV/emergency.", api_key_env)
+            self._client = None
+        else:
+            try:
+                self._client = genai.Client(api_key=api_key)
+            except Exception as exc:
+                logger.warning("Failed to initialize Gemini client: %s. Will fall back to CSV/emergency.", exc)
+                self._client = None
         self._model = gemini_config["model"]
 
     @property
@@ -65,6 +69,9 @@ class ContentGenerator:
 
     def generate(self, theme: str, event: dict | None = None) -> dict[str, str]:
         """Generate a quote and explanation for the given theme."""
+        if self._client is None:
+            logger.warning("Gemini client is unavailable; triggering fallback.")
+            raise RuntimeError("Gemini API client not initialized (missing API key or init error).")
 
         recent_quotes = self.get_recent_quotes()
 
