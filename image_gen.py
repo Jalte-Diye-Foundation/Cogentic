@@ -22,6 +22,8 @@ THEME_REGISTRY = {
         "margin_right_ratio": 0.17,
         "center_zone_top_ratio": 0.25,
         "center_zone_bottom_ratio": 0.46,
+        # Move the complete text block up by approximately two quote lines.
+        "vertical_offset_lines": -1,
     },
     "Women Empowerment": {
         "quote_color": "#dd1c4b",
@@ -72,6 +74,8 @@ THEME_REGISTRY = {
         "margin_right_ratio": 0.17,
         "center_zone_top_ratio": 0.25,
         "center_zone_bottom_ratio": 0.46,
+        # Move the complete text block up by approximately two quote lines.
+        "vertical_offset_lines": -1,
     },
     "jdf_general": {
         "quote_color": "#8c6239",
@@ -206,8 +210,11 @@ def render_output_image(bg_image_path, quote_text, explanation_text, theme=None,
     expl_block_h = block_height(expl_lines, explanation_font, draw, line_spacing)
     total_content_h = quote_block_h + block_gap + expl_block_h
 
-    # Vertically center the combined text block in the full image regardless of content length
-    y_cursor = max(0, (H - total_content_h) // 2)
+    # Vertically center the combined text block, with an optional theme-specific offset.
+    # A negative offset moves it upward; Foundation Events uses two quote-line heights.
+    line_height = text_height("Ag", quote_font, draw) + line_spacing
+    vertical_offset = cfg.get("vertical_offset_lines", 0) * line_height
+    y_cursor = max(0, (H - total_content_h) // 2 + vertical_offset)
 
     # Set DEBUG_LAYOUT=1 to draw center line and margin guides on the output image
     if os.environ.get("DEBUG_LAYOUT") == "1":
