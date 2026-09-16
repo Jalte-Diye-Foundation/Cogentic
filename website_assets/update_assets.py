@@ -6,10 +6,12 @@ import json
 import logging
 import os
 import shutil
-from datetime import date
+from datetime import datetime, timezone, timedelta
 from typing import Any
 
 logger = logging.getLogger(__name__)
+
+IST = timezone(timedelta(hours=5, minutes=30))
 
 
 def load_config(config_path: str) -> dict[str, Any]:
@@ -23,13 +25,7 @@ def update_website_assets(
     project_root: str | None = None,
     config_path: str | None = None,
 ) -> dict[str, str]:
-    """
-    Copy the daily poster to website_assets/latest/ and write metadata.json.
-
-    The frontend at https://reallyrealeducation.org/posts.html can fetch:
-      - website_assets/latest/poster.jpg
-      - website_assets/latest/metadata.json
-    """
+    """Copy the daily poster to website_assets/latest/ and write metadata.json."""
     project_root = project_root or os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     config_path = config_path or os.path.join(project_root, "config.json")
     config = config or load_config(config_path)
@@ -43,7 +39,7 @@ def update_website_assets(
     shutil.copy2(poster_source, poster_dest)
     logger.info("Website asset updated: %s -> %s", poster_source, poster_dest)
 
-    today_str = pipeline_result.get("date") or date.today().isoformat()
+    today_str = pipeline_result.get("date") or datetime.now(IST).date().isoformat()
     archive_dir = os.path.join(project_root, "website_assets", "archive", today_str)
     os.makedirs(archive_dir, exist_ok=True)
     archive_dest = os.path.join(archive_dir, website_config["poster_filename"])
@@ -53,20 +49,28 @@ def update_website_assets(
     content = pipeline_result.get("content", {})
     quote_val = content.get("quote") or pipeline_result.get("quote", "")
     expl_val = content.get("explanation") or pipeline_result.get("explanation", "")
+    context_val = content.get("context") or pipeline_result.get("context", "")
+    conn_val = content.get("foundation_connection") or pipeline_result.get("foundation_connection", "")
+    cta_val = content.get("cta") or pipeline_result.get("cta", "")
     long_expl_val = content.get("long_explanation") or pipeline_result.get("long_explanation", "")
     caption_val = content.get("caption") or pipeline_result.get("caption", "")
     hashtags_val = content.get("hashtags") or pipeline_result.get("hashtags", [])
+    event_val = pipeline_result.get("event")
 
     metadata = {
         "date": today_str,
         "theme": pipeline_result.get("theme", ""),
         "quote": quote_val,
         "explanation": expl_val,
+        "context": context_val,
+        "foundation_connection": conn_val,
+        "cta": cta_val,
         "long_explanation": long_expl_val,
         "caption": caption_val,
         "hashtags": hashtags_val,
         "image": website_config["image_url_path"],
         "source": website_config["source_label"],
+        "event": event_val,
     }
 
     metadata_path = os.path.join(latest_dir, website_config["metadata_filename"])
@@ -75,12 +79,6 @@ def update_website_assets(
         handle.write("\n")
     logger.info("Website metadata written: %s", metadata_path)
 
-    # Also save metadata.json alongside the archived poster for this date.
-    # Without this, website_assets/archive/<date>/ only ever had the
-    # image — both get_recent_quotes() and select_theme() read
-    # metadata.json from here to give the pipeline real memory of past
-    # posts, so this folder being image-only meant that memory was
-    # always empty.
     archive_metadata_path = os.path.join(archive_dir, website_config["metadata_filename"])
     with open(archive_metadata_path, "w", encoding="utf-8") as handle:
         json.dump(metadata, handle, indent=2, ensure_ascii=False)
@@ -112,7 +110,7 @@ def main() -> None:
         ],
     )
 
-    today = date.today().isoformat()
+    today = datetime.now(IST).date().isoformat()
     output_dir = os.path.join(project_root, config["paths"]["output_dir"], today)
     poster_filename = config["poster"]["output_filename"]
     poster_path = os.path.join(output_dir, poster_filename)
@@ -130,16 +128,12 @@ def main() -> None:
         pipeline_result["content"] = {
             "quote": sidecar.get("quote", ""),
             "explanation": sidecar.get("explanation", ""),
+            "context": sidecar.get("context", ""),
+            "foundation_connection": sidecar.get("foundation_connection", ""),
+            "cta": sidecar.get("cta", ""),
             "long_explanation": sidecar.get("long_explanation", ""),
             "caption": sidecar.get("caption", ""),
             "hashtags": sidecar.get("hashtags", []),
-        }
-    else:
-        pipeline_result["content"] = {
-            "quote": "",
-            "explanation": "",
-            "caption": "",
-            "hashtags": [],
         }
 
     update_website_assets(pipeline_result, config=config, project_root=project_root)

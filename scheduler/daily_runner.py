@@ -8,15 +8,24 @@ import os
 import random
 import time
 import traceback
-from datetime import date, datetime
+from datetime import date, datetime, timezone, timedelta
 from typing import Any
 
 from content.generator import ContentGenerator
 from content.evaluator import ContentEvaluator
 from content.fallback import FallbackProvider, is_quote_used, mark_quote_used
+from content.validator import ContentValidator
 from rendering.poster_generator import PosterGenerator
 
 logger = logging.getLogger(__name__)
+
+# Indian Standard Time (UTC+05:30)
+IST = timezone(timedelta(hours=5, minutes=30))
+
+
+def get_current_ist_date() -> date:
+    """Return the current calendar date in Indian Standard Time (IST)."""
+    return datetime.now(IST).date()
 
 
 def load_config(config_path: str) -> dict[str, Any]:
@@ -49,80 +58,65 @@ def setup_logging(log_file: str) -> None:
     root_logger.addHandler(file_handler)
     root_logger.addHandler(stream_handler)
 
-def load_events(project_root: str) -> dict:
+
+def load_events(project_root: str) -> dict[str, Any]:
     """Load events from events.json (repo root)."""
     events_file = os.path.join(project_root, "events.json")
-
     if not os.path.exists(events_file):
         return {}
-
     with open(events_file, "r", encoding="utf-8") as f:
         return json.load(f)
 
 
-def get_today_event(project_root: str, target_date: date | None = None):
+def get_today_event(project_root: str, target_date: date | None = None) -> dict[str, Any] | None:
     """Return today's event if one exists."""
     events = load_events(project_root)
-
-    d = target_date or date.today()
+    d = target_date or get_current_ist_date()
     today = d.strftime("%m-%d")
-
     return events.get(today)
 
 
-def select_theme(config: dict[str, Any], project_root: str, target_date: date | None = None):
-    """Select today's theme. Event days take priority."""
-
-    # Check today's event
+def select_theme(
+    config: dict[str, Any],
+    project_root: str,
+    target_date: date | None = None,
+    recent_themes: list[str] | None = None,
+) -> tuple[str, dict[str, Any] | None]:
+    """Select today's theme. Event days take priority; non-event days use evergreen themes."""
     today_event = get_today_event(project_root, target_date)
-
     if today_event:
-        logger.info("Today's event: %s", today_event["event"])
+        logger.info("Today's event: %s (Theme: %s)", today_event["event"], today_event["theme"])
         return today_event["theme"], today_event
 
-    # Normal theme rotation
-    themes = list(config["themes"].keys())
+    # Normal theme rotation - strictly evergreen themes (exclude 'Foundation Events')
+    all_themes = list(config["themes"].keys())
+    evergreen_themes = [t for t in all_themes if t != "Foundation Events"]
 
-    # Read recent theme history from website_assets/archive, which IS
-    # committed back to the repo by the daily workflow. The local
-    # output/ folder is NOT committed, so a fresh checkout always saw
-    # it empty (aside from one leftover folder from initial setup) —
-    # meaning this "avoid repeating the last 5 themes" safeguard never
-    # actually worked, and theme (and therefore background) repeats
-    # were just down to unprotected random chance among 6 options.
-    archive_dir = os.path.join(project_root, "website_assets", "archive")
+    if recent_themes is None:
+        archive_dir = os.path.join(project_root, "website_assets", "archive")
+        recent_themes = []
 
-    recent_themes = []
+        if os.path.exists(archive_dir):
+            folders = sorted(os.listdir(archive_dir))
+            for folder in folders[-5:]:
+                metadata_path = os.path.join(archive_dir, folder, "metadata.json")
+                if os.path.exists(metadata_path):
+                    try:
+                        with open(metadata_path, "r", encoding="utf-8") as f:
+                            data = json.load(f)
+                        theme = data.get("theme")
+                        if theme and theme != "Foundation Events":
+                            recent_themes.append(theme)
+                    except Exception:
+                        pass
 
-    if os.path.exists(archive_dir):
-        folders = sorted(os.listdir(archive_dir))
-
-        for folder in folders[-5:]:
-            metadata_path = os.path.join(archive_dir, folder, "metadata.json")
-
-            if os.path.exists(metadata_path):
-                try:
-                    with open(metadata_path, "r", encoding="utf-8") as f:
-                        data = json.load(f)
-
-                    theme = data.get("theme")
-
-                    if theme:
-                        recent_themes.append(theme)
-
-                except Exception:
-                    pass
-
-    available = [t for t in themes if t not in recent_themes]
-
+    available = [t for t in evergreen_themes if t not in recent_themes]
     if not available:
-        available = themes
+        available = evergreen_themes
 
     selected = random.choice(available)
-
     logger.info("Recent themes: %s", recent_themes)
-    logger.info("Selected theme: %s", selected)
-
+    logger.info("Selected evergreen theme: %s", selected)
     return selected, None
 
 
@@ -147,9 +141,7 @@ def select_background(theme: str, config: dict[str, Any], project_root: str) -> 
     ]
 
     if not candidates:
-        raise FileNotFoundError(
-            f"No background images found in theme folder: {theme_folder}"
-        )
+        raise FileNotFoundError(f"No background images found in theme folder: {theme_folder}")
 
     selected = random.choice(candidates)
     logger.info("Selected background: %s", selected)
@@ -164,29 +156,46 @@ def generate_with_evaluation(
     generator: ContentGenerator,
     evaluator: ContentEvaluator,
     fallback: FallbackProvider,
-) -> tuple[dict[str, str], str]:
-    """Run generation, evaluation, retries, and optional CSV fallback."""
+    validator: ContentValidator | None = None,
+) -> tuple[dict[str, Any], str]:
+    """Run generation, multi-level validation, evaluation, retries, and optional fallback."""
     max_retries = config["quality"]["max_retries"]
     retry_delay = config["quality"]["retry_delay_seconds"]
     used_quotes_log = os.path.join(project_root, config["paths"]["used_quotes_log"])
+    validator = validator or ContentValidator()
+    recent_history = generator.get_recent_history(limit=15)
     source = "gemini"
 
     try:
         for attempt in range(1, max_retries + 1):
-            logger.info("Generation attempt %s/%s", attempt, max_retries)
+            logger.info("Generation attempt %s/%s for theme '%s'", attempt, max_retries, theme)
             draft = generator.generate(theme, today_event)
             logger.info("Draft quote: %s", draft["quote"][:120])
 
+            # Level 0: Quick used quote check
             if is_quote_used(draft["quote"], used_quotes_log):
+                logger.warning("Quote already in used_quotes_log.txt; retrying (attempt %s).", attempt)
+                if attempt < max_retries:
+                    time.sleep(retry_delay)
+                continue
+
+            # Level 1 & Level 2 Validation
+            is_valid, val_errors, sim_scores = validator.validate_full(
+                draft, theme, today_event, recent_history
+            )
+            if not is_valid:
                 logger.warning(
-                    "Generated quote already used; treating attempt %s as rejected.",
+                    "Content failed validation on attempt %s: %s (Sim scores: %s)",
                     attempt,
+                    val_errors,
+                    sim_scores,
                 )
                 if attempt < max_retries:
                     time.sleep(retry_delay)
                 continue
 
-            evaluation = evaluator.evaluate(theme, draft)
+            # AI Quality Evaluation
+            evaluation = evaluator.evaluate(theme, draft, today_event)
             score = evaluation.get("score", 0)
             reasoning = evaluation.get("reasoning", "")
             logger.info("Evaluation score: %s/10 | Reasoning: %s", score, reasoning)
@@ -194,9 +203,12 @@ def generate_with_evaluation(
             if evaluator.passed(evaluation):
                 logger.info("Content passed quality control on attempt %s.", attempt)
                 mark_quote_used(draft["quote"], used_quotes_log)
+                draft["evaluator_score"] = score
+                draft["evaluator_reasoning"] = reasoning
+                draft["similarity_scores"] = sim_scores
                 return draft, source
 
-            logger.warning("Content rejected on attempt %s.", attempt)
+            logger.warning("Content rejected by evaluator on attempt %s (score: %s).", attempt, score)
             if attempt < max_retries:
                 time.sleep(retry_delay)
 
@@ -235,16 +247,10 @@ def run_daily_pipeline(
     elif isinstance(target_date, date):
         today_date = target_date
     else:
-        today_date = date.today()
+        today_date = get_current_ist_date()
     today_str = today_date.isoformat()
 
-    # website_assets/archive/<date>/ IS committed back to the repo, unlike
-    # output/<date>/ which only exists within a single CI checkout. Checking
-    # output/ alone can't stop a second same-day run (e.g. a manual
-    # workflow_dispatch re-trigger) from generating a different, conflicting
-    # post — which previously caused the live site's text and poster image
-    # to disagree. Checking the archive here makes the "one post per day"
-    # rule hold across separate runs too.
+    # One post per day guard
     archive_check_dir = os.path.join(project_root, "website_assets", "archive", today_str)
     if os.path.exists(archive_check_dir) and os.listdir(archive_check_dir):
         logger.info(
@@ -270,6 +276,7 @@ def run_daily_pipeline(
     generator = ContentGenerator(config, project_root)
     evaluator = ContentEvaluator(config, client=generator.client)
     fallback = FallbackProvider(config, project_root)
+    validator = ContentValidator()
     poster_generator = PosterGenerator(config, project_root)
 
     content, content_source = generate_with_evaluation(
@@ -280,6 +287,7 @@ def run_daily_pipeline(
         generator,
         evaluator,
         fallback,
+        validator,
     )
     logger.info("Final content source: %s", content_source)
     logger.info("Final quote: %s", content["quote"])
@@ -288,26 +296,7 @@ def run_daily_pipeline(
     output_dir = os.path.join(project_root, config["paths"]["output_dir"], today_str)
     output_filename = config["poster"]["output_filename"]
     output_path = os.path.join(output_dir, output_filename)
-
-    # ---- FIXED DUPLICATE CHECK ----
-    # Ensure the directory exists before checking for existing file
     os.makedirs(output_dir, exist_ok=True)
-    if os.path.exists(output_path):
-        logger.info(f"Poster for today ({today_str}) already exists at {output_path}. Skipping generation.")
-        return {
-            "date": today_str,
-            "theme": theme,
-            "background": background_path,
-            "content_source": content_source,
-            "quote": content["quote"],
-            "explanation": content["explanation"],
-            "long_explanation": content.get("long_explanation", ""),
-            "caption": content.get("caption", ""),
-            "hashtags": content.get("hashtags", []),
-            "poster_path": output_path,
-            "skipped": True,
-        }
-    # -----------------------------
 
     try:
         poster_generator.render(
@@ -325,15 +314,12 @@ def run_daily_pipeline(
             "theme": theme,
             "quote": content["quote"],
             "explanation": content["explanation"],
+            "context": content.get("context", ""),
+            "foundation_connection": content.get("foundation_connection", ""),
+            "cta": content.get("cta", ""),
             "long_explanation": content.get("long_explanation", ""),
-            "caption": (
-                content.get("caption")
-                or f'{content["quote"]}\n\n{content["explanation"]}'
-            ),
-            "hashtags": (
-                content.get("hashtags")
-                or "#Cogentic #JalteDiyeFoundation"
-            ),
+            "caption": content.get("caption", ""),
+            "hashtags": content.get("hashtags", []),
             "image": output_filename,
             "source": "Cogentic AI",
             "event": today_event["event"] if today_event else None,
@@ -357,10 +343,14 @@ def run_daily_pipeline(
         "content_source": content_source,
         "quote": content["quote"],
         "explanation": content["explanation"],
+        "context": content.get("context", ""),
+        "foundation_connection": content.get("foundation_connection", ""),
+        "cta": content.get("cta", ""),
         "long_explanation": content.get("long_explanation", ""),
         "caption": content.get("caption", ""),
         "hashtags": content.get("hashtags", []),
         "poster_path": output_path,
+        "event": today_event["event"] if today_event else None,
     }
 
     logger.info("Daily pipeline completed successfully.")
