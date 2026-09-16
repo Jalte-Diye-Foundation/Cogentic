@@ -7,7 +7,49 @@ import logging
 import os
 from typing import Any
 
+from content.generator import build_social_caption, build_structured_long_explanation
+
 logger = logging.getLogger(__name__)
+
+# Dynamic theme-specific synthesis for fallback scenarios (avoiding fixed canned repetition)
+THEME_FALLBACK_TEMPLATES = {
+    "Peace & Justice": {
+        "context": "Fostering peace and justice begins with how we treat those around us in everyday interactions. When communities cultivate fairness and open dialogue, trust replaces division.",
+        "foundation_connection": "Jalte Diye Foundation emphasizes ethical living and constructive social awareness as essential foundations for community harmony and mutual dignity.",
+        "cta": "Engage in active listening today and seek common ground in conversations where perspectives differ.",
+        "hashtags": ["#PeaceAndJustice", "#EthicalLiving", "#CommunityDialogue", "#SocialEducation"],
+    },
+    "Climate & Environment": {
+        "context": "Our natural ecosystems sustain every facet of human life and culture. Thoughtful environmental stewardship ensures that future generations inherit a thriving planet.",
+        "foundation_connection": "Through social education, Jalte Diye Foundation seeks to deepen community awareness around sustainability and responsible ecological choices.",
+        "cta": "Take one conscious action today to conserve energy, minimize waste, or support local green initiatives.",
+        "hashtags": ["#ClimateAction", "#Sustainability", "#EnvironmentalCare", "#JalteDiyeFoundation"],
+    },
+    "Quality Education": {
+        "context": "Education is the cornerstone of personal agency and collective societal advancement. Accessible learning unlocks human potential and nurtures critical thinking.",
+        "foundation_connection": "Jalte Diye Foundation champions lifelong learning and accessible social knowledge to empower every individual to contribute meaningfully to society.",
+        "cta": "Share an educational resource, mentor a curious learner, or dedicate time to learning a new skill today.",
+        "hashtags": ["#QualityEducation", "#LifelongLearning", "#KnowledgeSharing", "#SocialEmpowerment"],
+    },
+    "Women Empowerment": {
+        "context": "True societal progress requires equal opportunities, dignity, and active representation for women across all spheres of life.",
+        "foundation_connection": "Jalte Diye Foundation actively supports awareness around gender equity, inclusion, and the vital leadership of women in community development.",
+        "cta": "Amplify women's voices in your workplace and community, and support women-led initiatives.",
+        "hashtags": ["#WomenEmpowerment", "#GenderEquality", "#EqualOpportunity", "#CommunityLeadership"],
+    },
+    "Health & Mindfulness": {
+        "context": "Mental peace and physical well-being form the basis of our resilience and empathy toward others. Mindful living nurtures holistic health.",
+        "foundation_connection": "At Jalte Diye Foundation, we believe that emotional well-being and mindful reflection are fundamental to positive social and interpersonal engagement.",
+        "cta": "Take five quiet minutes today for mindful breathing and check in on a friend or colleague's well-being.",
+        "hashtags": ["#HealthAndMindfulness", "#MentalWellness", "#MindfulLiving", "#SelfCare"],
+    },
+    "Foundation Events": {
+        "context": "Commemorative observances remind us of shared human history, cultural milestones, and our collective responsibility to one another.",
+        "foundation_connection": "Jalte Diye Foundation observes these occasions to encourage community reflection, cultural appreciation, and shared civic values.",
+        "cta": "Take time to reflect on the meaning of today's observance and share its core lesson with someone near you.",
+        "hashtags": ["#CommunityCelebration", "#CivicAwareness", "#SocialValues", "#JalteDiyeFoundation"],
+    },
+}
 
 
 def load_used_quotes(log_path: str) -> set[str]:
@@ -37,39 +79,8 @@ def mark_quote_used(quote: str, log_path: str) -> None:
     logger.info("Marked quote as used: %s", normalized[:80])
 
 
-def _build_long_explanation(quote: str, explanation: str, theme: str) -> str:
-    """Synthesize a 10-12 line long_explanation when no AI-generated one exists.
-
-    Used for CSV fallback / emergency failsafe content, which have no
-    Gemini-authored long_explanation of their own.
-    """
-    quote = quote.strip()
-    explanation = explanation.strip()
-    lines = []
-    if quote:
-        lines.append(f'"{quote}"')
-    if explanation:
-        lines.append(explanation)
-    lines.append(
-        f"At Jalte Diye Foundation, this reflection on {theme.lower()} speaks directly "
-        "to the work we do every day — showing up for our community, listening first, "
-        "and turning good intentions into real, visible action."
-    )
-    lines.append(
-        "We believe lasting change comes from small, consistent efforts: a shared meal, "
-        "an open conversation, a helping hand extended without condition. Today's message "
-        "is a reminder that everyone has a part to play, no matter how small it may seem."
-    )
-    lines.append(
-        "As always, we invite you to join us — whether by volunteering, sharing this "
-        "message, or simply carrying its spirit into your own day."
-    )
-    lines.append("#Cogentic #JalteDiyeFoundation")
-    return "\n\n".join(lines)
-
-
 class FallbackProvider:
-    """Provides unused quotes from theme-specific CSV files."""
+    """Provides unused quotes from theme-specific CSV files with structured fallback descriptions."""
 
     def __init__(self, config: dict[str, Any], project_root: str) -> None:
         self._config = config
@@ -80,65 +91,95 @@ class FallbackProvider:
     def _resolve_path(self, relative_path: str) -> str:
         return os.path.join(self._project_root, relative_path)
 
-    def get_fallback_quote(self, theme: str, event: dict | None = None) -> dict[str, str]:
+    def get_fallback_quote(self, theme: str, event: dict | None = None) -> dict[str, Any]:
         """Pull an unused quote from the CSV mapped to the given theme."""
         logger.warning("Triggering CSV fallback for theme: %s", theme)
         theme_config = self._config["themes"].get(theme)
         if not theme_config:
             logger.error("No theme configuration found for: %s", theme)
-            return self._emergency_failsafe(theme)
+            return self._emergency_failsafe(theme, event)
 
         csv_file = self._resolve_path(theme_config["csv_fallback"])
         if not os.path.exists(csv_file):
             logger.error("Missing CSV fallback file for %s: %s", theme, csv_file)
-            return self._emergency_failsafe(theme)
+            return self._emergency_failsafe(theme, event)
 
         used_quotes = load_used_quotes(self._used_quotes_log)
         event_name = event["event"] if event else None
         fallback_content = self._read_unused_csv_quote(csv_file, used_quotes, event_name)
         if fallback_content:
             mark_quote_used(fallback_content["quote"], self._used_quotes_log)
-            fallback_content["long_explanation"] = _build_long_explanation(
-                fallback_content["quote"], fallback_content["explanation"], theme
+            # Assemble structured metadata
+            tpl = THEME_FALLBACK_TEMPLATES.get(theme, THEME_FALLBACK_TEMPLATES["Foundation Events"])
+            context = tpl["context"]
+            foundation_conn = tpl["foundation_connection"]
+            cta = tpl["cta"]
+            hashtags = list(tpl["hashtags"])
+            if event_name:
+                event_tag = f"#{event_name.replace(' ', '').replace('&', 'And').replace('-', '')}"
+                if event_tag not in hashtags:
+                    hashtags.insert(0, event_tag)
+
+            fallback_content["context"] = context
+            fallback_content["foundation_connection"] = foundation_conn
+            fallback_content["cta"] = cta
+            fallback_content["hashtags"] = hashtags
+            fallback_content["long_explanation"] = build_structured_long_explanation(
+                context=context,
+                foundation_connection=foundation_conn,
+                cta=cta,
+                hashtags=hashtags,
+            )
+            fallback_content["caption"] = build_social_caption(
+                quote=fallback_content["quote"],
+                context=context,
+                foundation_connection=foundation_conn,
+                cta=cta,
+                hashtags=hashtags,
             )
             logger.info("Retrieved fallback quote from CSV: %s", csv_file)
             return fallback_content
 
         logger.critical("No unused quotes remain in CSV: %s", csv_file)
-        return self._emergency_failsafe(theme)
+        return self._emergency_failsafe(theme, event)
 
     def _read_unused_csv_quote(
         self, csv_file: str, used_quotes: set[str], event_name: str | None = None
     ) -> dict[str, str] | None:
         with open(csv_file, "r", encoding="utf-8-sig") as handle:
-            reader = csv.reader(handle)
-            headers: list[str] = []
-            for row in reader:
-                if row and any(cell.strip() for cell in row):
-                    headers = [cell.strip().lower() for cell in row]
-                    break
+            raw_rows = [row for row in csv.reader(handle) if row and any(c.strip() for c in row)]
+            if not raw_rows:
+                return None
 
-            quote_idx = headers.index("quote") if "quote" in headers else -1
-            caption_idx = headers.index("caption") if "caption" in headers else -1
-            occasion_idx = headers.index("occasion") if "occasion" in headers else -1
+            first_non_empty = [cell.strip().lower() for cell in raw_rows[0]]
+            has_headers = "quote" in first_non_empty
 
-            all_rows = list(reader)
+            if has_headers:
+                headers = first_non_empty
+                quote_idx = headers.index("quote")
+                caption_idx = headers.index("caption") if "caption" in headers else -1
+                occasion_idx = headers.index("occasion") if "occasion" in headers else -1
+                data_rows = raw_rows[1:]
+            else:
+                # Headerless 2-column CSV (e.g. quotes.csv: [quote, caption])
+                quote_idx = 0
+                caption_idx = 1 if len(raw_rows[0]) > 1 else -1
+                occasion_idx = -1
+                data_rows = raw_rows
 
-        # When today has a specific event, only use rows whose occasion matches it
         if event_name and occasion_idx != -1:
             candidate_rows = [
-                r for r in all_rows
+                r for r in data_rows
                 if len(r) > occasion_idx and r[occasion_idx].strip().lower() == event_name.lower()
             ]
-            # Fall back to any row if no occasion-matched rows exist
             if not candidate_rows:
                 logger.warning("No CSV rows for event '%s'; using generic fallback row.", event_name)
-                candidate_rows = all_rows
+                candidate_rows = data_rows
         else:
-            candidate_rows = all_rows
+            candidate_rows = data_rows
 
         for row in candidate_rows:
-            if not row or quote_idx == -1 or len(row) <= quote_idx:
+            if not row or len(row) <= quote_idx:
                 continue
 
             row_quote = row[quote_idx].strip()
@@ -146,7 +187,6 @@ class FallbackProvider:
             if caption_idx != -1 and len(row) > caption_idx:
                 row_explanation = row[caption_idx].strip()
             elif occasion_idx != -1 and len(row) > occasion_idx:
-                # Only use the occasion label if it matches today's event
                 occasion_val = row[occasion_idx].strip()
                 if event_name and occasion_val.lower() == event_name.lower():
                     row_explanation = f"Observing {occasion_val}."
@@ -155,16 +195,40 @@ class FallbackProvider:
                 return {
                     "quote": row_quote.replace('"', ""),
                     "explanation": row_explanation.replace('"', ""),
-                    "long_explanation": "",
                 }
         return None
 
-    def _emergency_failsafe(self, theme: str = "") -> dict[str, str]:
+    def _emergency_failsafe(self, theme: str = "", event: dict | None = None) -> dict[str, Any]:
         logger.warning("Using emergency hardcoded failsafe quote.")
         quote = self._emergency["quote"]
         explanation = self._emergency["explanation"]
+        tpl = THEME_FALLBACK_TEMPLATES.get(theme, THEME_FALLBACK_TEMPLATES["Foundation Events"])
+        context = tpl["context"]
+        foundation_conn = tpl["foundation_connection"]
+        cta = tpl["cta"]
+        hashtags = list(tpl["hashtags"])
+        if event and event.get("event"):
+            event_name = event["event"]
+            hashtags.insert(0, f"#{event_name.replace(' ', '')}")
+
         return {
             "quote": quote,
             "explanation": explanation,
-            "long_explanation": _build_long_explanation(quote, explanation, theme or "hope"),
+            "context": context,
+            "foundation_connection": foundation_conn,
+            "cta": cta,
+            "hashtags": hashtags,
+            "long_explanation": build_structured_long_explanation(
+                context=context,
+                foundation_connection=foundation_conn,
+                cta=cta,
+                hashtags=hashtags,
+            ),
+            "caption": build_social_caption(
+                quote=quote,
+                context=context,
+                foundation_connection=foundation_conn,
+                cta=cta,
+                hashtags=hashtags,
+            ),
         }

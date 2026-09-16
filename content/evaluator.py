@@ -9,11 +9,13 @@ from typing import Any
 from google import genai
 from google.genai import types
 
+from content.foundation_context import get_foundation_prompt_context
+
 logger = logging.getLogger(__name__)
 
 
 class ContentEvaluator:
-    """Evaluates generated content quality using the Gemini API."""
+    """Evaluates full generated content packages using the Gemini API."""
 
     def __init__(self, config: dict[str, Any], client: genai.Client | None = None) -> None:
         self._config = config
@@ -41,22 +43,38 @@ class ContentEvaluator:
     def passing_score(self) -> int:
         return self._passing_score
 
-    def evaluate(self, theme: str, content: dict[str, str]) -> dict[str, Any]:
-        """Score content on alignment, clarity, and emotional impact."""
+    def evaluate(self, theme: str, content: dict[str, Any], event: dict | None = None) -> dict[str, Any]:
+        """Score the complete content package on alignment, clarity, impact, grounding, and lack of repetition."""
         if self._client is None:
             raise RuntimeError("Gemini API client unavailable for evaluation.")
+
+        foundation_context = get_foundation_prompt_context()
+        event_info = f"Special Event: {event['event']}" if event else "Evergreen Theme (No Event)"
+
         prompt = f"""
-    You are a strict Quality Control Editor for a social education foundation.
-    Evaluate the following quote and explanation based on its alignment with the theme "{theme}",
-    its clarity, and its emotional impact.
+You are a strict, senior Quality Control Editor for Jalte Diye Foundation.
+Evaluate the following complete daily social education content package.
 
-    Content to evaluate:
-    {json.dumps(content)}
+{foundation_context}
 
-    Score it on a scale of 1 to 10 (where 10 is breathtakingly profound and 1 is generic/confusing).
-    Return ONLY a valid JSON object with this exact schema:
-    {{"score": 8, "reasoning": "..."}}
-    """
+Theme: "{theme}"
+{event_info}
+
+Content to evaluate:
+{json.dumps(content, indent=2)}
+
+Evaluation Criteria:
+1. Relevance: Content must strongly align with the theme "{theme}" (and event if specified).
+2. Grounded Foundation Connection: The connection must realistically link to Jalte Diye Foundation's actual mission of social education, awareness, empathy, and community responsibility. Reject any fabricated claims of physical facilities, funding amounts, or fake partnerships.
+3. Clarity & Quality: Insightful, non-cliché writing.
+4. Actionability: Practical, constructive CTA.
+5. Non-Repetitive: The quote must NOT be repeated inside context/foundation_connection/CTA. No canned formulaic phrasing.
+6. Hashtag Relevance: 3-6 specific, relevant hashtags starting with '#'.
+
+Score on a strict scale of 1 to 10 (where 10 is exemplary and 1 is generic, repetitive, or flawed).
+Return ONLY valid JSON matching this schema:
+{{"score": 8, "reasoning": "..."}}
+"""
         try:
             response = self._client.models.generate_content(
                 model=self._model,
