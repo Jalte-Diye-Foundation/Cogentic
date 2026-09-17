@@ -16,24 +16,41 @@ from content.foundation_context import get_foundation_prompt_context
 logger = logging.getLogger(__name__)
 
 
+import re
+
+
+def strip_markdown(text: str) -> str:
+    """Remove markdown bold/italic formatting markers (** or * or __) while preserving text."""
+    if not text:
+        return ""
+    text = re.sub(r"\*\*([^*]+)\*\*", r"\1", text)
+    text = re.sub(r"\*([^*]+)\*", r"\1", text)
+    text = re.sub(r"__([^_]+)__", r"\1", text)
+    text = re.sub(r"_([^_]+)_", r"\1", text)
+    return text.strip()
+
+
 def build_structured_long_explanation(
     context: str,
     foundation_connection: str,
     cta: str,
-    hashtags: list[str],
+    hashtags: list[str] | None = None,
 ) -> str:
     """Assemble the web-facing long explanation from structured components.
 
-    Does NOT repeat the quote or event sentence.
+    - Does NOT repeat the quote or event sentence.
+    - Does NOT contain markdown asterisks (**).
+    - Does NOT append hashtags (hashtags are rendered separately downstream via metadata.json).
     """
+    clean_context = strip_markdown(context.strip())
+    clean_foundation = strip_markdown(foundation_connection.strip())
+    clean_cta = strip_markdown(cta.strip())
+
     sections = [
-        context.strip(),
-        f"**How this connects with our mission:**\n{foundation_connection.strip()}",
-        f"**Take Action:**\n{cta.strip()}",
+        clean_context,
+        f"How this connects with our mission:\n{clean_foundation}",
+        f"Take Action:\n{clean_cta}",
     ]
-    if hashtags:
-        tag_line = " ".join(hashtags)
-        sections.append(tag_line)
     return "\n\n".join(s for s in sections if s)
 
 
@@ -42,14 +59,19 @@ def build_social_caption(
     context: str,
     foundation_connection: str,
     cta: str,
-    hashtags: list[str],
+    hashtags: list[str] | None = None,
 ) -> str:
     """Assemble a clean social media caption without redundant duplication."""
+    clean_quote = strip_markdown(quote.strip())
+    clean_context = strip_markdown(context.strip())
+    clean_foundation = strip_markdown(foundation_connection.strip())
+    clean_cta = strip_markdown(cta.strip())
+
     sections = [
-        f'"{quote.strip()}"',
-        context.strip(),
-        foundation_connection.strip(),
-        cta.strip(),
+        f'"{clean_quote}"',
+        clean_context,
+        clean_foundation,
+        clean_cta,
     ]
     if hashtags:
         sections.append(" ".join(hashtags))
@@ -168,6 +190,7 @@ Key Instructions:
 2. Distinctiveness: Every section must be unique. Never repeat the quote inside the context, foundation connection, or CTA.
 3. Groundedness: Do not invent fake charity programs, numbers of beneficiaries, or partnerships.
 4. Hashtags: Provide 3 to 6 valid hashtags starting with '#'. At least 2 must be strongly topic/event-specific. Avoid generic hashtag spam.
+5. Formatting: Output plain text values. Do NOT include markdown formatting (such as **bold**, *italic*, or markdown headings) in any JSON values.
 """
 
         try:

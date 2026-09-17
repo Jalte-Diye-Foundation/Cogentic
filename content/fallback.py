@@ -39,7 +39,7 @@ THEME_FALLBACK_TEMPLATES = {
     },
     "Health & Mindfulness": {
         "context": "Mental peace and physical well-being form the basis of our resilience and empathy toward others. Mindful living nurtures holistic health.",
-        "foundation_connection": "At Jalte Diye Foundation, we believe that emotional well-being and mindful reflection are fundamental to positive social and interpersonal engagement.",
+        "foundation_connection": "Jalte Diye Foundation promotes emotional well-being and mindful reflection as fundamentals of positive social and interpersonal engagement.",
         "cta": "Take five quiet minutes today for mindful breathing and check in on a friend or colleague's well-being.",
         "hashtags": ["#HealthAndMindfulness", "#MentalWellness", "#MindfulLiving", "#SelfCare"],
     },

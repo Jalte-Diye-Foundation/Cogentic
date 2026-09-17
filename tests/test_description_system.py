@@ -134,17 +134,19 @@ class TestCogenticDescriptionSystem(unittest.TestCase):
         self.assertTrue(any("quote text repeated" in err.lower() for err in errors))
 
     def test_07_no_unnecessary_event_line_repetition(self):
-        """TEST 7: Generated long explanation formats cleanly without redundant event lines."""
+        """TEST 7: Generated long explanation formats cleanly without redundant event lines or markdown asterisks."""
         long_expl = build_structured_long_explanation(
             context="World Ozone Day reminds us of the fragile atmospheric shield.",
             foundation_connection="Jalte Diye Foundation links ecological awareness to community well-being.",
             cta="Make conscious choices about emissions.",
             hashtags=["#WorldOzoneDay", "#CleanAir"],
         )
-        # Verify clean structure
+        # Verify clean structure without literal asterisks
         self.assertNotIn('""', long_expl)
-        self.assertIn("**How this connects with our mission:**", long_expl)
-        self.assertIn("**Take Action:**", long_expl)
+        self.assertNotIn("**", long_expl)
+        self.assertNotIn("#", long_expl)  # Hashtags must NOT be inside long_explanation
+        self.assertIn("How this connects with our mission:\nJalte Diye Foundation", long_expl)
+        self.assertIn("Take Action:\nMake conscious choices", long_expl)
 
     def test_08_non_event_days_contain_no_event_content(self):
         """TEST 8: Non-event days reject event-specific observation phrasing."""
@@ -293,6 +295,51 @@ class TestCogenticDescriptionSystem(unittest.TestCase):
             )
             self.assertTrue(success)
             self.assertTrue(os.path.exists(out_path))
+
+    def test_21_no_duplicate_hashtags_between_long_explanation_and_metadata(self):
+        """TEST 21: Regression test: Hashtags must exist in hashtags list and NOT in long_explanation."""
+        candidate = self.fallback.get_fallback_quote("Peace & Justice")
+        # Hashtags array is populated
+        self.assertTrue(len(candidate["hashtags"]) >= 3)
+        # Hashtags are NOT in long_explanation
+        self.assertNotIn("#", candidate["long_explanation"])
+        for tag in candidate["hashtags"]:
+            self.assertNotIn(tag, candidate["long_explanation"])
+
+    def test_22_no_literal_markdown_asterisks_in_any_field(self):
+        """TEST 22: Regression test: No literal ** or __ in description or fallback fields."""
+        for theme in ["Peace & Justice", "Climate & Environment", "Quality Education", "Women Empowerment", "Health & Mindfulness", "Foundation Events"]:
+            candidate = self.fallback.get_fallback_quote(theme)
+            for field in ["quote", "explanation", "context", "foundation_connection", "cta", "long_explanation"]:
+                val = candidate.get(field, "")
+                self.assertNotIn("**", val, f"Found ** in {field} for theme {theme}")
+                self.assertNotIn("__", val, f"Found __ in {field} for theme {theme}")
+
+    def test_23_validator_rejects_literal_markdown_and_embedded_hashtags(self):
+        """TEST 23: Validator rejects posts with ** in headings or hashtags in long_explanation."""
+        bad_markdown_candidate = {
+            "quote": "Peace begins with a smile.",
+            "explanation": "Short expl.",
+            "context": "Context text.",
+            "foundation_connection": "**Mission connection:** At Jalte Diye Foundation, we focus on harmony.",
+            "cta": "Smile today.",
+            "hashtags": ["#Peace", "#Kindness", "#Community"],
+            "long_explanation": "Context text.\n\n**How this connects with our mission:**\nAt Jalte Diye Foundation...\n\n**Take Action:**\nSmile today.",
+        }
+        errors = self.validator.validate_deterministic(bad_markdown_candidate, "Peace & Justice")
+        self.assertTrue(any("literal markdown asterisks" in err.lower() for err in errors))
+
+        bad_hashtag_candidate = {
+            "quote": "Peace begins with a smile.",
+            "explanation": "Short expl.",
+            "context": "Context text.",
+            "foundation_connection": "At Jalte Diye Foundation, we focus on harmony.",
+            "cta": "Smile today.",
+            "hashtags": ["#Peace", "#Kindness", "#Community"],
+            "long_explanation": "Context text.\n\nHow this connects with our mission:\nAt Jalte Diye Foundation...\n\nTake Action:\nSmile today.\n\n#Peace #Kindness #Community",
+        }
+        errors2 = self.validator.validate_deterministic(bad_hashtag_candidate, "Peace & Justice")
+        self.assertTrue(any("must not contain hashtags" in err.lower() for err in errors2))
 
 
 if __name__ == "__main__":
