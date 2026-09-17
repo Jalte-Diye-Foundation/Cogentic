@@ -175,6 +175,23 @@ class ContentValidator:
         tag_errors = self.validate_hashtags(hashtags, theme, event)
         errors.extend(tag_errors)
 
+        # Markdown formatting check (no literal markdown asterisks allowed in fields)
+        for field_name, field_val in [
+            ("quote", quote),
+            ("explanation", str(content.get("explanation", ""))),
+            ("context", context),
+            ("foundation_connection", foundation_conn),
+            ("cta", cta),
+            ("long_explanation", str(content.get("long_explanation", ""))),
+        ]:
+            if "**" in field_val or "__" in field_val:
+                errors.append(f"Detected literal markdown asterisks or formatting in '{field_name}'")
+
+        # Long explanation separation check (must not embed hashtags, avoiding downstream duplication)
+        long_expl = str(content.get("long_explanation", "")).strip()
+        if long_expl and "#" in long_expl:
+            errors.append("Long explanation must not contain hashtags (hashtags are maintained separately)")
+
         # Repetition within post: Quote appearing in other sections
         quote_norm = normalize_text(quote)
         if quote_norm:
