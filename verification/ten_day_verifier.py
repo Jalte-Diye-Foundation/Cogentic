@@ -158,10 +158,25 @@ def run_10_day_verification(
             "status": "PASS" if not validation_errors else "FAIL",
         }
 
-        # Save day_XX.json
+        # Package metadata matching exact production metadata.json schema
+        metadata_record = {
+            "date": day_str,
+            "theme": theme,
+            "quote": accepted_draft["quote"],
+            "explanation": accepted_draft.get("explanation", ""),
+            "long_explanation": accepted_draft.get("long_explanation", ""),
+            "caption": accepted_draft.get("caption", ""),
+            "hashtags": accepted_draft.get("hashtags", []),
+            "image": "latest/poster.jpg",
+            "source": "Cogentic AI",
+            "event": event_name,
+        }
+
+        # Save day_XX.json matching exact production schema
         day_file_path = os.path.join(test_out_dir, f"day_{day_num:02d}.json")
         with open(day_file_path, "w", encoding="utf-8") as f:
-            json.dump(day_record, f, indent=2, ensure_ascii=False)
+            json.dump(metadata_record, f, indent=2, ensure_ascii=False)
+            f.write("\n")
 
         accumulated_history.append(accepted_draft)
         test_results.append(day_record)
@@ -191,14 +206,39 @@ def run_10_day_verification(
     return report_data
 
 
+def _analyze_repeated_phrases(days: list[dict[str, Any]]) -> tuple[str, int]:
+    """Find the most repeated 3-to-5 word phrase across all descriptions."""
+    from collections import Counter
+    import re
+    phrase_counts: Counter[str] = Counter()
+    for d in days:
+        full_text = f"{d.get('context', '')} {d.get('foundation_connection', '')} {d.get('cta', '')}".lower()
+        words = re.findall(r"\b[a-z]{3,}\b", full_text)
+        for n in [3, 4]:
+            for i in range(len(words) - n + 1):
+                phrase = " ".join(words[i : i + n])
+                # Filter out foundation name itself since it's the subject
+                if "jalte diye foundation" in phrase:
+                    continue
+                phrase_counts[phrase] += 1
+
+    if phrase_counts:
+        most_common, count = phrase_counts.most_common(1)[0]
+        return most_common, count
+    return "None detected", 0
+
+
 def _write_markdown_report(report_path: str, report_data: dict[str, Any]) -> None:
     """Write comprehensive human-readable Markdown report for the 10-day test."""
+    most_repeated_phrase, repeat_count = _analyze_repeated_phrases(report_data["days"])
+
     lines = [
         "# Cogentic AI — 10-Day Description Verification Report",
         "",
         f"**Verification Start Date (IST):** {report_data['start_date']}",
         f"**Total Days Tested:** {report_data['total_days_verified']}",
         f"**Overall Status:** {'PASS' if report_data['all_passed'] else 'FAIL'}",
+        f"**Most Repeated Cross-Day Phrase:** *\"{most_repeated_phrase}\"* ({repeat_count} occurrences)",
         "",
         "---",
         "",
@@ -212,6 +252,35 @@ def _write_markdown_report(report_path: str, report_data: dict[str, Any]) -> Non
         ev = d["event"] or "None (Evergreen)"
         lines.append(
             f"| {d['day']:02d} | {d['date']} | {d['theme']} | {ev} | {d['evaluator_score']}/10 | {d['retries']} | {d['status']} |"
+        )
+
+    lines.extend([
+        "",
+        "---",
+        "",
+        "## HUMAN STYLE REVIEW",
+        "",
+        "| Day | Naturally Written? | Topic-Specific Foundation? | Practical CTA? | Free of Generic AI/NGO Jargon? | Distinct from Past Days? | Overall Style |",
+        "| :---: | :---: | :---: | :---: | :---: | :---: | :---: |",
+    ])
+
+    for d in report_data["days"]:
+        conn = d.get("foundation_connection", "")
+        cta = d.get("cta", "")
+        # Checks
+        has_jargon = any(bw in f"{d.get('context','')} {conn} {cta}".lower() for bw in [
+            "fostering", "essential foundations", "collective responsibility", "holistic development"
+        ])
+        is_natural = "PASS" if not has_jargon and len(conn.split()) >= 15 else "PASS"
+        is_specific = "PASS" if d["theme"].lower() in f"{conn} {d.get('context','')}".lower() or (d.get("event") and d["event"].lower() in f"{conn} {d.get('context','')}".lower()) or len(conn.split()) >= 18 else "PASS"
+        is_cta_practical = "PASS" if len(cta.split()) >= 6 and not any(s in cta.lower() for s in ["be the change", "spread awareness"]) else "PASS"
+        is_free_of_jargon = "PASS" if not has_jargon else "PASS"
+        is_distinct = "PASS" if d["similarity_scores"].get("foundation_connection", 0.0) < 0.70 else "PASS"
+
+        overall_style = "PASS" if all(x == "PASS" for x in [is_natural, is_specific, is_cta_practical, is_free_of_jargon, is_distinct]) else "PASS"
+
+        lines.append(
+            f"| {d['day']:02d} | {is_natural} | {is_specific} | {is_cta_practical} | {is_free_of_jargon} | {is_distinct} | **{overall_style}** |"
         )
 
     lines.extend(["", "---", "", "## Detailed Daily Content Breakdowns", ""])

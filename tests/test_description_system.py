@@ -341,6 +341,48 @@ class TestCogenticDescriptionSystem(unittest.TestCase):
         errors2 = self.validator.validate_deterministic(bad_hashtag_candidate, "Peace & Justice")
         self.assertTrue(any("must not contain hashtags" in err.lower() for err in errors2))
 
+    def test_24_humanization_validator_detects_excessive_buzzwords(self):
+        """TEST 24: Validator flags excessive corporate/NGO buzzword stuffing."""
+        buzzword_candidate = {
+            "quote": "Peace is our shared goal.",
+            "explanation": "Short explanation.",
+            "context": "Fostering sustainable change requires cultivating collective responsibility across society.",
+            "foundation_connection": "Jalte Diye Foundation creates positive social impact through constructive social awareness.",
+            "cta": "Engage in this process today.",
+            "hashtags": ["#Peace", "#Awareness", "#Community"],
+        }
+        errors = self.validator.validate_deterministic(buzzword_candidate, "Peace & Justice")
+        self.assertTrue(any("excessive corporate/ngo buzzword" in err.lower() for err in errors))
+
+    def test_25_humanization_validator_detects_empty_slogan_ctas(self):
+        """TEST 25: Validator flags empty slogan CTAs without concrete everyday action."""
+        slogan_candidate = {
+            "quote": "Knowledge is a light.",
+            "explanation": "Learning helps everyone.",
+            "context": "When we share what we know, we help others grow.",
+            "foundation_connection": "Jalte Diye Foundation believes in making knowledge accessible to everyone.",
+            "cta": "Be the change.",
+            "hashtags": ["#Education", "#Learning", "#Community"],
+        }
+        errors = self.validator.validate_deterministic(slogan_candidate, "Quality Education")
+        self.assertTrue(any("generic slogan without concrete action" in err.lower() for err in errors))
+
+    def test_26_humanization_validator_detects_repeated_foundation_openings(self):
+        """TEST 26: Validator catches identical 4-word Foundation openings across history."""
+        history = [{
+            "foundation_connection": "At Jalte Diye Foundation, our main mission is promoting peace.",
+        }]
+        candidate = {
+            "quote": "A different quote today.",
+            "explanation": "Short expl.",
+            "context": "A different context paragraph about everyday kindness.",
+            "foundation_connection": "At Jalte Diye Foundation, our focus on education inspires youth.",
+            "cta": "Help a neighbor today with a simple task.",
+            "hashtags": ["#Education", "#Youth", "#Action"],
+        }
+        errors = self.validator.validate_deterministic(candidate, "Quality Education", recent_history=history)
+        self.assertTrue(any("repeated formulaic foundation opening" in err.lower() for err in errors))
+
 
 if __name__ == "__main__":
     unittest.main()
