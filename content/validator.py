@@ -38,6 +38,36 @@ CANNED_OPENINGS = [
     "we believe lasting change comes from small, consistent efforts",
     "a shared meal, an open conversation, a helping hand extended",
     "as always, we invite you to join us",
+    "serves as a reminder that",
+    "this serves as a reminder",
+    "it is important to remember that",
+    "together, we can build a better",
+]
+
+# Overly abstract corporate / NGO buzzwords to monitor for density
+CORPORATE_NGO_BUZZWORDS = [
+    "fostering",
+    "cultivating",
+    "essential foundations",
+    "collective responsibility",
+    "positive social impact",
+    "constructive social awareness",
+    "holistic development",
+    "mutual dignity",
+    "ethical transformation",
+    "meaningful change begins",
+    "pivotal role",
+    "beacon of hope",
+    "catalyst for change",
+]
+
+# Disallowed empty slogan CTAs without concrete action
+EMPTY_SLOGAN_CTAS = [
+    "be the change",
+    "make a difference",
+    "spread awareness",
+    "join us in creating positive change",
+    "take meaningful action today",
 ]
 
 # Configurable similarity thresholds
@@ -253,6 +283,49 @@ class ContentValidator:
                 errors.append("Exact duplicate CTA found in history")
             if curr_tag_set and curr_tag_set == prev_tag_set:
                 errors.append("Identical hashtag set found in recent history")
+
+        # Humanization and natural tone validation
+        human_errors = self.validate_humanization(content, recent_history)
+        errors.extend(human_errors)
+
+        return errors
+
+    def validate_humanization(
+        self,
+        content: dict[str, Any],
+        recent_history: list[dict[str, Any]] | None = None,
+    ) -> list[str]:
+        """Validate that writing feels human, warm, conversational, and not filled with corporate NGO buzzwords."""
+        errors: list[str] = []
+        recent_history = recent_history or []
+
+        context = str(content.get("context", "")).strip()
+        foundation_conn = str(content.get("foundation_connection", "")).strip()
+        cta = str(content.get("cta", "")).strip()
+        combined_text_lower = f"{context} {foundation_conn} {cta}".lower()
+
+        # 1. Check corporate/NGO buzzword density
+        found_buzzwords = [bw for bw in CORPORATE_NGO_BUZZWORDS if bw in combined_text_lower]
+        if len(found_buzzwords) >= 3:
+            errors.append(f"Excessive corporate/NGO buzzword density ({len(found_buzzwords)} detected: {', '.join(found_buzzwords)})")
+
+        # 2. Check for empty slogan CTAs without concrete everyday action
+        cta_norm = normalize_text(cta)
+        for empty_slogan in EMPTY_SLOGAN_CTAS:
+            if cta_norm == normalize_text(empty_slogan):
+                errors.append(f"CTA is a generic slogan without concrete action: '{cta}'")
+
+        # 3. Check opening variety against recent history (avoid formulaic repeated openings)
+        curr_conn_words = normalize_text(foundation_conn).split()
+        if len(curr_conn_words) >= 4:
+            curr_opening_4 = " ".join(curr_conn_words[:4])
+            for prev in recent_history[-5:]:
+                prev_conn_words = normalize_text(prev.get("foundation_connection", "")).split()
+                if len(prev_conn_words) >= 4:
+                    prev_opening_4 = " ".join(prev_conn_words[:4])
+                    if curr_opening_4 == prev_opening_4:
+                        errors.append(f"Repeated formulaic Foundation opening across consecutive posts: '{curr_opening_4}'")
+                        break
 
         return errors
 

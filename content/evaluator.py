@@ -52,7 +52,7 @@ class ContentEvaluator:
         event_info = f"Special Event: {event['event']}" if event else "Evergreen Theme (No Event)"
 
         prompt = f"""
-You are a strict, senior Quality Control Editor for Jalte Diye Foundation.
+You are a senior Quality Control Editor and Human Style Reviewer for Jalte Diye Foundation.
 Evaluate the following complete daily social education content package.
 
 {foundation_context}
@@ -63,15 +63,20 @@ Theme: "{theme}"
 Content to evaluate:
 {json.dumps(content, indent=2)}
 
-Evaluation Criteria:
-1. Relevance: Content must strongly align with the theme "{theme}" (and event if specified).
-2. Grounded Foundation Connection: The connection must realistically link to Jalte Diye Foundation's actual mission of social education, awareness, empathy, and community responsibility. Reject any fabricated claims of physical facilities, funding amounts, or fake partnerships.
-3. Clarity & Quality: Insightful, non-cliché writing.
-4. Actionability: Practical, constructive CTA.
-5. Non-Repetitive: The quote must NOT be repeated inside context/foundation_connection/CTA. No canned formulaic phrasing.
-6. Hashtag Relevance: 3-6 specific, relevant hashtags starting with '#'.
+Evaluation Criteria (Score 1-10):
+1. Human Naturalness & Warmth: Does it sound like a thoughtful, caring human content writer rather than a corporate press release or robotic AI?
+2. Conversational Readability: Simple, clear, and relatable language. Free of corporate NGO buzzwords ('fostering', 'cultivating', 'essential foundations', 'collective responsibility', 'holistic development', etc.).
+3. Grounded & Dynamic Foundation Connection: Specifically answers why THIS topic matters to Jalte Diye Foundation's social education and empathy values. No boilerplate templates like 'At Jalte Diye Foundation, we believe...'. No fake programs or statistics.
+4. Everyday Relevance: Context connects the theme to ordinary human experiences (conversations, family, work, community, habits).
+5. Practical, Realistic CTA: Gives a concrete, doable action step rather than an empty slogan like 'be the change'.
+6. Distinctiveness & Zero Repetition: The quote is NOT repeated in the text; sections do not repeat the same sentences or canned formulas.
+7. Hashtag Relevance: 3-6 relevant, specific hashtags starting with '#'.
 
-Score on a strict scale of 1 to 10 (where 10 is exemplary and 1 is generic, repetitive, or flawed).
+Score on a strict scale of 1 to 10:
+- Score 8-10: Warm, human, natural, grounded, insightful, and topic-specific.
+- Score 6-7: Acceptable but slightly formal or generic.
+- Score 1-5: Robotic, academic textbook style, corporate buzzword-stuffed, repetitive, or contains fabricated NGO claims.
+
 Return ONLY valid JSON matching this schema:
 {{"score": 8, "reasoning": "..."}}
 """
