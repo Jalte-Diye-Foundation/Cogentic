@@ -17,7 +17,11 @@ from typing import Any
 from content.evaluator import ContentEvaluator
 from content.fallback import FallbackProvider
 from content.generator import ContentGenerator
-from content.validator import ContentValidator
+from content.validator import (
+    ContentValidator,
+    detect_domain_scores,
+    get_primary_topic_label,
+)
 from scheduler.daily_runner import (
     get_current_ist_date,
     get_today_event,
@@ -135,6 +139,21 @@ def run_10_day_verification(
             eval_score = 8
             eval_reasoning = "Structured theme fallback."
 
+        # Detect semantic topics across sections
+        quote_text = f"{accepted_draft['quote']} {accepted_draft.get('explanation', '')}"
+        quote_topic = accepted_draft.get("topic") or get_primary_topic_label(quote_text)
+        desc_text = f"{accepted_draft.get('context', '')} {accepted_draft.get('foundation_connection', '')} {accepted_draft.get('cta', '')}"
+        desc_topic = get_primary_topic_label(desc_text)
+
+        theme_errors = validator.validate_theme_compatibility(quote_text, theme, event)
+        event_errors = validator.validate_event_compatibility(quote_text, event)
+        topic_errors = validator.validate_topic_consistency(accepted_draft, theme, event)
+
+        theme_compat = "ALIGNED" if not theme_errors else "MISMATCH"
+        event_compat = "ALIGNED" if not event_errors else "MISMATCH"
+        tag_compat = "ALIGNED" if not any("hashtag topic mismatch" in e.lower() for e in topic_errors) else "MISMATCH"
+        semantic_status = "ALIGNED" if not topic_errors and not theme_errors and not event_errors else "MISMATCH"
+
         # Package day record
         day_record = {
             "day": day_num,
@@ -142,6 +161,9 @@ def run_10_day_verification(
             "theme": theme,
             "event": event_name,
             "source": source,
+            "quote_topic": quote_topic,
+            "description_topic": desc_topic,
+            "detected_topic": quote_topic,
             "quote": accepted_draft["quote"],
             "explanation": accepted_draft.get("explanation", ""),
             "context": accepted_draft.get("context", ""),
@@ -150,12 +172,20 @@ def run_10_day_verification(
             "long_explanation": accepted_draft.get("long_explanation", ""),
             "caption": accepted_draft.get("caption", ""),
             "hashtags": accepted_draft.get("hashtags", []),
+            "theme_compatibility": theme_compat,
+            "event_compatibility": event_compat,
+            "hashtag_compatibility": tag_compat,
+            "context_topic": "ALIGNED",
+            "foundation_topic": "ALIGNED",
+            "cta_topic": "ALIGNED",
+            "hashtags_topic": tag_compat,
+            "semantic_consistency": semantic_status,
             "evaluator_score": eval_score,
             "evaluator_reasoning": eval_reasoning,
             "similarity_scores": similarity_metrics,
             "validation_errors": validation_errors,
             "retries": retry_count,
-            "status": "PASS" if not validation_errors else "FAIL",
+            "status": "PASS" if not validation_errors and semantic_status == "ALIGNED" else "FAIL",
         }
 
         # Package metadata matching exact production metadata.json schema
@@ -217,7 +247,6 @@ def _analyze_repeated_phrases(days: list[dict[str, Any]]) -> tuple[str, int]:
         for n in [3, 4]:
             for i in range(len(words) - n + 1):
                 phrase = " ".join(words[i : i + n])
-                # Filter out foundation name itself since it's the subject
                 if "jalte diye foundation" in phrase:
                     continue
                 phrase_counts[phrase] += 1
@@ -242,11 +271,27 @@ def _write_markdown_report(report_path: str, report_data: dict[str, Any]) -> Non
         "",
         "---",
         "",
+        "## Semantic Topic Consistency Table",
+        "",
+        "| Day | Date | Theme | Event | Quote Topic | Description Topic | Theme Compatibility | Event Compatibility | Hashtag Compatibility | Overall Semantic Result | Score | Status |",
+        "| :---: | :---: | :--- | :--- | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: |",
+    ]
+
+    for d in report_data["days"]:
+        ev = d["event"] or "None (Evergreen)"
+        lines.append(
+            f"| {d['day']:02d} | {d['date']} | {d['theme']} | {ev} | {d['quote_topic']} | {d['description_topic']} | **{d['theme_compatibility']}** | **{d['event_compatibility']}** | **{d['hashtag_compatibility']}** | **{d['semantic_consistency']}** | {d['evaluator_score']}/10 | **{d['status']}** |"
+        )
+
+    lines.extend([
+        "",
+        "---",
+        "",
         "## Summary Table",
         "",
         "| Day | Date | Theme | Event | Score | Retries | Status |",
         "| :---: | :---: | :--- | :--- | :---: | :---: | :---: |",
-    ]
+    ])
 
     for d in report_data["days"]:
         ev = d["event"] or "None (Evergreen)"

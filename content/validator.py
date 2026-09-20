@@ -70,6 +70,208 @@ EMPTY_SLOGAN_CTAS = [
     "take meaningful action today",
 ]
 
+# Disallowed empty explanation slogans or non-interpretive one-liners
+DISALLOWED_EXPLANATION_SLOGANS = [
+    "drop your anchor",
+    "do not wait for a grand plan",
+    "keep going",
+    "be kind",
+    "be the change",
+    "make a difference",
+    "stay positive",
+    "stay strong",
+    "never give up",
+    "spread the word",
+    "just do it",
+    "sing it with your hands",
+    "take action today",
+    "find your peace",
+    "lead the way",
+    "believe in yourself",
+]
+
+# Common English stop words to exclude when extracting significant quote tokens
+STOP_WORDS = {
+    "a", "about", "above", "after", "again", "against", "all", "am", "an", "and",
+    "any", "are", "aren't", "as", "at", "be", "because", "been", "before", "being",
+    "below", "between", "both", "but", "by", "can", "can't", "cannot", "could",
+    "couldn't", "did", "didn't", "do", "does", "doesn't", "doing", "don't", "down",
+    "during", "each", "few", "for", "from", "further", "had", "hadn't", "has",
+    "hasn't", "have", "haven't", "having", "he", "he'd", "he'll", "he's", "her",
+    "here", "here's", "hers", "herself", "him", "himself", "his", "how", "how's",
+    "i", "i'd", "i'll", "i'm", "i've", "if", "in", "into", "is", "isn't", "it",
+    "it's", "its", "itself", "let's", "me", "more", "most", "mustn't", "my",
+    "myself", "no", "nor", "not", "of", "off", "on", "once", "only", "or", "other",
+    "ought", "our", "ours", "ourselves", "out", "over", "own", "same", "shan't",
+    "she", "she'd", "she'll", "she's", "should", "shouldn't", "so", "some", "such",
+    "than", "that", "that's", "the", "their", "theirs", "them", "themselves", "then",
+    "there", "there's", "these", "they", "they'd", "they'll", "they're", "they've",
+    "this", "those", "through", "to", "too", "under", "until", "up", "very", "was",
+    "wasn't", "we", "we'd", "we'll", "we're", "we've", "were", "weren't", "what",
+    "what's", "when", "when's", "where", "where's", "which", "while", "who", "who's",
+    "whom", "why", "why's", "with", "won't", "would", "wouldn't", "you", "you'd",
+    "you'll", "you're", "you've", "your", "yours", "yourself", "yourselves",
+}
+
+# Sub-topic / concept clusters for quote-level semantic anchor extraction and divergence checking
+QUOTE_SUBTOPIC_CLUSTERS: dict[str, dict[str, Any]] = {
+    "climate_math_urgency": {
+        "triggers": {"math", "chalk", "calculation", "numbers", "equation", "countdown", "running out", "clock", "timer", "deadline"},
+        "anchors": {"math", "calculation", "calculating", "numbers", "urgency", "time", "clock", "countdown", "emissions", "measurable", "choices", "acting", "delay", "action before", "window", "options", "damage"},
+        "incompatible_subtopics": {
+            "biodiversity_soil_food": {"soil", "biodiversity", "food we eat", "eating", "flora", "fauna", "wildlife", "species", "preserve the soil"},
+        },
+    },
+    "activism_burnout_selfcare": {
+        "triggers": {"activism", "activist", "selfcare", "self-care", "tension", "burnout", "movements", "advocacy"},
+        "anchors": {"activism", "activist", "selfcare", "self-care", "burnout", "movement", "organizing", "exhaustion", "sustain", "sustainable", "recharge", "wellbeing", "well-being", "advocacy", "advocate", "energy", "caring for yourself", "stay engaged", "emotional commitment"},
+        "incompatible_subtopics": {
+            "mindful_breathing_only": {"breathing", "breathe", "breaths", "screen", "posture", "inhale", "exhale", "mindful breathing"},
+        },
+    },
+    "renewable_clean_energy": {
+        "triggers": {"renewable", "renewables", "forgiveness", "clean energy", "solar", "wind", "fossil", "electricity grid"},
+        "anchors": {"renewable", "renewables", "clean energy", "energy", "transition", "power", "solar", "wind", "fossil", "emissions", "carbon", "grid", "electricity", "generation", "sustainable power", "fuel", "fossil fuels"},
+        "incompatible_subtopics": {
+            "river_litter_waste": {"litter", "rivers", "river", "plastic", "trash", "clean water", "picking up litter", "waterways"},
+        },
+    },
+    "hope_peace_resilience": {
+        "triggers": {"hope", "anchor", "drift"},
+        "anchors": {"hope", "anchor", "drift", "peace", "resilience", "possibility", "uncertainty", "conflict", "hold onto", "stability", "grounded", "compassion", "harmony", "optimism", "encouragement", "steadfast"},
+    },
+    "girls_daughters_empowerment": {
+        "triggers": {"daughters", "daughter", "girls", "girl"},
+        "anchors": {"daughters", "daughter", "girl", "girls", "women", "empowerment", "education", "schooling", "future", "generations", "leadership", "unbreakable", "investing in girls"},
+    },
+    "books_reading_literacy": {
+        "triggers": {"book", "books", "reading", "read", "library", "libraries", "borrow", "pages"},
+        "anchors": {"book", "books", "reading", "read", "library", "libraries", "borrow", "pages", "literature", "stories", "empathy", "author", "curiosity", "literacy"},
+    },
+    "car_free_urban_spaces": {
+        "triggers": {"car", "cars", "car-free", "carfree", "streets", "traffic", "pedestrian"},
+        "anchors": {"car", "cars", "car-free", "carfree", "streets", "traffic", "pedestrian", "pedestrians", "sidewalk", "walkable", "neighbour", "neighbors", "public space", "mobility"},
+    },
+    "refugee_displacement_dignity": {
+        "triggers": {"refugee", "refugees", "border", "borders", "stateless", "passport", "asylum", "fleeing", "displaced"},
+        "anchors": {"refugee", "refugees", "border", "borders", "stateless", "passport", "asylum", "fleeing", "displacement", "displaced", "dignity", "migrant", "migrants", "homeland", "refugee rights"},
+    },
+    "transparency_open_governance": {
+        "triggers": {"transparency", "right to know", "whistleblower", "public records", "disclosure", "information access"},
+        "anchors": {"transparency", "right to know", "informed", "records", "openness", "accountability", "governance", "public trust", "information", "freedom of information"},
+    },
+}
+
+# Semantic domain taxonomies for topic consistency validation
+SEMANTIC_DOMAINS: dict[str, set[str]] = {
+    "refugees_migration": {
+        "refugee", "refugees", "asylum", "displacement", "displaced",
+        "migrant", "migrants", "migration", "border", "borders", "stateless",
+        "passport", "homeland", "exile", "fleeing", "crossborder", "cross-border",
+        "refugeeawareness", "refugeerights", "migrationcrisis",
+    },
+    "women_gender_empowerment": {
+        "woman", "women", "womens", "womans", "girl", "girls", "female",
+        "mother", "mothers", "daughter", "daughters", "sister", "sisters",
+        "gender", "matriarch", "patriarchy", "womenempowerment", "womeninleadership",
+        "genderequity", "equalvoices", "genderequality", "womenlead", "womeninstem",
+        "equalpay", "femaleempowerment",
+    },
+    "climate_environment_nature": {
+        "climate", "environment", "environmental", "planet", "earth", "nature",
+        "tree", "trees", "forest", "forests", "water", "ocean", "oceans",
+        "river", "rivers", "carbon", "emissions", "waste", "plastic", "recycling",
+        "soil", "biodiversity", "wildlife", "ecosystem", "ozone", "pollution",
+        "sustainable", "sustainability", "conservation", "sapling", "eco",
+        "climatecare", "ecoawareness", "savewater", "cleanair", "greenplanet",
+        "globalwarming", "renewable", "wetland", "wetlands",
+    },
+    "mental_health_mindfulness": {
+        "mental", "mindfulness", "mindful", "inner", "stillness", "calm",
+        "anxiety", "stress", "meditation", "meditate", "breathe", "breathing",
+        "breath", "breaths", "pause",
+        "burnout", "depression", "emotional", "selfcare", "mentalhealth",
+        "selfcompassion", "dailycalm", "mentalpeace", "wellbeing", "well-being",
+        "healing",
+    },
+    "quality_education_literacy": {
+        "education", "educate", "educated", "educating", "school", "schools",
+        "classroom", "teacher", "teachers", "student", "students", "literacy",
+        "illiteracy", "book", "books", "curriculum", "textbook", "curiosity",
+        "scholarship", "library", "libraries", "teach", "teaching", "learn",
+        "learning", "learner", "learners", "knowledge", "reading", "read",
+        "lifelonglearning", "shareknowledge", "qualityeducation",
+    },
+    "peace_justice_humanity": {
+        "peace", "peaceful", "justice", "unjust", "injustice", "harmony",
+        "violence", "nonviolence", "war", "conflict", "reconciliation",
+        "dialogue", "fairness", "dignity", "treaty", "treaties", "ceasefire",
+        "peaceandjustice", "humandignity", "communitydialogue", "ethicalharmony",
+    },
+    "democracy_civic_rights": {
+        "democracy", "democratic", "vote", "voting", "voter", "election",
+        "elections", "ballot", "constitution", "republic", "citizen", "citizens",
+        "citizenship", "civic", "liberty", "civicduty", "civicawareness",
+    },
+    "civic_rights_transparency_information": {
+        "transparency", "right to know", "righttoknow", "informed citizen", "informed citizens",
+        "accountability", "public records", "disclosure", "information access", "freedom of information",
+        "whistleblower", "open governance", "transparencyinleadership",
+    },
+    "health_wellness_nutrition": {
+        "health", "healthy", "healthcare", "disease", "illness", "hospital",
+        "doctor", "medical", "medicine", "nutrition", "hunger", "hungry",
+        "malnutrition", "food", "sanitation", "hygiene", "wellness", "cure",
+        "publichealth", "zerohunger", "healthforall", "worldhealthday",
+    },
+    "rural_development_opportunity": {
+        "rural", "village", "villages", "villager", "villagers", "agrarian",
+        "farming", "farmer", "farmers", "agriculture", "countryside", "remote areas",
+        "rural communities", "urban-rural", "rural development",
+    },
+    "public_space_urban_mobility": {
+        "streets", "street", "car", "cars", "car-free", "carfree", "traffic",
+        "pedestrian", "pedestrians", "sidewalk", "sidewalks", "urban mobility",
+        "public space", "public spaces", "strangers become neighbours",
+    },
+    "children_youth": {
+        "child", "children", "childhood", "youth", "young", "kids",
+        "nextgeneration", "parenting", "boyhood", "girlhood",
+    },
+    "culture_language_heritage": {
+        "language", "indigenous", "culture", "cultural", "heritage",
+        "tradition", "mothertongue", "folklore", "art", "arts",
+    },
+    "science_technology_discovery": {
+        "science", "scientific", "scientist", "scientists", "discovery",
+        "research", "experiment", "technology", "physics", "chemistry", "biology",
+    },
+}
+
+# Theme to expected compatible semantic domains
+THEME_EXPECTED_DOMAINS: dict[str, set[str]] = {
+    "Women Empowerment": {"women_gender_empowerment"},
+    "Climate & Environment": {"climate_environment_nature"},
+    "Quality Education": {"quality_education_literacy"},
+    "Health & Mindfulness": {"mental_health_mindfulness", "health_wellness_nutrition"},
+    "Peace & Justice": {"peace_justice_humanity", "democracy_civic_rights", "refugees_migration"},
+}
+
+# Domains that indicate distinct specialization that cannot be substituted without cross-bridging
+SPECIALIZED_DOMAINS: list[str] = [
+    "refugees_migration",
+    "women_gender_empowerment",
+    "climate_environment_nature",
+    "mental_health_mindfulness",
+    "quality_education_literacy",
+    "peace_justice_humanity",
+    "democracy_civic_rights",
+    "civic_rights_transparency_information",
+    "health_wellness_nutrition",
+    "rural_development_opportunity",
+    "public_space_urban_mobility",
+]
+
 # Configurable similarity thresholds
 DEFAULT_SIMILARITY_THRESHOLDS = {
     "quote": 0.65,
@@ -77,6 +279,48 @@ DEFAULT_SIMILARITY_THRESHOLDS = {
     "cta": 0.65,
     "full_description": 0.75,
 }
+
+
+def detect_domain_scores(text: str) -> dict[str, int]:
+    """Calculate domain keyword occurrence scores from normalized text, supporting phrases and hashtags."""
+    if not text:
+        return {}
+    normalized = normalize_text(text)
+    words = re.findall(r"[a-z0-9]+", normalized)
+    word_set = set(words)
+    scores: dict[str, int] = {}
+
+    # Identify hashtag tokens specifically if present in raw text
+    raw_hashtags = [normalize_text(tag) for tag in re.findall(r"#[A-Za-z0-9_]+", text)]
+
+    for domain, keywords in SEMANTIC_DOMAINS.items():
+        score = 0
+        for kw in keywords:
+            kw_clean = kw.lower().strip()
+            if " " in kw_clean or "-" in kw_clean:
+                kw_norm = normalize_text(kw_clean)
+                if kw_norm and kw_norm in normalized:
+                    score += 2
+            else:
+                # Count exact token matches in text
+                score += sum(1 for w in words if w == kw_clean)
+                # Count hashtag matches (e.g. #WomenEmpowerment -> womenempowerment contains women)
+                for htag in raw_hashtags:
+                    if htag != "socialeducation" and len(kw_clean) >= 4 and kw_clean in htag:
+                        score += 1
+        if score > 0:
+            scores[domain] = score
+
+    return scores
+
+
+def get_primary_topic_label(text: str) -> str:
+    """Identify human-readable topic label from text for reporting."""
+    scores = detect_domain_scores(text)
+    if not scores:
+        return "General Social Education & Reflection"
+    top_domain = max(scores.items(), key=lambda x: x[1])[0]
+    return top_domain.replace("_", " ").title()
 
 
 def normalize_text(text: str) -> str:
@@ -137,6 +381,63 @@ def jaccard_similarity(text1: str, text2: str) -> float:
     intersection = set1 & set2
     union = set1 | set2
     return len(intersection) / len(union) if union else 0.0
+
+
+
+def extract_quote_anchors(quote: str) -> dict[str, Any]:
+    """Extract lightweight semantic anchors and triggered concept clusters from a quote without heavy NLP."""
+    norm = normalize_text(quote)
+    words = re.findall(r"[a-z0-9]+", norm)
+    significant_tokens = {w for w in words if len(w) >= 4 and w not in STOP_WORDS}
+
+    triggered_clusters: list[str] = []
+    cluster_anchors: set[str] = set()
+    for cluster_name, cluster_data in QUOTE_SUBTOPIC_CLUSTERS.items():
+        triggers = cluster_data.get("triggers", set())
+        for trigger in triggers:
+            if " " in trigger or "-" in trigger:
+                if normalize_text(trigger) in norm:
+                    triggered_clusters.append(cluster_name)
+                    cluster_anchors.update(cluster_data.get("anchors", set()))
+                    break
+            elif trigger in words:
+                triggered_clusters.append(cluster_name)
+                cluster_anchors.update(cluster_data.get("anchors", set()))
+                break
+
+    return {
+        "tokens": significant_tokens,
+        "clusters": triggered_clusters,
+        "cluster_anchors": cluster_anchors,
+    }
+
+
+def validate_explanation_quality(explanation: str, quote: str = "") -> list[str]:
+    """Validate that the explanation is a meaningful 1-2 sentence interpretation of the quote."""
+    errors: list[str] = []
+    clean_expl = explanation.strip()
+    if not clean_expl:
+        errors.append("Explanation is empty or missing")
+        return errors
+
+    words = clean_expl.split()
+    if len(words) < 4 or len(clean_expl) < 20:
+        errors.append(
+            f"Explanation is too short or a slogan ({len(words)} words, {len(clean_expl)} chars): '{clean_expl}'"
+        )
+        return errors
+
+    norm_expl = normalize_text(clean_expl)
+    for slogan in DISALLOWED_EXPLANATION_SLOGANS:
+        norm_slogan = normalize_text(slogan)
+        if norm_expl == norm_slogan or norm_expl.startswith(norm_slogan + " "):
+            if len(words) <= 7:
+                errors.append(f"Explanation is a generic slogan or CTA without interpretation: '{clean_expl}'")
+                return errors
+
+    return errors
+
+
 
 
 class ContentValidator:
@@ -287,6 +588,236 @@ class ContentValidator:
         # Humanization and natural tone validation
         human_errors = self.validate_humanization(content, recent_history)
         errors.extend(human_errors)
+
+        # Semantic topic consistency validation
+        topic_errors = self.validate_topic_consistency(content, theme, event)
+        errors.extend(topic_errors)
+
+        # Quote-level semantic alignment validation
+        quote_alignment_errors = self.validate_quote_alignment(content, theme, event)
+        errors.extend(quote_alignment_errors)
+
+        return errors
+
+    def validate_quote_alignment(
+        self,
+        content: dict[str, Any],
+        theme: str = "",
+        event: dict | None = None,
+    ) -> list[str]:
+        """Validate quote-level meaning grounding between the quote and its explanation & description."""
+        errors: list[str] = []
+        quote = str(content.get("quote", "")).strip()
+        explanation = str(content.get("explanation", "")).strip()
+        context = str(content.get("context", "")).strip()
+        foundation_conn = str(content.get("foundation_connection", "")).strip()
+        cta = str(content.get("cta", "")).strip()
+
+        # 1. Check explanation quality
+        expl_errors = validate_explanation_quality(explanation, quote)
+        errors.extend(expl_errors)
+
+        if not quote:
+            return errors
+
+        anchors = extract_quote_anchors(quote)
+        norm_desc = normalize_text(f"{context} {foundation_conn} {cta}")
+        desc_words = set(re.findall(r"[a-z0-9]+", norm_desc))
+
+        # 2. Check triggered subtopic clusters for sub-topic divergence / incompatible topics
+        for cluster_name in anchors["clusters"]:
+            cluster_data = QUOTE_SUBTOPIC_CLUSTERS.get(cluster_name, {})
+            incompatible = cluster_data.get("incompatible_subtopics", {})
+            for incomp_name, incomp_terms in incompatible.items():
+                incomp_matched = []
+                for term in incomp_terms:
+                    term_clean = term.lower().strip()
+                    if " " in term_clean or "-" in term_clean:
+                        if normalize_text(term_clean) in norm_desc:
+                            incomp_matched.append(term_clean)
+                    elif term_clean in desc_words:
+                        incomp_matched.append(term_clean)
+
+                if incomp_matched:
+                    # Check if description actually addresses the core quote anchor concepts
+                    expected_anchors = cluster_data.get("anchors", set())
+                    has_anchor_support = any(
+                        (normalize_text(a) in norm_desc if (" " in a or "-" in a) else a in desc_words)
+                        for a in expected_anchors
+                        if a not in incomp_terms
+                    )
+                    if not has_anchor_support:
+                        q_topic_clean = cluster_name.replace("_", " ")
+                        inc_topic_clean = incomp_name.replace("_", " ")
+                        errors.append(
+                            f"Quote-level semantic mismatch: Quote is specifically about '{q_topic_clean}' but description focuses on '{inc_topic_clean}' instead of explaining the quote's central idea"
+                        )
+
+        return errors
+
+
+    def validate_theme_compatibility(
+        self,
+        quote_text: str,
+        theme: str,
+        event: dict | None = None,
+    ) -> list[str]:
+        """Verify that the quote is semantically compatible with the configured theme."""
+        errors: list[str] = []
+        if event and event.get("event"):
+            # When event is active, EVENT > THEME (event compatibility takes precedence)
+            return errors
+
+        expected_domains = THEME_EXPECTED_DOMAINS.get(theme)
+        if not expected_domains:
+            return errors
+
+        quote_domains = detect_domain_scores(quote_text)
+        if not quote_domains:
+            return errors
+
+        # Has at least one match in expected domains?
+        has_expected_domain = any(dom in expected_domains for dom in quote_domains)
+
+        # Detect top dominant domain in quote
+        top_quote_domain = max(quote_domains.items(), key=lambda x: x[1])[0]
+
+        if not has_expected_domain and top_quote_domain in SPECIALIZED_DOMAINS:
+            top_label = top_quote_domain.replace("_", " ").title()
+            errors.append(
+                f"Theme compatibility mismatch: Theme is '{theme}' but quote is about '{top_label}'"
+            )
+
+        return errors
+
+    def validate_event_compatibility(
+        self,
+        quote_text: str,
+        event: dict | None = None,
+    ) -> list[str]:
+        """Verify that the quote is semantically relevant to the active calendar event."""
+        errors: list[str] = []
+        if not event or not event.get("event"):
+            return errors
+
+        event_name = event["event"]
+        event_domains = detect_domain_scores(event_name)
+        quote_domains = detect_domain_scores(quote_text)
+
+        # If event maps to known semantic domains
+        if event_domains:
+            top_event_domain = max(event_domains.items(), key=lambda x: x[1])[0]
+            if top_event_domain in SPECIALIZED_DOMAINS:
+                # Check if quote has zero tokens of the event domain and is dominated by another domain
+                if quote_domains:
+                    top_quote_domain = max(quote_domains.items(), key=lambda x: x[1])[0]
+                    if (
+                        top_quote_domain in SPECIALIZED_DOMAINS
+                        and top_quote_domain != top_event_domain
+                        and quote_domains.get(top_event_domain, 0) == 0
+                    ):
+                        ev_label = top_event_domain.replace("_", " ").title()
+                        q_label = top_quote_domain.replace("_", " ").title()
+                        errors.append(
+                            f"Event relevance mismatch: Event is '{event_name}' ({ev_label}) but quote is about '{q_label}'"
+                        )
+
+        return errors
+
+    def validate_topic_consistency(
+        self,
+        content: dict[str, Any],
+        theme: str,
+        event: dict | None = None,
+    ) -> list[str]:
+        """Validate that all content fields share the same semantic topic and do not diverge."""
+        errors: list[str] = []
+        quote = str(content.get("quote", "")).strip()
+        explanation = str(content.get("explanation", "")).strip()
+        context = str(content.get("context", "")).strip()
+        foundation_conn = str(content.get("foundation_connection", "")).strip()
+        cta = str(content.get("cta", "")).strip()
+        hashtags = content.get("hashtags", [])
+        tag_text = " ".join(hashtags) if isinstance(hashtags, list) else str(hashtags)
+
+        quote_text = f"{quote} {explanation}"
+
+        # 1. Event compatibility check (EVENT > THEME)
+        event_errors = self.validate_event_compatibility(quote_text, event)
+        errors.extend(event_errors)
+
+        # 2. Theme compatibility check (when no event is active)
+        theme_errors = self.validate_theme_compatibility(quote_text, theme, event)
+        errors.extend(theme_errors)
+
+        # 3. Detect domain signals in Quote + Explanation
+        quote_domains = detect_domain_scores(quote_text)
+
+        # 4. Detect domain signals in Description (context + foundation_connection + cta)
+        desc_text = f"{context} {foundation_conn} {cta}"
+        desc_domains = detect_domain_scores(desc_text)
+
+        # 5. Detect domain signals in Hashtags
+        tag_domains = detect_domain_scores(tag_text)
+
+        # Find dominant specialized domains in Quote
+        specialized_q_scores = {d: s for d, s in quote_domains.items() if d in SPECIALIZED_DOMAINS and s >= 1}
+        specialized_d_scores = {d: s for d, s in desc_domains.items() if d in SPECIALIZED_DOMAINS and s >= 1}
+        specialized_t_scores = {d: s for d, s in tag_domains.items() if d in SPECIALIZED_DOMAINS and s >= 1}
+
+        # Check for Quote vs Description topic divergence
+        if specialized_q_scores and specialized_d_scores:
+            top_q_dom = max(specialized_q_scores.items(), key=lambda x: x[1])[0]
+            top_d_dom = max(specialized_d_scores.items(), key=lambda x: x[1])[0]
+
+            # If top quote domain and top description domain are different and share no cross-domain grounding
+            if (
+                top_q_dom != top_d_dom
+                and desc_domains.get(top_q_dom, 0) == 0
+                and quote_domains.get(top_d_dom, 0) == 0
+                and specialized_d_scores[top_d_dom] >= 1
+            ):
+                q_label = top_q_dom.replace("_", " ").title()
+                d_label = top_d_dom.replace("_", " ").title()
+                errors.append(
+                    f"Semantic topic mismatch: Quote is about '{q_label}' but description discusses '{d_label}'"
+                )
+
+        # Check for Quote vs Hashtags topic divergence
+        if specialized_q_scores and specialized_t_scores:
+            top_q_dom = max(specialized_q_scores.items(), key=lambda x: x[1])[0]
+            top_t_dom = max(specialized_t_scores.items(), key=lambda x: x[1])[0]
+
+            if (
+                top_q_dom != top_t_dom
+                and tag_domains.get(top_q_dom, 0) == 0
+                and quote_domains.get(top_t_dom, 0) == 0
+                and specialized_t_scores[top_t_dom] >= 1
+            ):
+                q_label = top_q_dom.replace("_", " ").title()
+                t_label = top_t_dom.replace("_", " ").title()
+                errors.append(
+                    f"Hashtag topic mismatch: Hashtags contain '{t_label}' tags unrelated to Quote topic '{q_label}'"
+                )
+
+        # Check for Event day topic mismatch (event vs description)
+        if event and event.get("event"):
+            event_name = event["event"]
+            event_domains = detect_domain_scores(event_name)
+            specialized_ev_scores = {d: s for d, s in event_domains.items() if d in SPECIALIZED_DOMAINS and s >= 1}
+            if specialized_ev_scores and specialized_d_scores:
+                top_ev_dom = max(specialized_ev_scores.items(), key=lambda x: x[1])[0]
+                top_d_dom = max(specialized_d_scores.items(), key=lambda x: x[1])[0]
+                if (
+                    top_ev_dom != top_d_dom
+                    and desc_domains.get(top_ev_dom, 0) == 0
+                    and quote_domains.get(top_d_dom, 0) == 0
+                ):
+                    ev_label = top_ev_dom.replace("_", " ").title()
+                    d_label = top_d_dom.replace("_", " ").title()
+                    errors.append(
+                        f"Event topic mismatch: Event is about '{event_name}' ({ev_label}) but description discusses '{d_label}'"
+                    )
 
         return errors
 
