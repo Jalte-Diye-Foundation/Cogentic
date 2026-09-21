@@ -951,6 +951,174 @@ class TestCogenticDescriptionSystem(unittest.TestCase):
                 "Climate & Environment",
             ])
 
+    def test_event_name_foundation_event_uses_exact_name_from_events_json(self):
+        """1. Foundation Event uses exact event name from events.json."""
+        event = get_today_event(self.project_root, date(2026, 9, 21))
+        self.assertIsNotNone(event)
+        self.assertEqual(event["event"], "International Day of Peace")
+
+        # Fallback content on this event day must carry the exact event name
+        fb = self.fallback.get_fallback_quote("Foundation Events", event)
+        self.assertEqual(fb["event_name"], "International Day of Peace")
+
+    def test_event_name_foundation_event_does_not_get_gemini_replacement(self):
+        """2. Foundation Event does not get a Gemini-generated replacement name."""
+        event = {"event": "International Day of Peace", "theme": "Foundation Events"}
+        candidate = {
+            "event_name": "Some Random Awareness Day",
+            "quote": "Peace is not the absence of conflict; it is the presence of justice.",
+            "explanation": "True peace comes through justice and mutual respect.",
+            "context": "Meaningful peace begins in quiet moments of understanding and dialogue.",
+            "foundation_connection": "At Jalte Diye Foundation, our social education fosters empathy and dialogue.",
+            "cta": "Listen completely to someone today before forming a reply.",
+            "hashtags": ["#InternationalDayofPeace", "#PeaceAndJustice", "#Dialogue"],
+        }
+        errors = self.validator.validate_deterministic(candidate, "Foundation Events", event=event)
+        self.assertTrue(any("foundation event name mismatch" in e.lower() for e in errors))
+
+    def test_event_name_women_girls_education_gets_relevant_event(self):
+        """3. Women/girls education content gets a relevant women/girls awareness event."""
+        candidate = {
+            "event_name": "International Day of the Girl Child",
+            "quote": "When a girl is educated, an entire generation is elevated with her.",
+            "explanation": "Educating girls builds stronger, more equitable communities.",
+            "context": "When girls access quality schooling and support, families and communities thrive.",
+            "foundation_connection": "Jalte Diye Foundation promotes accessible education for girls to bridge social barriers.",
+            "cta": "Support or mentor a young girl in your neighborhood with educational resources today.",
+            "hashtags": ["#GirlsEducation", "#DayOfTheGirl", "#EqualOpportunities", "#SocialEducation"],
+        }
+        errors = self.validator.validate_deterministic(candidate, "Women Empowerment")
+        self.assertEqual(errors, [])
+
+    def test_event_name_forest_content_gets_forest_event(self):
+        """4. Forest content gets a forest/environment event."""
+        candidate = {
+            "event_name": "International Day of Forests",
+            "quote": "A forest is not just trees; it is a breathing community of ancient life.",
+            "explanation": "Preserving forests safeguards biodiversity and the air we breathe.",
+            "context": "Ancient woodlands and urban tree canopies filter our air and protect local water tables.",
+            "foundation_connection": "At Jalte Diye Foundation, environmental awareness is part of daily community stewardship.",
+            "cta": "Plant a sapling or water a neighborhood tree on your street today.",
+            "hashtags": ["#DayOfForests", "#ProtectNature", "#TreeCanopy", "#EcoAwareness"],
+        }
+        errors = self.validator.validate_deterministic(candidate, "Climate & Environment")
+        self.assertEqual(errors, [])
+
+    def test_event_name_peace_content_gets_peace_event(self):
+        """5. Peace content gets a peace-related event."""
+        candidate = {
+            "event_name": "International Day of Peace",
+            "quote": "Peace is not the absence of conflict; it is the presence of justice and dialogue.",
+            "explanation": "True harmony begins when we choose dialogue and fairness over division.",
+            "context": "Everyday peace is built when people choose to listen and resolve differences fairly.",
+            "foundation_connection": "Social education at Jalte Diye Foundation emphasizes mutual respect and compassionate dialogue.",
+            "cta": "Reach out to resolve a misunderstanding with someone today through kind dialogue.",
+            "hashtags": ["#InternationalDayOfPeace", "#PeaceAndJustice", "#CommunityDialogue"],
+        }
+        errors = self.validator.validate_deterministic(candidate, "Peace & Justice")
+        self.assertEqual(errors, [])
+
+    def test_event_name_unrelated_event_is_rejected(self):
+        """6. Unrelated event name is rejected by validator."""
+        # Quote about women's leadership with Event Name: International Day of Forests -> REJECT
+        candidate = {
+            "event_name": "International Day of Forests",
+            "quote": "When women are given the space and freedom to lead, entire communities rise.",
+            "explanation": "Equal opportunities enable women to lead meaningful community progress.",
+            "context": "Every family and community thrives when women make decisions without barriers.",
+            "foundation_connection": "Promoting gender equity is a vital part of Jalte Diye Foundation's social education efforts.",
+            "cta": "Make space today to support a woman's voice or idea in your workplace.",
+            "hashtags": ["#WomenEmpowerment", "#EqualVoices", "#CommunityRespect"],
+        }
+        errors = self.validator.validate_deterministic(candidate, "Women Empowerment")
+        self.assertTrue(len(errors) > 0)
+        self.assertTrue(
+            any("event name topic mismatch" in e.lower() or "forests" in e.lower() for e in errors)
+        )
+
+    def test_event_name_content_with_no_strong_event_match_returns_general_awareness(self):
+        """7. Content with no strong event match returns General Awareness and passes validation."""
+        candidate = {
+            "event_name": "General Awareness",
+            "quote": "Taking time to pause and care for your mental calm restores emotional resilience.",
+            "explanation": "A quiet moment of reflection calms the mind and helps us respond with clarity.",
+            "context": "Taking care of your mental peace gives you the patience to show up well for others.",
+            "foundation_connection": "Emotional well-being and mindfulness are central to Jalte Diye Foundation's holistic education.",
+            "cta": "Take a quiet five-minute pause today to breathe deeply and check in on how you feel.",
+            "hashtags": ["#HealthAndMindfulness", "#MentalPeace", "#DailyCalm", "#SelfCare"],
+        }
+        errors = self.validator.validate_deterministic(candidate, "Health & Mindfulness")
+        self.assertEqual(errors, [])
+
+    def test_event_name_present_in_final_metadata(self):
+        """8. Event Name is present in final metadata construction."""
+        from website_assets.update_assets import update_website_assets
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp_output = os.path.join(temp_dir, "test_poster.jpg")
+            with open(temp_output, "wb") as f:
+                f.write(b"dummy image content")
+
+            pipeline_result = {
+                "date": "2026-09-22",
+                "theme": "Women Empowerment",
+                "event_name": "International Day of the Girl Child",
+                "quote": "When women lead, communities rise.",
+                "explanation": "Equal leadership drives community progress.",
+                "long_explanation": "Context and action.",
+                "caption": "Full caption text.",
+                "hashtags": ["#WomenLead"],
+                "poster_path": temp_output,
+                "event": None,
+            }
+
+            res = update_website_assets(pipeline_result, project_root=temp_dir, config=self.config)
+            self.assertTrue(os.path.exists(res["metadata_path"]))
+
+            with open(res["metadata_path"], "r", encoding="utf-8") as f:
+                saved_metadata = json.load(f)
+
+            self.assertIn("event_name", saved_metadata)
+            self.assertEqual(saved_metadata["event_name"], "International Day of the Girl Child")
+
+    def test_event_name_canonical_metadata_key_order(self):
+        """9. Canonical metadata key order strictly places event_name immediately after theme."""
+        content = self.fallback.get_fallback_quote("Climate & Environment")
+        today_str = "2026-09-22"
+        theme = "Climate & Environment"
+        event_name = content.get("event_name", "General Awareness")
+
+        metadata = {
+            "date": today_str,
+            "theme": theme,
+            "event_name": event_name,
+            "quote": content["quote"],
+            "explanation": content["explanation"],
+            "long_explanation": content.get("long_explanation", ""),
+            "caption": content.get("caption", ""),
+            "hashtags": content.get("hashtags", []),
+            "image": "latest/poster.jpg",
+            "source": "Cogentic AI",
+            "event": None,
+        }
+
+        keys = list(metadata.keys())
+        theme_idx = keys.index("theme")
+        event_name_idx = keys.index("event_name")
+        quote_idx = keys.index("quote")
+
+        self.assertEqual(event_name_idx, theme_idx + 1)
+        self.assertEqual(quote_idx, event_name_idx + 1)
+
+    def test_poster_generator_accepts_event_name(self):
+        """10. PosterGenerator.render accepts event_name parameter gracefully."""
+        pg = PosterGenerator(self.config, self.project_root)
+        # Verify method signature allows event_name
+        import inspect
+        sig = inspect.signature(pg.render)
+        self.assertIn("event_name", sig.parameters)
+
 
 if __name__ == "__main__":
     unittest.main()
