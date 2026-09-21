@@ -597,6 +597,78 @@ class ContentValidator:
         quote_alignment_errors = self.validate_quote_alignment(content, theme, event)
         errors.extend(quote_alignment_errors)
 
+        # Event name relevance validation
+        event_name_errors = self.validate_event_name_relevance(
+            content.get("event_name", ""), content, theme, event
+        )
+        errors.extend(event_name_errors)
+
+        return errors
+
+    def validate_event_name_relevance(
+        self,
+        event_name: str,
+        content: dict[str, Any],
+        theme: str = "",
+        event: dict | None = None,
+    ) -> list[str]:
+        """Validate that event_name is relevant to the content and does not conflict with the post topic."""
+        errors: list[str] = []
+        clean_ev_name = str(event_name).strip() if event_name else ""
+
+        # 1. If today is an authoritative Foundation Event day
+        if event and event.get("event"):
+            expected_name = str(event["event"]).strip()
+            if clean_ev_name and normalize_text(clean_ev_name) != normalize_text(expected_name):
+                errors.append(
+                    f"Foundation Event name mismatch: Expected '{expected_name}' from events.json but got '{clean_ev_name}'"
+                )
+            return errors
+
+        # 2. If General Awareness or empty, always valid
+        if not clean_ev_name or normalize_text(clean_ev_name) == "general awareness":
+            return errors
+
+        # 3. Check for topic conflict between event_name and quote / content
+        quote = str(content.get("quote", "")).strip()
+        explanation = str(content.get("explanation", "")).strip()
+        context = str(content.get("context", "")).strip()
+        quote_text = f"{quote} {explanation}"
+        full_content_text = f"{quote} {explanation} {context}"
+
+        ev_domains = detect_domain_scores(clean_ev_name)
+        q_domains = detect_domain_scores(quote_text)
+        content_domains = detect_domain_scores(full_content_text)
+
+        specialized_ev = {d: s for d, s in ev_domains.items() if d in SPECIALIZED_DOMAINS and s >= 1}
+        specialized_q = {d: s for d, s in q_domains.items() if d in SPECIALIZED_DOMAINS and s >= 1}
+
+        if specialized_ev and specialized_q:
+            top_ev_dom = max(specialized_ev.items(), key=lambda x: x[1])[0]
+            top_q_dom = max(specialized_q.items(), key=lambda x: x[1])[0]
+
+            # If event domain completely differs from quote domain and has zero support in full content
+            if (
+                top_ev_dom != top_q_dom
+                and content_domains.get(top_ev_dom, 0) == 0
+                and q_domains.get(top_ev_dom, 0) == 0
+            ):
+                ev_label = top_ev_dom.replace("_", " ").title()
+                q_label = top_q_dom.replace("_", " ").title()
+                errors.append(
+                    f"Event Name topic mismatch: Event Name '{clean_ev_name}' ({ev_label}) is unrelated to Quote topic '{q_label}'"
+                )
+
+        # 4. Check specific keyword conflicts
+        ev_lower = clean_ev_name.lower()
+        content_lower = full_content_text.lower()
+        if "forest" in ev_lower and not any(w in content_lower for w in ["forest", "tree", "trees", "woodland", "nature", "green", "canopy"]):
+            errors.append(f"Event Name '{clean_ev_name}' refers to forests, but content does not discuss forests or trees")
+        elif "girl" in ev_lower and not any(w in content_lower for w in ["girl", "daughter", "female", "gender", "she", "her", "women"]):
+            errors.append(f"Event Name '{clean_ev_name}' refers to girl child, but content does not discuss girls or gender equality")
+        elif "ocean" in ev_lower and not any(w in content_lower for w in ["ocean", "marine", "sea", "coral", "water", "plastic"]):
+            errors.append(f"Event Name '{clean_ev_name}' refers to oceans, but content does not discuss marine/water topics")
+
         return errors
 
     def validate_quote_alignment(

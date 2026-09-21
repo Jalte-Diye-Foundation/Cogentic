@@ -239,22 +239,24 @@ Previous Recent Hashtag Sets (DO NOT REPEAT):
 REQUIRED GENERATION SEQUENCE (FOLLOW EXACTLY IN ORDER):
 STEP 1: Identify the exact topic and subject of the quote (aligned with Event if active, or Theme if evergreen).
 STEP 2: Identify the specific entity, challenge, or human experience represented by the quote.
-STEP 3: Generate a concise poster explanation (under 35 words) around that exact subject.
-STEP 4: Generate context (40 to 70 words) explaining why this exact subject matters to everyday people.
-STEP 5: Generate foundation connection (40 to 80 words) linking this exact subject to Jalte Diye Foundation's social education mission.
-STEP 6: Generate a concrete daily CTA (20 to 40 words) for this exact subject.
-STEP 7: Generate 3 to 6 hashtags specifically representing that subject.
-STEP 8: Check whether the entire package matches the configured Theme.
-STEP 9: If an Event exists, check whether the entire package matches the Event.
+STEP 3: If an active calendar event exists (Foundation Event), use that exact event name. If evergreen, identify a recognized international/national awareness day matching this specific topic (or 'General Awareness' if no strong match exists).
+STEP 4: Generate a concise poster explanation (under 35 words) around that exact subject.
+STEP 5: Generate context (40 to 70 words) explaining why this exact subject matters to everyday people.
+STEP 6: Generate foundation connection (40 to 80 words) linking this exact subject to Jalte Diye Foundation's social education mission.
+STEP 7: Generate a concrete daily CTA (20 to 40 words) for this exact subject.
+STEP 8: Generate 3 to 6 hashtags specifically representing that subject.
+STEP 9: Check whether the entire package matches the configured Theme.
+STEP 10: If an Event exists, check whether the entire package matches the Event.
 
 CRITICAL SEMANTIC CONSISTENCY RULES:
 1. PRIMARY ANCHOR: The Quote + Explanation is the primary semantic anchor of the entire post.
 2. SECONDARY CONTENT: Context, Foundation Connection, CTA, and Hashtags MUST be semantically derived from the Quote + Explanation.
-3. EXTERNAL CONSTRAINT: Theme is a classification constraint, NOT permission to introduce an unrelated topic.
-4. EVENT CONSTRAINT: If an Event is present, Event is a hard semantic constraint (EVENT > THEME).
-5. NO ARBITRARY TOPIC INJECTION: Do NOT introduce women empowerment, climate, education, mental health, refugees, etc. unless the quote itself directly establishes that subject.
-6. NO VAGUE/GENERIC BRIDGING: Do NOT accept generic concepts like "community", "equality", "respect", "humanity", "education", or "awareness" as sufficient evidence of topic alignment when the underlying subjects differ (e.g., a quote about rural development + description about women empowerment is REJECTED).
-7. THEME & EVENT FIDELITY: Theme/Event must NEVER force you to rewrite or diverge from the quote's subject.
+3. EVENT NAME RULE: Generate Event Name after understanding the quote and explanation. It must describe the specific awareness/event context of the post (e.g. quote about girls' education -> 'International Day of the Girl Child'; quote about forests -> 'International Day of Forests'; quote about peace -> 'International Day of Peace'; quote about mental health -> 'World Mental Health Day'). Do not select an event only from the broad theme. Do not invent fictional awareness days. If no strong match exists, return 'General Awareness'. On Foundation Event dates, do not invent a name; use the exact event from events.json.
+4. EXTERNAL CONSTRAINT: Theme is a classification constraint, NOT permission to introduce an unrelated topic.
+5. EVENT CONSTRAINT: If an Event is present, Event is a hard semantic constraint (EVENT > THEME).
+6. NO ARBITRARY TOPIC INJECTION: Do NOT introduce women empowerment, climate, education, mental health, refugees, etc. unless the quote itself directly establishes that subject.
+7. NO VAGUE/GENERIC BRIDGING: Do NOT accept generic concepts like "community", "equality", "respect", "humanity", "education", or "awareness" as sufficient evidence of topic alignment when the underlying subjects differ.
+8. THEME & EVENT FIDELITY: Theme/Event must NEVER force you to rewrite or diverge from the quote's subject.
 
 Required Output Schema:
 Return ONLY valid JSON matching this exact structure:
@@ -262,6 +264,7 @@ Return ONLY valid JSON matching this exact structure:
     "topic": "Specific 2 to 6 word topic label (e.g. 'Refugee Dignity & Shared Humanity')",
     "topic_keywords": ["keyword1", "keyword2", "keyword3"],
     "topic_domains": ["domain_label"],
+    "event_name": "Recognized awareness/event day matching the specific quote topic (or 'General Awareness')",
     "quote": "10 to 20 word memorable, inspiring quote (for poster)",
     "explanation": "Short 2-sentence explanation for the poster (maximum 35 words)",
     "context": "Why this specific quote topic matters to everyday people (2 to 3 sentences, 40 to 70 words). Must address the quote's topic directly. Do NOT repeat the quote text. Do NOT write like an academic textbook or NGO report.",
@@ -302,9 +305,13 @@ Key Style & Human-Writing Rules:
                 ),
             )
 
-            parsed = json.loads(response.text)
-
             topic = sanitize_text(str(parsed.get("topic", "")).strip())
+            if event and event.get("event"):
+                event_name = sanitize_text(str(event["event"]).strip())
+            else:
+                raw_ev = str(parsed.get("event_name", "")).strip()
+                event_name = sanitize_text(raw_ev) if raw_ev else "General Awareness"
+
             quote = sanitize_text(str(parsed.get("quote", "")).strip())
             explanation = sanitize_text(str(parsed.get("explanation", "")).strip())
             context = sanitize_text(str(parsed.get("context", "")).strip())
@@ -358,6 +365,7 @@ Key Style & Human-Writing Rules:
 
             return {
                 "topic": topic,
+                "event_name": event_name,
                 "quote": quote,
                 "explanation": explanation,
                 "context": context,

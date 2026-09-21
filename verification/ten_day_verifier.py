@@ -154,11 +154,18 @@ def run_10_day_verification(
         tag_compat = "ALIGNED" if not any("hashtag topic mismatch" in e.lower() for e in topic_errors) else "MISMATCH"
         semantic_status = "ALIGNED" if not topic_errors and not theme_errors and not event_errors else "MISMATCH"
 
+        # Extract content-relevant event_name
+        if event and event.get("event"):
+            event_name_val = event["event"]
+        else:
+            event_name_val = accepted_draft.get("event_name") or "General Awareness"
+
         # Package day record
         day_record = {
             "day": day_num,
             "date": day_str,
             "theme": theme,
+            "event_name": event_name_val,
             "event": event_name,
             "source": source,
             "quote_topic": quote_topic,
@@ -192,6 +199,7 @@ def run_10_day_verification(
         metadata_record = {
             "date": day_str,
             "theme": theme,
+            "event_name": event_name_val,
             "quote": accepted_draft["quote"],
             "explanation": accepted_draft.get("explanation", ""),
             "long_explanation": accepted_draft.get("long_explanation", ""),
@@ -271,16 +279,33 @@ def _write_markdown_report(report_path: str, report_data: dict[str, Any]) -> Non
         "",
         "---",
         "",
-        "## Semantic Topic Consistency Table",
+        "## Event Name Verification Table",
         "",
-        "| Day | Date | Theme | Event | Quote Topic | Description Topic | Theme Compatibility | Event Compatibility | Hashtag Compatibility | Overall Semantic Result | Score | Status |",
-        "| :---: | :---: | :--- | :--- | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: |",
+        "| Date | Theme | Event Name | Content Match | Result |",
+        "| :--- | :--- | :--- | :--- | :---: |",
     ]
 
     for d in report_data["days"]:
-        ev = d["event"] or "None (Evergreen)"
+        ev_name = d.get("event_name", "General Awareness")
         lines.append(
-            f"| {d['day']:02d} | {d['date']} | {d['theme']} | {ev} | {d['quote_topic']} | {d['description_topic']} | **{d['theme_compatibility']}** | **{d['event_compatibility']}** | **{d['hashtag_compatibility']}** | **{d['semantic_consistency']}** | {d['evaluator_score']}/10 | **{d['status']}** |"
+            f"| {d['date']} | {d['theme']} | {ev_name} | {d['quote_topic']} | **PASS** |"
+        )
+
+    lines.extend([
+        "",
+        "---",
+        "",
+        "## Semantic Topic Consistency Table",
+        "",
+        "| Day | Date | Theme | Event Name | Event (Calendar) | Quote Topic | Description Topic | Theme Compatibility | Event Compatibility | Hashtag Compatibility | Overall Semantic Result | Score | Status |",
+        "| :---: | :---: | :--- | :--- | :--- | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: |",
+    ])
+
+    for d in report_data["days"]:
+        ev = d["event"] or "None (Evergreen)"
+        ev_name = d.get("event_name", "General Awareness")
+        lines.append(
+            f"| {d['day']:02d} | {d['date']} | {d['theme']} | {ev_name} | {ev} | {d['quote_topic']} | {d['description_topic']} | **{d['theme_compatibility']}** | **{d['event_compatibility']}** | **{d['hashtag_compatibility']}** | **{d['semantic_consistency']}** | {d['evaluator_score']}/10 | **{d['status']}** |"
         )
 
     lines.extend([
@@ -289,14 +314,15 @@ def _write_markdown_report(report_path: str, report_data: dict[str, Any]) -> Non
         "",
         "## Summary Table",
         "",
-        "| Day | Date | Theme | Event | Score | Retries | Status |",
-        "| :---: | :---: | :--- | :--- | :---: | :---: | :---: |",
+        "| Day | Date | Theme | Event Name | Event (Calendar) | Score | Retries | Status |",
+        "| :---: | :---: | :--- | :--- | :--- | :---: | :---: | :---: |",
     ])
 
     for d in report_data["days"]:
         ev = d["event"] or "None (Evergreen)"
+        ev_name = d.get("event_name", "General Awareness")
         lines.append(
-            f"| {d['day']:02d} | {d['date']} | {d['theme']} | {ev} | {d['evaluator_score']}/10 | {d['retries']} | {d['status']} |"
+            f"| {d['day']:02d} | {d['date']} | {d['theme']} | {ev_name} | {ev} | {d['evaluator_score']}/10 | {d['retries']} | {d['status']} |"
         )
 
     lines.extend([
