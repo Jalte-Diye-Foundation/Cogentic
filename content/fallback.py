@@ -383,6 +383,66 @@ EMERGENCY_DOMAIN_QUOTES: dict[str, list[dict[str, str]]] = {
 }
 
 
+def derive_fallback_event_name(theme: str, quote: str, context: str = "", event: dict | None = None) -> str:
+    """Derive an authoritative or content-relevant recognized event name for fallback content."""
+    if event and event.get("event"):
+        return sanitize_text(str(event["event"]).strip())
+
+    text = f"{quote} {context}".lower()
+
+    # 1. Topic/Quote specific recognized awareness days
+    if any(w in text for w in ["girl", "daughter", "female child"]):
+        return "International Day of the Girl Child"
+    if any(w in text for w in ["women", "woman", "female leader", "equal partnership"]):
+        return "International Women's Day"
+    if any(w in text for w in ["forest", "trees", "woodland", "planting a tree", "plant a tree"]):
+        return "International Day of Forests"
+    if any(w in text for w in ["water", "river", "rivers", "wetland"]):
+        return "World Water Day"
+    if any(w in text for w in ["ocean", "marine", "sea", "coral"]):
+        return "World Oceans Day"
+    if any(w in text for w in ["earth", "soil", "climate", "renewable", "clean energy", "carbon", "nature", "litter", "plastic"]):
+        return "World Environment Day"
+    if any(w in text for w in ["book", "reading", "read a book", "library"]):
+        return "World Book Day"
+    if any(w in text for w in ["literacy", "illiteracy", "learn to read"]):
+        return "International Literacy Day"
+    if any(w in text for w in ["teacher", "classroom", "teach"]):
+        return "World Teachers' Day"
+    if any(w in text for w in ["mental health", "emotional", "stress", "calm", "inner stillness", "pause", "suffering"]):
+        return "World Mental Health Day"
+    if any(w in text for w in ["health", "nutrition", "wellness", "vitality", "doctor"]):
+        return "World Health Day"
+    if any(w in text for w in ["refugee", "migration", "border", "displaced"]):
+        return "World Refugee Day"
+    if any(w in text for w in ["transparency", "information", "right to know", "civic"]):
+        return "Right to Know Day"
+    if any(w in text for w in ["democracy", "vote", "voter", "voting"]):
+        return "International Day of Democracy"
+    if any(w in text for w in ["non-violence", "nonviolence", "ahimsa"]):
+        return "International Day of Non-Violence"
+    if any(w in text for w in ["human rights", "rights", "dignity"]):
+        return "Human Rights Day"
+    if any(w in text for w in ["peace", "justice", "conflict", "harmony", "dialogue"]):
+        return "International Day of Peace"
+    if any(w in text for w in ["education", "curiosity", "school", "learning"]):
+        return "International Day of Education"
+
+    # 2. Theme-level mapping
+    if theme == "Women Empowerment":
+        return "International Women's Day"
+    elif theme == "Climate & Environment":
+        return "World Environment Day"
+    elif theme == "Quality Education":
+        return "International Day of Education"
+    elif theme == "Health & Mindfulness":
+        return "World Mental Health Day"
+    elif theme == "Peace & Justice":
+        return "International Day of Peace"
+
+    return "General Awareness"
+
+
 def load_used_quotes(log_path: str) -> set[str]:
     """Load previously used quotes from the persistent log file."""
     if not os.path.exists(log_path):
@@ -468,6 +528,8 @@ class FallbackProvider:
                 if event_tag not in hashtags:
                     hashtags.insert(0, event_tag)
 
+            fallback_content["topic"] = top_domain.replace("_", " ").title()
+            fallback_content["event_name"] = derive_fallback_event_name(theme, fallback_content["quote"], context, event)
             fallback_content["quote"] = sanitize_text(fallback_content["quote"])
             fallback_content["explanation"] = sanitize_text(fallback_content.get("explanation", ""))
             fallback_content["context"] = context
@@ -642,6 +704,8 @@ class FallbackProvider:
                 hashtags.insert(0, event_tag)
 
         return {
+            "topic": top_domain.replace("_", " ").title(),
+            "event_name": derive_fallback_event_name(theme, quote, context, event),
             "quote": quote,
             "explanation": explanation,
             "context": context,

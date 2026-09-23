@@ -56,10 +56,12 @@ def update_website_assets(
     caption_val = content.get("caption") or pipeline_result.get("caption", "")
     hashtags_val = content.get("hashtags") or pipeline_result.get("hashtags", [])
     event_val = pipeline_result.get("event")
+    event_name_val = content.get("event_name") or pipeline_result.get("event_name") or (event_val if event_val else "General Awareness")
 
     metadata = {
         "date": today_str,
         "theme": pipeline_result.get("theme", ""),
+        "event_name": event_name_val,
         "quote": quote_val,
         "explanation": expl_val,
         "long_explanation": long_expl_val,

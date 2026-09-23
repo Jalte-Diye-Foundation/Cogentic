@@ -298,6 +298,11 @@ def run_daily_pipeline(
     output_path = os.path.join(output_dir, output_filename)
     os.makedirs(output_dir, exist_ok=True)
 
+    if today_event and today_event.get("event"):
+        event_name = today_event["event"]
+    else:
+        event_name = content.get("event_name") or "General Awareness"
+
     try:
         poster_generator.render(
             quote=content["quote"],
@@ -306,12 +311,14 @@ def run_daily_pipeline(
             output_path=output_path,
             layout_name=layout_name,
             theme=theme,
+            event_name=event_name,
         )
         logger.info("Poster creation succeeded: %s", output_path)
 
         metadata = {
             "date": today_str,
             "theme": theme,
+            "event_name": event_name,
             "quote": content["quote"],
             "explanation": content["explanation"],
             "long_explanation": content.get("long_explanation", ""),
@@ -336,6 +343,7 @@ def run_daily_pipeline(
     result = {
         "date": today_str,
         "theme": theme,
+        "event_name": event_name,
         "background": background_path,
         "content_source": content_source,
         "quote": content["quote"],

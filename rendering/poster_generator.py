@@ -23,6 +23,7 @@ class PosterGenerator:
         output_path: str,
         layout_name: str,          # kept for compatibility
         theme: str | None = None,
+        event_name: str | None = None,
     ) -> str:
         success = render_output_image(
             bg_image_path=background_path,
