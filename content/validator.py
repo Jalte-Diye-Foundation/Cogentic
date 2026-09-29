@@ -160,10 +160,19 @@ QUOTE_SUBTOPIC_CLUSTERS: dict[str, dict[str, Any]] = {
         "triggers": {"transparency", "right to know", "whistleblower", "public records", "disclosure", "information access"},
         "anchors": {"transparency", "right to know", "informed", "records", "openness", "accountability", "governance", "public trust", "information", "freedom of information"},
     },
+    "cardiovascular_heart_health": {
+        "triggers": {"heart", "cardiovascular", "cardiac", "artery", "pulse", "blood pressure", "heartbeat", "circulation"},
+        "anchors": {"heart", "cardiovascular", "cardiac", "artery", "pulse", "blood pressure", "heartbeat", "circulation", "vitality", "care", "wellness", "healthy", "exercise", "habits", "stroke", "cholesterol"},
+    },
 }
 
 # Semantic domain taxonomies for topic consistency validation
 SEMANTIC_DOMAINS: dict[str, set[str]] = {
+    "cardiovascular_heart_health": {
+        "heart", "cardiovascular", "cardiac", "artery", "pulse", "bloodpressure", "blood pressure",
+        "heartbeat", "circulation", "healthy heart", "worldheartday", "heartcare", "hearthealth",
+        "cholesterol", "stroke", "cardio",
+    },
     "refugees_migration": {
         "refugee", "refugees", "asylum", "displacement", "displaced",
         "migrant", "migrants", "migration", "border", "borders", "stateless",
@@ -253,12 +262,13 @@ THEME_EXPECTED_DOMAINS: dict[str, set[str]] = {
     "Women Empowerment": {"women_gender_empowerment"},
     "Climate & Environment": {"climate_environment_nature"},
     "Quality Education": {"quality_education_literacy"},
-    "Health & Mindfulness": {"mental_health_mindfulness", "health_wellness_nutrition"},
+    "Health & Mindfulness": {"mental_health_mindfulness", "health_wellness_nutrition", "cardiovascular_heart_health"},
     "Peace & Justice": {"peace_justice_humanity", "democracy_civic_rights", "refugees_migration"},
 }
 
 # Domains that indicate distinct specialization that cannot be substituted without cross-bridging
 SPECIALIZED_DOMAINS: list[str] = [
+    "cardiovascular_heart_health",
     "refugees_migration",
     "women_gender_empowerment",
     "climate_environment_nature",

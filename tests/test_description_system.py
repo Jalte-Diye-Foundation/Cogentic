@@ -1119,9 +1119,105 @@ class TestCogenticDescriptionSystem(unittest.TestCase):
         sig = inspect.signature(pg.render)
         self.assertIn("event_name", sig.parameters)
 
+    def test_event_aware_01_world_heart_day_discovery_and_content(self):
+        """Regression Test 1: World Heart Day on 29 September is recognized for Health & Mindfulness."""
+        from content.events_registry import find_matching_awareness_event, resolve_event_and_theme_for_date
+
+        target_date = date(2026, 9, 29)
+        theme = "Health & Mindfulness"
+
+        # 1. Verify Event Discovery for 29 September + Health & Mindfulness
+        ev = find_matching_awareness_event(target_date, theme)
+        self.assertIsNotNone(ev)
+        self.assertEqual(ev.name, "World Heart Day")
+
+        res_theme, event_dict, event_name = resolve_event_and_theme_for_date(
+            target_date, self.project_root, selected_theme=theme
+        )
+        self.assertEqual(res_theme, "Health & Mindfulness")
+        self.assertIsNotNone(event_dict)
+        self.assertEqual(event_name, "World Heart Day")
+        self.assertTrue(event_dict.get("is_awareness_day"))
+
+        # 2. Verify fallback/generated content is specifically about heart/cardiovascular health
+        fb_content = self.fallback.get_fallback_quote(theme, event=event_dict)
+        self.assertEqual(fb_content["event_name"], "World Heart Day")
+        full_text = f"{fb_content['quote']} {fb_content['explanation']} {fb_content['context']}".lower()
+        has_heart_keyword = any(k in full_text for k in ["heart", "cardiovascular", "cardiac", "pulse", "blood pressure"])
+        self.assertTrue(
+            has_heart_keyword,
+            f"Expected cardiovascular/heart health content on World Heart Day, got: {full_text}"
+        )
+
+    def test_event_aware_02_wrong_date_prevention(self):
+        """Regression Test 2: If event date is Sep 29, Sep 26 does NOT receive World Heart Day."""
+        from content.events_registry import find_matching_awareness_event, resolve_event_and_theme_for_date
+
+        target_date = date(2026, 9, 26)
+        theme = "Health & Mindfulness"
+
+        # September 26 must NOT match World Heart Day
+        ev = find_matching_awareness_event(target_date, theme)
+        ev_name = ev.name if ev else None
+        self.assertNotEqual(ev_name, "World Heart Day")
+
+        _, event_dict, event_name = resolve_event_and_theme_for_date(
+            target_date, self.project_root, selected_theme=theme
+        )
+        self.assertNotEqual(event_name, "World Heart Day")
+
+    def test_event_aware_03_unrelated_theme_receives_general_awareness(self):
+        """Regression Test 3: Date 29 Sep with Theme Climate & Environment does NOT attach World Heart Day."""
+        from content.events_registry import find_matching_awareness_event, resolve_event_and_theme_for_date
+
+        target_date = date(2026, 9, 29)
+        unrelated_theme = "Climate & Environment"
+
+        # Climate & Environment is not relevant to World Heart Day
+        ev = find_matching_awareness_event(target_date, unrelated_theme)
+        self.assertIsNone(ev)
+
+        res_theme, event_dict, event_name = resolve_event_and_theme_for_date(
+            target_date, self.project_root, selected_theme=unrelated_theme
+        )
+        self.assertEqual(res_theme, "Climate & Environment")
+        self.assertIsNone(event_dict)
+        self.assertEqual(event_name, "General Awareness")
+
+    def test_event_aware_04_foundation_event_priority(self):
+        """Regression Test 4: Foundation Events in events.json take priority over awareness matching."""
+        from content.events_registry import resolve_event_and_theme_for_date
+
+        # 21 September is International Day of Peace in events.json
+        peace_date = date(2026, 9, 21)
+        res_theme, event_dict, event_name = resolve_event_and_theme_for_date(
+            peace_date, self.project_root, selected_theme="Health & Mindfulness"
+        )
+        self.assertEqual(res_theme, "Foundation Events")
+        self.assertEqual(event_name, "International Day of Peace")
+        self.assertTrue(event_dict.get("is_foundation_event"))
+
+    def test_event_aware_05_no_event_defaults_to_general_awareness(self):
+        """Regression Test 5: A standard date with no matching event defaults to General Awareness."""
+        from content.events_registry import find_matching_awareness_event, resolve_event_and_theme_for_date
+
+        ordinary_date = date(2026, 9, 24)
+        theme = "Quality Education"
+
+        ev = find_matching_awareness_event(ordinary_date, theme)
+        self.assertIsNone(ev)
+
+        res_theme, event_dict, event_name = resolve_event_and_theme_for_date(
+            ordinary_date, self.project_root, selected_theme=theme
+        )
+        self.assertEqual(res_theme, "Quality Education")
+        self.assertIsNone(event_dict)
+        self.assertEqual(event_name, "General Awareness")
+
 
 if __name__ == "__main__":
     unittest.main()
+
 
 
 

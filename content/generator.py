@@ -196,26 +196,53 @@ class ContentGenerator:
 
         foundation_context = get_foundation_prompt_context()
 
-        if event:
-            event_instruction = f"""
+        # Determine target date string and pre-determine event_name
+        if isinstance(event, dict) and event.get("target_date"):
+            target_date_str = str(event["target_date"])
+        else:
+            target_date_str = get_current_ist_date().strftime("%d %B %Y")
+
+        if event and event.get("event"):
+            event_name = sanitize_text(str(event["event"]).strip())
+            is_awareness = event.get("is_awareness_day", False)
+            if is_awareness:
+                event_instruction = f"""
+Today's Date: {target_date_str}
+Recognized Awareness Day: {event_name}
+Configured Theme: {theme}
+
+HARD CONSTRAINT (AWARENESS EVENT SPECIFICITY):
+- Today is '{event_name}'.
+- The quote, explanation, context, foundation connection, CTA, and hashtags MUST be specifically focused on the topic represented by '{event_name}' (e.g. for 'World Heart Day' -> heart health, cardiovascular wellness, daily heart care, healthy habits).
+- Do NOT generate a generic or disconnected reflection.
+- Event Name must be exact: '{event_name}'.
+"""
+            else:
+                event_instruction = f"""
+Today's Date: {target_date_str}
 Today's Special Calendar Event:
-Event Name: {event['event']}
+Event Name: {event_name}
+Theme: {theme}
 
 HARD CONSTRAINT (EVENT > THEME):
-- The active calendar event is '{event['event']}'.
-- The quote MUST directly represent and celebrate '{event['event']}'.
+- The active calendar event is '{event_name}'.
+- The quote MUST directly represent and celebrate '{event_name}'.
 - Do NOT generate content about an unrelated topic (e.g. do not generate tree-planting or climate quotes for Peace Day or Right to Know Day).
-- The quote, explanation, context, foundation connection, CTA, and hashtags must all celebrate '{event['event']}'.
+- The quote, explanation, context, foundation connection, CTA, and hashtags must all celebrate '{event_name}'.
+- Event Name must be exact: '{event_name}'.
 """
         else:
+            event_name = "General Awareness"
             event_instruction = f"""
+Today's Date: {target_date_str}
 This is an evergreen theme day (NO special event).
 Theme: {theme}
+Event Name: General Awareness
 
 HARD CONSTRAINT (THEME AS CLASSIFICATION CONSTRAINT):
 - The quote MUST be semantically compatible with '{theme}'.
 - Do NOT introduce an unrelated topic (e.g. if Theme is 'Women Empowerment', do NOT generate quotes about rural development or car-free streets; if Theme is 'Climate & Environment', do NOT generate quotes about peace or schooling).
-- Do NOT mention or invent any holiday, calendar observance, or special event day.
+- Do NOT invent or attach any calendar holiday or special event day. Set event_name to 'General Awareness'.
 """
 
         prompt = f"""
@@ -225,6 +252,7 @@ Your goal is to write a warm, conversational, reflective, and relatable daily re
 {foundation_context}
 
 Configured Theme: {theme}
+Determined Event Name: {event_name}
 {event_instruction}
 
 Previous Recent Quotes (DO NOT REPEAT):
@@ -237,21 +265,20 @@ Previous Recent Hashtag Sets (DO NOT REPEAT):
 {recent_hashtags_text}
 
 REQUIRED GENERATION SEQUENCE (FOLLOW EXACTLY IN ORDER):
-STEP 1: Identify the exact topic and subject of the quote (aligned with Event if active, or Theme if evergreen).
+STEP 1: Identify the exact topic and subject of the quote (aligned with Event '{event_name}' if active, or Theme '{theme}' if General Awareness).
 STEP 2: Identify the specific entity, challenge, or human experience represented by the quote.
-STEP 3: If an active calendar event exists (Foundation Event), use that exact event name. If evergreen, identify a recognized international/national awareness day matching this specific topic (or 'General Awareness' if no strong match exists).
+STEP 3: Use the pre-determined event name: '{event_name}'.
 STEP 4: Generate a concise poster explanation (under 35 words) around that exact subject.
 STEP 5: Generate context (40 to 70 words) explaining why this exact subject matters to everyday people.
 STEP 6: Generate foundation connection (40 to 80 words) linking this exact subject to Jalte Diye Foundation's social education mission.
 STEP 7: Generate a concrete daily CTA (20 to 40 words) for this exact subject.
 STEP 8: Generate 3 to 6 hashtags specifically representing that subject.
-STEP 9: Check whether the entire package matches the configured Theme.
-STEP 10: If an Event exists, check whether the entire package matches the Event.
+STEP 9: Check whether the entire package matches the configured Theme and Event Name.
 
 CRITICAL SEMANTIC CONSISTENCY RULES:
 1. PRIMARY ANCHOR: The Quote + Explanation is the primary semantic anchor of the entire post.
 2. SECONDARY CONTENT: Context, Foundation Connection, CTA, and Hashtags MUST be semantically derived from the Quote + Explanation.
-3. EVENT NAME RULE: Generate Event Name after understanding the quote and explanation. It must describe the specific awareness/event context of the post (e.g. quote about girls' education -> 'International Day of the Girl Child'; quote about forests -> 'International Day of Forests'; quote about peace -> 'International Day of Peace'; quote about mental health -> 'World Mental Health Day'). Do not select an event only from the broad theme. Do not invent fictional awareness days. If no strong match exists, return 'General Awareness'. On Foundation Event dates, do not invent a name; use the exact event from events.json.
+3. EVENT NAME RULE: Use the exact pre-determined event name '{event_name}'.
 4. EXTERNAL CONSTRAINT: Theme is a classification constraint, NOT permission to introduce an unrelated topic.
 5. EVENT CONSTRAINT: If an Event is present, Event is a hard semantic constraint (EVENT > THEME).
 6. NO ARBITRARY TOPIC INJECTION: Do NOT introduce women empowerment, climate, education, mental health, refugees, etc. unless the quote itself directly establishes that subject.
@@ -261,10 +288,10 @@ CRITICAL SEMANTIC CONSISTENCY RULES:
 Required Output Schema:
 Return ONLY valid JSON matching this exact structure:
 {{
-    "topic": "Specific 2 to 6 word topic label (e.g. 'Refugee Dignity & Shared Humanity')",
+    "topic": "Specific 2 to 6 word topic label (e.g. 'Cardiovascular Wellness & Daily Heart Care')",
     "topic_keywords": ["keyword1", "keyword2", "keyword3"],
     "topic_domains": ["domain_label"],
-    "event_name": "Recognized awareness/event day matching the specific quote topic (or 'General Awareness')",
+    "event_name": "{event_name}",
     "quote": "10 to 20 word memorable, inspiring quote (for poster)",
     "explanation": "Short 2-sentence explanation for the poster (maximum 35 words)",
     "context": "Why this specific quote topic matters to everyday people (2 to 3 sentences, 40 to 70 words). Must address the quote's topic directly. Do NOT repeat the quote text. Do NOT write like an academic textbook or NGO report.",
@@ -305,12 +332,11 @@ Key Style & Human-Writing Rules:
                 ),
             )
 
+            parsed = json.loads(response.text)
+
             topic = sanitize_text(str(parsed.get("topic", "")).strip())
-            if event and event.get("event"):
-                event_name = sanitize_text(str(event["event"]).strip())
-            else:
-                raw_ev = str(parsed.get("event_name", "")).strip()
-                event_name = sanitize_text(raw_ev) if raw_ev else "General Awareness"
+            # Enforce pre-determined authoritative event_name
+            final_event_name = event_name
 
             quote = sanitize_text(str(parsed.get("quote", "")).strip())
             explanation = sanitize_text(str(parsed.get("explanation", "")).strip())
@@ -365,7 +391,7 @@ Key Style & Human-Writing Rules:
 
             return {
                 "topic": topic,
-                "event_name": event_name,
+                "event_name": final_event_name,
                 "quote": quote,
                 "explanation": explanation,
                 "context": context,

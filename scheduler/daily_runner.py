@@ -69,7 +69,7 @@ def load_events(project_root: str) -> dict[str, Any]:
 
 
 def get_today_event(project_root: str, target_date: date | None = None) -> dict[str, Any] | None:
-    """Return today's event if one exists."""
+    """Return today's Foundation Event if one exists in events.json."""
     events = load_events(project_root)
     d = target_date or get_current_ist_date()
     today = d.strftime("%m-%d")
@@ -82,11 +82,29 @@ def select_theme(
     target_date: date | None = None,
     recent_themes: list[str] | None = None,
 ) -> tuple[str, dict[str, Any] | None]:
-    """Select today's theme. Event days take priority; non-event days use evergreen themes."""
-    today_event = get_today_event(project_root, target_date)
+    """Select today's theme and event context using event-discovery-first architecture.
+
+    1. Priority 1: Foundation Event from events.json (forces Theme: Foundation Events)
+    2. Priority 2: Evergreen Theme rotation -> Check if target_date has an Awareness Day relevant to the selected Theme
+    3. Priority 3: No relevant event -> Evergreen Theme with no event context (General Awareness)
+    """
+    from content.events_registry import find_matching_awareness_event
+
+    d = target_date or get_current_ist_date()
+    today_event = get_today_event(project_root, d)
+
+    # Priority 1: Foundation Event
     if today_event:
-        logger.info("Today's event: %s (Theme: %s)", today_event["event"], today_event["theme"])
-        return today_event["theme"], today_event
+        logger.info("Today's Foundation Event: %s (Theme: %s)", today_event["event"], today_event.get("theme", "Foundation Events"))
+        event_dict = {
+            "event": today_event["event"],
+            "theme": today_event.get("theme", "Foundation Events"),
+            "csv_row": today_event.get("csv_row", today_event["event"]),
+            "is_foundation_event": True,
+            "is_awareness_day": False,
+            "target_date": d.isoformat(),
+        }
+        return today_event.get("theme", "Foundation Events"), event_dict
 
     # Normal theme rotation - strictly evergreen themes (exclude 'Foundation Events')
     all_themes = list(config["themes"].keys())
@@ -117,6 +135,28 @@ def select_theme(
     selected = random.choice(available)
     logger.info("Recent themes: %s", recent_themes)
     logger.info("Selected evergreen theme: %s", selected)
+
+    # Priority 2: Check if target_date has a recognized awareness event matching the selected theme
+    matching_awareness = find_matching_awareness_event(d, selected)
+    if matching_awareness:
+        logger.info(
+            "Found recognized Awareness Day for %s matching theme '%s': %s",
+            d.isoformat(),
+            selected,
+            matching_awareness.name,
+        )
+        awareness_dict = {
+            "event": matching_awareness.name,
+            "theme": selected,
+            "keywords": list(matching_awareness.keywords),
+            "description": matching_awareness.description,
+            "subtopic_cluster": matching_awareness.subtopic_cluster,
+            "is_foundation_event": False,
+            "is_awareness_day": True,
+            "target_date": d.isoformat(),
+        }
+        return selected, awareness_dict
+
     return selected, None
 
 
@@ -315,6 +355,12 @@ def run_daily_pipeline(
         )
         logger.info("Poster creation succeeded: %s", output_path)
 
+        is_foundation = (
+            today_event is not None
+            and today_event.get("is_foundation_event", True)
+            and not today_event.get("is_awareness_day", False)
+        )
+
         metadata = {
             "date": today_str,
             "theme": theme,
@@ -326,7 +372,7 @@ def run_daily_pipeline(
             "hashtags": content.get("hashtags", []),
             "image": output_filename,
             "source": "Cogentic AI",
-            "event": today_event["event"] if today_event else None,
+            "event": today_event["event"] if is_foundation else None,
         }
         metadata_path = os.path.join(output_dir, "metadata.json")
 
@@ -355,7 +401,7 @@ def run_daily_pipeline(
         "caption": content.get("caption", ""),
         "hashtags": content.get("hashtags", []),
         "poster_path": output_path,
-        "event": today_event["event"] if today_event else None,
+        "event": today_event["event"] if is_foundation else None,
     }
 
     logger.info("Daily pipeline completed successfully.")
