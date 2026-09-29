@@ -68,18 +68,19 @@ def run_10_day_verification(
         print(f"--- Day {day_num:02d} / 10 | Target Date: {day_str} ---")
 
         # Theme & Event determination
-        event = get_today_event(project_root, target_date)
-        if event:
-            theme = event["theme"]
+        simulated_recent_themes = [d["theme"] for d in test_results[-5:] if d.get("theme") != "Foundation Events"]
+        theme, event = select_theme(config, project_root, target_date, recent_themes=simulated_recent_themes if simulated_recent_themes else None)
+        if event and event.get("event"):
             event_name = event["event"]
-            print(f"  🎉 Calendar Event : {event_name}")
-            print(f"  🎨 Theme          : {theme}")
+            if event.get("is_awareness_day"):
+                print(f"  🎉 Recognized Event: {event_name}")
+                print(f"  🎨 Theme           : {theme}")
+            else:
+                print(f"  🎉 Calendar Event  : {event_name}")
+                print(f"  🎨 Theme           : {theme}")
         else:
-            # Evergreen theme selection with recent simulated rotation
-            simulated_recent_themes = [d["theme"] for d in test_results[-5:] if d.get("theme") != "Foundation Events"]
-            theme, _ = select_theme(config, project_root, target_date, recent_themes=simulated_recent_themes if simulated_recent_themes else None)
-            event_name = None
-            print(f"  🎨 Evergreen Theme: {theme}")
+            event_name = "General Awareness"
+            print(f"  🎨 Evergreen Theme : {theme}")
 
         # Generation + Multi-level Validation + Evaluation loop
         accepted_draft = None

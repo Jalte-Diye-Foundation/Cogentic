@@ -32,46 +32,15 @@ def main():
 
     target_mmdd = target_date.strftime("%m-%d")
 
-    # Check for event on that date
-    events_path = os.path.join(project_root, "events.json")
-    with open(events_path, "r", encoding="utf-8") as f:
-        events = json.load(f)
+    from scheduler.daily_runner import select_theme
+    theme, today_event = select_theme(config, project_root, target_date)
 
-    today_event = events.get(target_mmdd)
-
-    # Determine theme using same logic as daily_runner
+    print(f"📅 Date       : {target_date}")
     if today_event:
-        theme = today_event["theme"]
-        print(f"📅 Date       : {target_date}")
         print(f"🎉 Event      : {today_event['event']}")
-        print(f"🎨 Theme      : {theme}")
     else:
-        # Read recent themes from archive to avoid repeats
-        archive_dir = os.path.join(project_root, "website_assets", "archive")
-        recent_themes = []
-        if os.path.exists(archive_dir):
-            for folder in sorted(os.listdir(archive_dir))[-5:]:
-                meta_path = os.path.join(archive_dir, folder, "metadata.json")
-                if os.path.exists(meta_path):
-                    try:
-                        with open(meta_path, "r", encoding="utf-8") as f:
-                            data = json.load(f)
-                        t = data.get("theme")
-                        if t:
-                            recent_themes.append(t)
-                    except Exception:
-                        pass
-
-        all_themes = list(config["themes"].keys())
-        available = [t for t in all_themes if t not in recent_themes] or all_themes
-
-        print(f"📅 Date           : {target_date}")
-        print(f"🎨 Theme (random pool): {available}")
-        print(f"   (one of the above will be picked at runtime)")
-        # Pick first available for preview
-        theme = available[0]
-        print(f"   Previewing with : {theme}")
-        today_event = None
+        print(f"🎉 Event      : General Awareness")
+    print(f"🎨 Theme      : {theme}")
 
     print()
     print("⏳ Calling Gemini to generate content preview...")

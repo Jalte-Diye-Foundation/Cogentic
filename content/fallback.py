@@ -12,7 +12,7 @@ from content.generator import (
     build_structured_long_explanation,
     sanitize_text,
 )
-from content.validator import detect_domain_scores
+from content.validator import THEME_EXPECTED_DOMAINS, detect_domain_scores
 
 logger = logging.getLogger(__name__)
 
@@ -148,6 +148,20 @@ TOPIC_FALLBACK_TEMPLATES: dict[str, list[dict[str, Any]]] = {
             "hashtags": ["#RightToKnow", "#InformedCitizens", "#TransparencyInAction", "#SocialEducation"],
         },
     ],
+    "cardiovascular_heart_health": [
+        {
+            "context": "Taking care of your heart is a daily commitment to your life and the loved ones who count on your presence.",
+            "foundation_connection": "Cardiovascular health awareness is an essential part of Jalte Diye Foundation's preventive health and community wellness initiatives.",
+            "cta": "Take a brisk 20-minute walk and choose a nourishing, heart-healthy meal today.",
+            "hashtags": ["#WorldHeartDay", "#HeartHealth", "#HealthyHabits", "#CardiovascularCare"],
+        },
+        {
+            "context": "A healthy heart beats with the rhythm of mindful choices, regular movement, and stress-free moments.",
+            "foundation_connection": "At Jalte Diye Foundation, our social wellness efforts encourage simple daily routines that protect heart vitality for people of all ages.",
+            "cta": "Drink plenty of water, climb the stairs, and take a mindful pause to rest your heart today.",
+            "hashtags": ["#HeartWellness", "#MindfulMovement", "#HealthyLiving", "#SocialEducation"],
+        },
+    ],
     "health_wellness_nutrition": [
         {
             "context": "Good physical and community health allows every person to learn, work, and contribute meaningfully to those around them.",
@@ -184,6 +198,13 @@ TOPIC_FALLBACK_TEMPLATES: dict[str, list[dict[str, Any]]] = {
 def get_topic_fallback_template(domain: str, quote_text: str = "") -> dict[str, Any]:
     """Retrieve a topic-specific fallback template, selecting dynamically when multiple exist."""
     norm_q = quote_text.lower()
+    if "heart" in norm_q or "cardiovascular" in norm_q or "cardiac" in norm_q or "pulse" in norm_q:
+        return {
+            "context": "Heart health is the foundation of daily energy and longevity; mindful daily habits protect our cardiovascular vitality.",
+            "foundation_connection": "At Jalte Diye Foundation, our health education initiatives highlight practical everyday awareness for a healthy heart.",
+            "cta": "Take a 20-minute brisk walk and choose a nutritious, low-sodium meal today.",
+            "hashtags": ["#WorldHeartDay", "#HeartHealth", "#CardiovascularWellness", "#DailyCare"],
+        }
     if "math" in norm_q or "chalk" in norm_q or "calculation" in norm_q:
         return {
             "context": "Addressing climate change requires measurable urgency and decisive action before emissions rise beyond our capacity to adapt.",
@@ -269,9 +290,6 @@ def get_topic_fallback_template(domain: str, quote_text: str = "") -> dict[str, 
     return templates[selected_idx]
 
 
-
-
-
 THEME_TO_DOMAIN_MAP = {
     "Peace & Justice": "peace_justice_humanity",
     "Climate & Environment": "climate_environment_nature",
@@ -282,6 +300,16 @@ THEME_TO_DOMAIN_MAP = {
 }
 
 EMERGENCY_DOMAIN_QUOTES: dict[str, list[dict[str, str]]] = {
+    "cardiovascular_heart_health": [
+        {
+            "quote": "Taking care of your heart is a daily commitment to your life and the loved ones who count on your presence.",
+            "explanation": "Daily cardiovascular care begins with mindful habits, healthy food, and regular movement. Caring for your heart protects your future.",
+        },
+        {
+            "quote": "A healthy heart beats with the rhythm of mindful choices and daily care.",
+            "explanation": "Small daily habits like regular exercise and nutritious food protect your heart and strengthen your well-being.",
+        },
+    ],
     "peace_justice_humanity": [
         {
             "quote": "Peace is not the absence of conflict; it is the presence of justice, understanding, and shared dignity.",
@@ -384,62 +412,13 @@ EMERGENCY_DOMAIN_QUOTES: dict[str, list[dict[str, str]]] = {
 
 
 def derive_fallback_event_name(theme: str, quote: str, context: str = "", event: dict | None = None) -> str:
-    """Derive an authoritative or content-relevant recognized event name for fallback content."""
+    """Derive an authoritative recognized event name for fallback content.
+    
+    - If event is provided (from Foundation Events or date-matched Awareness Day), use event["event"].
+    - If no event is provided for today's date, return "General Awareness".
+    """
     if event and event.get("event"):
         return sanitize_text(str(event["event"]).strip())
-
-    text = f"{quote} {context}".lower()
-
-    # 1. Topic/Quote specific recognized awareness days
-    if any(w in text for w in ["girl", "daughter", "female child"]):
-        return "International Day of the Girl Child"
-    if any(w in text for w in ["women", "woman", "female leader", "equal partnership"]):
-        return "International Women's Day"
-    if any(w in text for w in ["forest", "trees", "woodland", "planting a tree", "plant a tree"]):
-        return "International Day of Forests"
-    if any(w in text for w in ["water", "river", "rivers", "wetland"]):
-        return "World Water Day"
-    if any(w in text for w in ["ocean", "marine", "sea", "coral"]):
-        return "World Oceans Day"
-    if any(w in text for w in ["earth", "soil", "climate", "renewable", "clean energy", "carbon", "nature", "litter", "plastic"]):
-        return "World Environment Day"
-    if any(w in text for w in ["book", "reading", "read a book", "library"]):
-        return "World Book Day"
-    if any(w in text for w in ["literacy", "illiteracy", "learn to read"]):
-        return "International Literacy Day"
-    if any(w in text for w in ["teacher", "classroom", "teach"]):
-        return "World Teachers' Day"
-    if any(w in text for w in ["mental health", "emotional", "stress", "calm", "inner stillness", "pause", "suffering"]):
-        return "World Mental Health Day"
-    if any(w in text for w in ["health", "nutrition", "wellness", "vitality", "doctor"]):
-        return "World Health Day"
-    if any(w in text for w in ["refugee", "migration", "border", "displaced"]):
-        return "World Refugee Day"
-    if any(w in text for w in ["transparency", "information", "right to know", "civic"]):
-        return "Right to Know Day"
-    if any(w in text for w in ["democracy", "vote", "voter", "voting"]):
-        return "International Day of Democracy"
-    if any(w in text for w in ["non-violence", "nonviolence", "ahimsa"]):
-        return "International Day of Non-Violence"
-    if any(w in text for w in ["human rights", "rights", "dignity"]):
-        return "Human Rights Day"
-    if any(w in text for w in ["peace", "justice", "conflict", "harmony", "dialogue"]):
-        return "International Day of Peace"
-    if any(w in text for w in ["education", "curiosity", "school", "learning"]):
-        return "International Day of Education"
-
-    # 2. Theme-level mapping
-    if theme == "Women Empowerment":
-        return "International Women's Day"
-    elif theme == "Climate & Environment":
-        return "World Environment Day"
-    elif theme == "Quality Education":
-        return "International Day of Education"
-    elif theme == "Health & Mindfulness":
-        return "World Mental Health Day"
-    elif theme == "Peace & Justice":
-        return "International Day of Peace"
-
     return "General Awareness"
 
 
@@ -593,7 +572,16 @@ class FallbackProvider:
         else:
             candidate_rows = data_rows
 
-        from content.validator import THEME_EXPECTED_DOMAINS
+        # Determine expected domain requirements for the row
+        expected_doms = set()
+        if event_name:
+            ev_scores = detect_domain_scores(event_name)
+            if "heart" in event_name.lower():
+                expected_doms.add("cardiovascular_heart_health")
+            elif ev_scores:
+                expected_doms.update(ev_scores.keys())
+        elif theme and theme in THEME_EXPECTED_DOMAINS:
+            expected_doms = THEME_EXPECTED_DOMAINS[theme]
 
         for row in candidate_rows:
             if not row or len(row) <= quote_idx:
@@ -611,14 +599,13 @@ class FallbackProvider:
             if not row_quote or row_quote in used_quotes:
                 continue
 
-            # If evergreen theme, verify that quote strictly matches the expected theme domain
-            if not event_name and theme and theme in THEME_EXPECTED_DOMAINS:
+            # Verify that quote strictly matches the expected domain
+            if expected_doms:
                 q_scores = detect_domain_scores(row_quote)
                 if not q_scores:
                     continue
-                top_domain = max(q_scores.items(), key=lambda x: x[1])[0]
-                expected_doms = THEME_EXPECTED_DOMAINS[theme]
-                if top_domain not in expected_doms:
+                matching = any(d in expected_doms for d in q_scores.keys())
+                if not matching:
                     continue
 
             # Ensure explanation meets explanation quality standards
@@ -626,7 +613,9 @@ class FallbackProvider:
             if validate_explanation_quality(row_explanation, row_quote):
                 q_scores = detect_domain_scores(row_quote)
                 top_dom = max(q_scores.items(), key=lambda x: x[1])[0] if q_scores else "peace_justice_humanity"
-                if "math" in row_quote.lower() or "chalk" in row_quote.lower():
+                if "heart" in row_quote.lower() or "cardiovascular" in row_quote.lower():
+                    row_explanation = "Daily cardiovascular care and healthy habits protect your heart and strengthen your future."
+                elif "math" in row_quote.lower() or "chalk" in row_quote.lower():
                     row_explanation = "The quote emphasizes measurable urgency and acting before emissions become harder to change."
                 elif "renewable" in row_quote.lower() or "energy" in row_quote.lower():
                     row_explanation = "Clean energy powers communities sustainably without demanding ecological forgiveness."
@@ -658,11 +647,14 @@ class FallbackProvider:
 
         if event and event.get("event"):
             ev_name = event["event"]
-            ev_scores = detect_domain_scores(ev_name)
-            if ev_scores:
-                top_domain = max(ev_scores.items(), key=lambda x: x[1])[0]
+            if "heart" in ev_name.lower():
+                top_domain = "cardiovascular_heart_health"
             else:
-                top_domain = "peace_justice_humanity"
+                ev_scores = detect_domain_scores(ev_name)
+                if ev_scores:
+                    top_domain = max(ev_scores.items(), key=lambda x: x[1])[0]
+                else:
+                    top_domain = THEME_TO_DOMAIN_MAP.get(theme, "peace_justice_humanity")
         elif theme:
             top_domain = THEME_TO_DOMAIN_MAP.get(theme, "peace_justice_humanity")
 
