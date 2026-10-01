@@ -535,3 +535,13 @@ def resolve_event_and_theme_for_date(
     # Priority 3: No Relevant Event
     logger.info("No relevant event for %s with Theme '%s' -> General Awareness", target_mmdd, selected_theme)
     return selected_theme, None, "General Awareness"
+
+def get_event_for_date(date_str: str, project_root: str) -> dict[str, Any] | None:
+    """Helper to retrieve registered foundation event for a date string (YYYY-MM-DD)."""
+    try:
+        from datetime import datetime
+        dt = datetime.strptime(date_str, "%Y-%m-%d").date()
+        _, ev_dict, _ = resolve_event_and_theme_for_date(dt, project_root)
+        return ev_dict
+    except Exception:
+        return None

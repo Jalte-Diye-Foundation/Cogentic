@@ -39,11 +39,31 @@ from scheduler.daily_runner import (
 class TestCogenticDescriptionSystem(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
+        import tempfile
         cls.project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         cls.config_path = os.path.join(cls.project_root, "config.json")
         cls.config = load_config(cls.config_path)
         cls.validator = ContentValidator()
-        cls.fallback = FallbackProvider(cls.config, cls.project_root)
+
+        cls._tmp_log = tempfile.NamedTemporaryFile(delete=False, suffix=".txt")
+        cls._tmp_log.close()
+        prod_log = os.path.join(cls.project_root, cls.config["paths"]["used_quotes_log"])
+        if os.path.exists(prod_log):
+            with open(prod_log, "r", encoding="utf-8") as f_in, open(cls._tmp_log.name, "w", encoding="utf-8") as f_out:
+                f_out.write(f_in.read())
+        test_cfg = dict(cls.config)
+        test_cfg["paths"] = dict(cls.config["paths"])
+        test_cfg["paths"]["used_quotes_log"] = os.path.relpath(cls._tmp_log.name, cls.project_root)
+        cls.test_config = test_cfg
+        cls.fallback = FallbackProvider(test_cfg, cls.project_root)
+
+    @classmethod
+    def tearDownClass(cls):
+        if hasattr(cls, "_tmp_log") and os.path.exists(cls._tmp_log.name):
+            try:
+                os.remove(cls._tmp_log.name)
+            except Exception:
+                pass
 
     def test_01_no_exact_duplicate_quotes(self):
         """TEST 1: Validator detects and rejects exact duplicate quotes."""
@@ -1215,9 +1235,232 @@ class TestCogenticDescriptionSystem(unittest.TestCase):
         self.assertEqual(event_name, "General Awareness")
 
 
+
+    def test_regression_test_1_event_name_post_rendering(self):
+        """Regression Test 1: post_renderer.py conditionally renders event_name."""
+        from website_assets.post_renderer import render_post_page
+
+        # 1. Foundation Event with explicit event_name must render Event line
+        meta_event = {
+            "date": "2026-10-01",
+            "theme": "Foundation Events",
+            "event_name": "International Day of Older Persons",
+            "quote": "To honor our elders is to honor the roots that give our entire community shade and stability.",
+            "explanation": "Elders carry irreplaceable lived wisdom.",
+        }
+        html_event = render_post_page(meta_event)
+        self.assertIn('<p class="card-meta">Theme: Foundation Events</p>', html_event)
+        self.assertIn('<p class="card-meta">Event: International Day of Older Persons</p>', html_event)
+        self.assertIn('<p class="card-meta">Last updated: 1 October 2026</p>', html_event)
+
+        # 2. General Awareness must NOT render Event line
+        meta_gen = {
+            "date": "2026-09-24",
+            "theme": "Quality Education",
+            "event_name": "General Awareness",
+            "quote": "Learning is lifelong.",
+            "explanation": "Curiosity inspires wisdom.",
+        }
+        html_gen = render_post_page(meta_gen)
+        self.assertIn('<p class="card-meta">Theme: Quality Education</p>', html_gen)
+        self.assertNotIn("Event:", html_gen)
+
+        # 3. None / empty / null event_name must NOT render Event line
+        for empty_val in [None, "", "None", "null", "undefined"]:
+            meta_empty = {
+                "date": "2026-09-24",
+                "theme": "Women Empowerment",
+                "event_name": empty_val,
+                "quote": "Equality builds community.",
+                "explanation": "Respect creates progress.",
+            }
+            html_empty = render_post_page(meta_empty)
+            self.assertIn('<p class="card-meta">Theme: Women Empowerment</p>', html_empty)
+            self.assertNotIn("Event:", html_empty)
+
+    def test_regression_test_2_emergency_duplicate_prevention(self):
+        """Regression Test 2: Emergency fallback never returns a quote already in used_quotes_log."""
+        import tempfile
+        from content.fallback import FallbackProvider
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            used_log = os.path.join(tmpdir, "used_quotes_log.txt")
+            old_tree_quote = "The best time to plant a tree was twenty years ago. The second best time is now."
+            with open(used_log, "w", encoding="utf-8") as f:
+                f.write(old_tree_quote + "\n")
+
+            test_cfg = dict(self.config)
+            test_cfg["paths"] = dict(self.config["paths"])
+            test_cfg["paths"]["used_quotes_log"] = os.path.relpath(used_log, self.project_root)
+
+            fb = FallbackProvider(test_cfg, self.project_root)
+            ev = {"event": "International Day of Older Persons", "is_foundation_event": True}
+            res = fb._emergency_failsafe("Foundation Events", ev)
+
+            self.assertNotEqual(res["quote"], old_tree_quote)
+            self.assertNotEqual(res["quote"], "")
+            self.assertEqual(res["event_name"], "International Day of Older Persons")
+
+    def test_regression_test_3_repeated_emergency_fallback(self):
+        """Regression Test 3: Repeated emergency fallback selects diverse unused quotes without immediate duplication."""
+        import tempfile
+        from content.fallback import FallbackProvider
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            used_log = os.path.join(tmpdir, "used_quotes_log.txt")
+            with open(used_log, "w", encoding="utf-8") as f:
+                f.write("")
+
+            test_cfg = dict(self.config)
+            test_cfg["paths"] = dict(self.config["paths"])
+            test_cfg["paths"]["used_quotes_log"] = os.path.relpath(used_log, self.project_root)
+
+            fb = FallbackProvider(test_cfg, self.project_root)
+            ev = {"event": "International Day of Older Persons", "is_foundation_event": True}
+
+            first_run = fb._emergency_failsafe("Foundation Events", ev)
+            second_run = fb._emergency_failsafe("Foundation Events", ev)
+
+            self.assertNotEqual(first_run["quote"], second_run["quote"])
+
+    def test_regression_test_4_event_specific_fallback_oct_01(self):
+        """Regression Test 4: Oct 01 International Day of Older Persons fallback is event-specific, semantically valid, and not the old tree quote."""
+        from scheduler.daily_runner import select_theme
+
+        target_date = date(2026, 10, 1)
+        theme, today_event = select_theme(self.config, self.project_root, target_date)
+
+        self.assertEqual(theme, "Foundation Events")
+        self.assertIsNotNone(today_event)
+        self.assertEqual(today_event["event"], "International Day of Older Persons")
+
+        content = self.fallback.get_fallback_quote(theme, event=today_event)
+
+        self.assertEqual(content["event_name"], "International Day of Older Persons")
+        old_tree_quote = "The best time to plant a tree was twenty years ago. The second best time is now."
+        self.assertNotEqual(content["quote"], old_tree_quote)
+
+        # Content must be valid according to ContentValidator
+        errors = self.validator.validate_deterministic(content, theme, event=today_event)
+        self.assertEqual(errors, [], f"Fallback content failed deterministic validation: {errors}")
+
+    def test_regression_test_5_event_csv_coverage(self):
+        """Regression Test 5: Registered Foundation Events in events.json have valid event-specific fallback coverage."""
+        from content.events_registry import get_event_for_date
+
+        event_oct_01 = get_event_for_date("2026-10-01", self.project_root)
+        self.assertIsNotNone(event_oct_01)
+        self.assertEqual(event_oct_01["event"], "International Day of Older Persons")
+
+        # Test CSV lookup for International Day of Older Persons
+        used_set = set()
+        csv_path = os.path.join(self.project_root, "Event_quotes.csv")
+        row = self.fallback._read_unused_csv_quote(csv_path, used_set, event_name="International Day of Older Persons", theme="Foundation Events")
+        self.assertIsNotNone(row, "Event_quotes.csv must contain unused row for International Day of Older Persons")
+        self.assertIn("quote", row)
+        self.assertTrue(len(row["quote"]) > 10)
+
+    def test_part_d_test_5_emergency_compatible_domain_selection(self):
+        """Test 5: Exhaust Foundation Events pool, leave unused Climate quote. Verify Climate quote is NOT selected for a Foundation Event."""
+        import tempfile
+        from content.fallback import FallbackProvider, EMERGENCY_DOMAIN_QUOTES
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            used_log = os.path.join(tmpdir, "used_quotes_log.txt")
+            # Populate used log with all quotes from Foundation Events
+            used_quotes = [q["quote"] for q in EMERGENCY_DOMAIN_QUOTES.get("Foundation Events", [])]
+            with open(used_log, "w", encoding="utf-8") as f:
+                for q in used_quotes:
+                    f.write(q + "\n")
+
+            test_cfg = dict(self.config)
+            test_cfg["paths"] = dict(self.config["paths"])
+            test_cfg["paths"]["used_quotes_log"] = os.path.relpath(used_log, self.project_root)
+
+            fb = FallbackProvider(test_cfg, self.project_root)
+            ev = {"event": "International Day of Older Persons", "is_foundation_event": True}
+            res = fb._emergency_failsafe("Foundation Events", ev)
+
+            # The quote chosen must NOT be from an incompatible domain like climate_environment_nature
+            climate_quotes = {q["quote"] for q in EMERGENCY_DOMAIN_QUOTES.get("climate_environment_nature", [])}
+            self.assertNotIn(res["quote"], climate_quotes, "Foundation Event must never borrow climate quote!")
+
+    def test_part_d_test_6_emergency_exact_duplicate_rejection(self):
+        """Test 6: Pre-populate used_quotes_log.txt with all candidates in target emergency pool. Verify none of those exact quotes are returned."""
+        import tempfile
+        from content.fallback import FallbackProvider, EMERGENCY_DOMAIN_QUOTES
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            used_log = os.path.join(tmpdir, "used_quotes_log.txt")
+            target_quotes = [q["quote"] for q in EMERGENCY_DOMAIN_QUOTES.get("Foundation Events", [])]
+            with open(used_log, "w", encoding="utf-8") as f:
+                for q in target_quotes:
+                    f.write(q + "\n")
+
+            test_cfg = dict(self.config)
+            test_cfg["paths"] = dict(self.config["paths"])
+            test_cfg["paths"]["used_quotes_log"] = os.path.relpath(used_log, self.project_root)
+
+            fb = FallbackProvider(test_cfg, self.project_root)
+            ev = {"event": "International Day of Older Persons", "is_foundation_event": True}
+            res = fb._emergency_failsafe("Foundation Events", ev)
+
+            self.assertNotIn(res["quote"], target_quotes, "Exhausted target quotes must not be returned!")
+
+    def test_part_d_test_7_fresh_fallback_synthesis_when_exhausted(self):
+        """Test 7: Exhaust all compatible emergency candidates. Verify system creates/selects a fresh semantically valid fallback instead of recycling an old quote, and records it in used_quotes_log.txt."""
+        import tempfile
+        from content.fallback import FallbackProvider, EMERGENCY_DOMAIN_QUOTES
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            used_log = os.path.join(tmpdir, "used_quotes_log.txt")
+            # Exhaust all quotes across all emergency pools
+            all_known = []
+            for dom_quotes in EMERGENCY_DOMAIN_QUOTES.values():
+                for c in dom_quotes:
+                    all_known.append(c["quote"])
+            with open(used_log, "w", encoding="utf-8") as f:
+                for q in all_known:
+                    f.write(q + "\n")
+
+            test_cfg = dict(self.config)
+            test_cfg["paths"] = dict(self.config["paths"])
+            test_cfg["paths"]["used_quotes_log"] = os.path.relpath(used_log, self.project_root)
+
+            fb = FallbackProvider(test_cfg, self.project_root)
+            ev = {"event": "International Day of Older Persons", "is_foundation_event": True}
+            res = fb._emergency_failsafe("Foundation Events", ev)
+
+            # Verify it is fresh and not in all_known
+            self.assertNotIn(res["quote"], all_known, "Must synthesize a fresh quote when all candidates are exhausted!")
+            self.assertTrue(len(res["quote"]) > 10)
+
+            # Verify it was recorded in used_quotes_log.txt
+            with open(used_log, "r", encoding="utf-8") as f:
+                recorded = {line.strip() for line in f if line.strip()}
+            self.assertIn(res["quote"], recorded, "Fresh quote must be recorded in used_quotes_log.txt")
+
+    def test_part_d_test_8_emergency_elder_domain_routing(self):
+        """Test 8: Verify emergency fallback for International Day of Older Persons routes to Foundation Events."""
+        import tempfile
+        from content.fallback import FallbackProvider
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            used_log = os.path.join(tmpdir, "used_quotes_log.txt")
+            with open(used_log, "w", encoding="utf-8") as f:
+                f.write("")
+
+            test_cfg = dict(self.config)
+            test_cfg["paths"] = dict(self.config["paths"])
+            test_cfg["paths"]["used_quotes_log"] = os.path.relpath(used_log, self.project_root)
+
+            fb = FallbackProvider(test_cfg, self.project_root)
+            ev = {"event": "International Day of Older Persons", "is_foundation_event": True}
+            res = fb._emergency_failsafe("Foundation Events", ev)
+
+            self.assertEqual(res["event_name"], "International Day of Older Persons")
+            self.assertIn("#InternationalDayofOlderPersons", res["hashtags"])
+
+
 if __name__ == "__main__":
     unittest.main()
-
-
-
-

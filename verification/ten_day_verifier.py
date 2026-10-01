@@ -45,9 +45,19 @@ def run_10_day_verification(
     test_out_dir = output_dir or os.path.join(project_root, "output", "description_10_day_test")
     os.makedirs(test_out_dir, exist_ok=True)
 
-    generator = ContentGenerator(config, project_root)
-    evaluator = ContentEvaluator(config, client=generator.client)
-    fallback = FallbackProvider(config, project_root)
+    # Isolate verification run to test-specific used quotes log initialized from current production log
+    test_config = dict(config)
+    test_config["paths"] = dict(config["paths"])
+    test_used_log = os.path.join(test_out_dir, "test_used_quotes_log.txt")
+    prod_used_log = os.path.join(project_root, config["paths"]["used_quotes_log"])
+    if os.path.exists(prod_used_log):
+        with open(prod_used_log, "r", encoding="utf-8") as f_in, open(test_used_log, "w", encoding="utf-8") as f_out:
+            f_out.write(f_in.read())
+    test_config["paths"]["used_quotes_log"] = os.path.relpath(test_used_log, project_root)
+
+    generator = ContentGenerator(test_config, project_root)
+    evaluator = ContentEvaluator(test_config, client=generator.client)
+    fallback = FallbackProvider(test_config, project_root)
     validator = ContentValidator()
 
     start_date = get_current_ist_date() + timedelta(days=1)
