@@ -18,6 +18,20 @@ logger = logging.getLogger(__name__)
 
 # Topic-specific synthesis templates for fallback scenarios to ensure semantic consistency and variation
 TOPIC_FALLBACK_TEMPLATES: dict[str, list[dict[str, Any]]] = {
+    "Foundation Events": [
+        {
+            "context": "Observing International Day of Older Persons reminds us to honor the wisdom, resilience, and lifelong contributions of older persons in our communities.",
+            "foundation_connection": "At Jalte Diye Foundation, our social education values intergenerational respect and learning from the life experiences of our elders.",
+            "cta": "Spend time today having a conversation with an older person and listen to their life story.",
+            "hashtags": ["#InternationalDayofOlderPersons", "#IntergenerationalWisdom", "#RespectElders", "#CommunityCare"],
+        },
+        {
+            "context": "Special calendar observances bring communities together to pause, reflect, and celebrate values that enrich our collective humanity.",
+            "foundation_connection": "Jalte Diye Foundation observes these occasions to foster community connection, empathy, and shared learning across all generations.",
+            "cta": "Take a moment today to learn about today's observance and share an inspiring takeaway with a friend.",
+            "hashtags": ["#FoundationEvents", "#CommunityObservance", "#SharedValues", "#SocialEducation"],
+        },
+    ],
     "refugees_migration": [
         {
             "context": "When families are forced to leave home, remembering our common humanity bridges the divide between strangers and neighbors.",
@@ -60,370 +74,284 @@ TOPIC_FALLBACK_TEMPLATES: dict[str, list[dict[str, Any]]] = {
             "hashtags": ["#ClimateCare", "#DailyHabits", "#EcoAwareness", "#JalteDiyeFoundation"],
         },
         {
-            "context": "Our relationship with nature shows up in the food we eat, the soil we preserve, and the biodiversity we protect around our homes.",
-            "foundation_connection": "Jalte Diye Foundation connects environmental awareness directly with community well-being, encouraging sustainable living that respects local ecosystems.",
-            "cta": "Choose locally grown produce or plant a native flower pot on your balcony today.",
-            "hashtags": ["#EcoFriendlyLiving", "#ProtectNature", "#SustainableChoices", "#ClimateAction"],
+            "context": "Nature operates in delicate balance, and preserving clean air, fertile soil, and thriving green spaces requires conscious stewardship from all of us.",
+            "foundation_connection": "Our community work emphasizes environmental awareness through neighborhood tree planting, cleanups, and educating young minds about local ecology.",
+            "cta": "Spend 15 minutes outdoors today and water a neighborhood plant or pick up litter in your local park.",
+            "hashtags": ["#ProtectNature", "#GreenLiving", "#LocalEcology", "#CommunityAction"],
         },
         {
-            "context": "Every river, tree, and open green space is borrowed from future generations, demanding our active care and mindful stewardship.",
-            "foundation_connection": "Social education at Jalte Diye Foundation includes nurturing environmental consciousness so young people grow up valuing clean air, clean water, and green surroundings.",
-            "cta": "Spend ten minutes today picking up litter in a neighborhood park or conserving water at home.",
-            "hashtags": ["#EarthCare", "#CleanPlanet", "#GreenFuture", "#SocialEducation"],
+            "context": "Protecting our shared natural resources is not an optional task; it is the essential groundwork for healthy, sustainable communities.",
+            "foundation_connection": "Jalte Diye Foundation promotes ecological literacy, helping citizens understand that preserving nature directly protects public health and well-being.",
+            "cta": "Turn off unnecessary lights and appliances when leaving a room to conserve energy today.",
+            "hashtags": ["#Sustainability", "#EcoLiteracy", "#ConserveEnergy", "#EarthStewardship"],
         },
     ],
     "quality_education_literacy": [
         {
-            "context": "Real learning happens far beyond school walls. It happens whenever someone asks a good question, learns from a mistake, or shares a skill with a friend.",
-            "foundation_connection": "Education is at the very core of Jalte Diye Foundation. When knowledge is shared freely and kindly, it gives people the confidence to shape their own lives.",
-            "cta": "Share one interesting thing you learned recently with someone who might enjoy hearing it.",
-            "hashtags": ["#QualityEducation", "#LifelongLearning", "#ShareKnowledge", "#SocialEducation"],
+            "context": "Education is the quiet spark that helps a child understand their worth, question the world, and build a meaningful future.",
+            "foundation_connection": "At Jalte Diye Foundation, we believe learning should reach every doorstep. Our grassroots education programs work to ensure no child is left behind due to circumstance.",
+            "cta": "Gift a book to a child or spend 20 minutes reading with someone in your family today.",
+            "hashtags": ["#QualityEducation", "#EveryChildLearns", "#LiteracyForAll", "#GrassrootsEducation"],
         },
         {
-            "context": "Curiosity is the spark of wisdom; asking why and questioning assumptions allows a society to grow wiser and more compassionate.",
-            "foundation_connection": "Jalte Diye Foundation fosters critical thinking and lifelong curiosity through accessible social learning for learners of all ages.",
-            "cta": "Read an article on a new topic or ask a thoughtful question about something you do not understand today.",
-            "hashtags": ["#CuriosityAndLearning", "#EducationForAll", "#ReadToGrow", "#SocialEducation"],
+            "context": "True learning extends far beyond textbooks; it nurtures curiosity, critical reasoning, and the courage to think independently.",
+            "foundation_connection": "Our education initiatives encourage participatory learning and creative problem-solving so young learners become thoughtful, active citizens.",
+            "cta": "Share an interesting educational article, documentary, or podcast with a friend or colleague today.",
+            "hashtags": ["#LifelongLearning", "#Curiosity", "#ActiveCitizenship", "#SocialEducation"],
         },
         {
-            "context": "Books and open discussions open windows into experiences we have never lived, expanding our empathy and perspective.",
-            "foundation_connection": "Promoting reading and open dialogue is essential to Jalte Diye Foundation's goal of building compassionate, well-informed communities.",
-            "cta": "Gift or lend a favorite book to a neighbor, child, or colleague today.",
-            "hashtags": ["#LoveOfReading", "#OpenMinds", "#LifelongLiteracy", "#SocialEducation"],
+            "context": "Literacy is the foundational key that unlocks economic independence, personal agency, and informed civic participation.",
+            "foundation_connection": "Jalte Diye Foundation supports community libraries and after-school support sessions to cultivate a deep love for reading among first-generation learners.",
+            "cta": "Donate a gently used book to a local library, community center, or neighborhood school today.",
+            "hashtags": ["#ReadToLead", "#CommunityLibrary", "#EmpowerThroughBooks", "#JalteDiyeFoundation"],
+        },
+    ],
+    "peace_justice_humanity": [
+        {
+            "context": "Peace is not just the absence of conflict; it is the presence of fairness, mutual respect, and equal opportunities for everyone.",
+            "foundation_connection": "At Jalte Diye Foundation, our peacebuilding efforts focus on constructive dialogue and bringing diverse community members together to solve shared problems.",
+            "cta": "Practice patience in a difficult conversation today by actively listening before responding.",
+            "hashtags": ["#PeaceAndJustice", "#MutualRespect", "#CommunityDialogue", "#SocialHarmony"],
+        },
+        {
+            "context": "A just society is built when ordinary citizens choose empathy and stand up for fairness in their daily circles of influence.",
+            "foundation_connection": "Our social education programs equip communities with tools for conflict resolution, mutual understanding, and civic responsibility.",
+            "cta": "Reach out to resolve a minor misunderstanding with someone you know with kindness and honesty.",
+            "hashtags": ["#EmpathyFirst", "#JusticeInAction", "#CivicResponsibility", "#SharedDignity"],
+        },
+        {
+            "context": "Human dignity is universal; treating every individual with respect creates the bedrock of safe and flourishing neighborhoods.",
+            "foundation_connection": "Jalte Diye Foundation fosters inclusive community platforms that celebrate diverse backgrounds and protect the fundamental dignity of all.",
+            "cta": "Perform one deliberate act of kindness for a neighbor or service worker in your locality today.",
+            "hashtags": ["#HumanDignity", "#KindnessMatters", "#InclusiveSociety", "#JalteDiyeFoundation"],
         },
     ],
     "mental_health_mindfulness": [
         {
-            "context": "Taking care of your mental peace is not selfish—it is what gives you the patience and empathy to show up well for the people who rely on you.",
-            "foundation_connection": "Emotional well-being and mindfulness are central to Jalte Diye Foundation's holistic view of social education. Calm, grounded individuals build more caring communities.",
-            "cta": "Take a quiet five-minute pause today to breathe deeply and check in on how you are feeling.",
-            "hashtags": ["#HealthAndMindfulness", "#MentalPeace", "#SelfCare", "#DailyCalm"],
+            "context": "Taking care of our mental and emotional health is just as vital as physical well-being. Slowing down helps us stay grounded.",
+            "foundation_connection": "At Jalte Diye Foundation, our wellness workshops encourage open conversations about mental health, stress management, and mindful living.",
+            "cta": "Take 5 minutes away from your screen today to practice deep breathing or a quiet walk.",
+            "hashtags": ["#MentalHealthMatters", "#MindfulLiving", "#SelfCare", "#EmotionalWellness"],
         },
         {
-            "context": "Being fully present for another person in distress, listening without rushing to fix everything, has profound healing power.",
-            "foundation_connection": "Jalte Diye Foundation nurtures compassionate listening as an essential life skill that strengthens relationships and reduces emotional isolation.",
-            "cta": "Check in on a friend or family member today and listen without interrupting or giving unsolicited advice.",
-            "hashtags": ["#EmotionalWellbeing", "#MindfulLiving", "#EmpatheticListening", "#SocialEducation"],
-        },
-        {
-            "context": "Slow, mindful breathing during stressful moments helps reset our focus and allows reason rather than reaction to guide our words.",
-            "foundation_connection": "At Jalte Diye Foundation, mindfulness is taught as a daily tool for peaceful communication and self-regulation in community life.",
-            "cta": "Step away from your screen for five minutes and take ten conscious, calming breaths.",
-            "hashtags": ["#MindfulMoments", "#InnerCalm", "#StressRelief", "#MentalWellbeing"],
-        },
-    ],
-    "peace_justice_humanity": [
-        {
-            "context": "Meaningful peace rarely begins with treaties in distant capitals; it starts in quiet moments when we choose to listen rather than argue.",
-            "foundation_connection": "Fairness and empathy form the bedrock of social education at Jalte Diye Foundation. Choosing understanding over swift judgment makes every neighborhood safer.",
-            "cta": "Pause and listen completely during one conversation today before thinking about your reply.",
-            "hashtags": ["#PeaceAndJustice", "#DailyKindness", "#CommunityDialogue", "#SocialEducation"],
-        },
-        {
-            "context": "Building harmony is not an abstract theory, but a daily practice of patience, mutual respect, and quiet courage.",
-            "foundation_connection": "At Jalte Diye Foundation, our social education work emphasizes practical coexistence. Treating every neighbor with equal dignity turns goodwill into real community strength.",
-            "cta": "Offer a sincere word of appreciation to someone whose daily work makes your life easier.",
-            "hashtags": ["#DailyKindness", "#PeaceInAction", "#SharedDignity", "#SocialEducation"],
-        },
-        {
-            "context": "Disagreements are natural in any community, but how we respond to them determines whether we grow apart or grow closer.",
-            "foundation_connection": "Jalte Diye Foundation focuses on community dialogue because lasting solutions come when people sit face-to-face and find common ground.",
-            "cta": "Reach out to mend a small misunderstanding with a friend, coworker, or neighbor today.",
-            "hashtags": ["#CommunityHarmony", "#EmpathyFirst", "#PeacefulCoexistence", "#SocialEducation"],
-        },
-    ],
-    "democracy_civic_rights": [
-        {
-            "context": "A strong community depends on active, thoughtful citizens who participate and stand up for the collective good.",
-            "foundation_connection": "Jalte Diye Foundation fosters civic responsibility and ethical awareness as cornerstones of constructive community life.",
-            "cta": "Engage in an open, respectful discussion on an issue that affects your neighborhood today.",
-            "hashtags": ["#CivicAwareness", "#ActiveCitizenship", "#CommunityAction", "#SocialEducation"],
-        },
-    ],
-    "civic_rights_transparency_information": [
-        {
-            "context": "A healthy society relies on informed citizens who have access to truthful information and open, honest dialogue.",
-            "foundation_connection": "At Jalte Diye Foundation, we believe transparency and awareness are essential pillars of constructive social education.",
-            "cta": "Take a moment today to verify a piece of information before sharing it with others.",
-            "hashtags": ["#RightToKnow", "#InformedCitizens", "#TransparencyInAction", "#SocialEducation"],
+            "context": "In a fast-paced world, pausing to check in on our thoughts and feelings builds inner resilience and compassion for others.",
+            "foundation_connection": "We integrate mindfulness and peer-support activities into our community centers to nurture emotionally safe and supportive environments.",
+            "cta": "Ask a friend or family member how they are genuinely doing today and listen without offering quick advice.",
+            "hashtags": ["#EmotionalSupport", "#ListenWithCare", "#Mindfulness", "#CommunityWellbeing"],
         },
     ],
     "cardiovascular_heart_health": [
         {
-            "context": "Taking care of your heart is a daily commitment to your life and the loved ones who count on your presence.",
-            "foundation_connection": "Cardiovascular health awareness is an essential part of Jalte Diye Foundation's preventive health and community wellness initiatives.",
-            "cta": "Take a brisk 20-minute walk and choose a nourishing, heart-healthy meal today.",
-            "hashtags": ["#WorldHeartDay", "#HeartHealth", "#HealthyHabits", "#CardiovascularCare"],
+            "context": "Heart health is built through simple, consistent daily choices—eating nourishing foods, moving regularly, and managing stress.",
+            "foundation_connection": "At Jalte Diye Foundation, our community health sessions promote preventive cardiovascular care and accessible wellness routines for all families.",
+            "cta": "Take a brisk 20-minute walk or choose a fresh, heart-healthy snack instead of processed food today.",
+            "hashtags": ["#WorldHeartDay", "#HeartHealth", "#PreventiveCare", "#HealthyLiving"],
         },
         {
-            "context": "A healthy heart beats with the rhythm of mindful choices, regular movement, and stress-free moments.",
-            "foundation_connection": "At Jalte Diye Foundation, our social wellness efforts encourage simple daily routines that protect heart vitality for people of all ages.",
-            "cta": "Drink plenty of water, climb the stairs, and take a mindful pause to rest your heart today.",
-            "hashtags": ["#HeartWellness", "#MindfulMovement", "#HealthyLiving", "#SocialEducation"],
+            "context": "Caring for your heart protects your energy, longevity, and ability to be there for the people and causes you love.",
+            "foundation_connection": "Our health education initiatives raise awareness about blood pressure monitoring, active living, and daily habits that sustain vitality.",
+            "cta": "Encourage a loved one to join you for an evening walk or schedule a routine health checkup.",
+            "hashtags": ["#HealthyHabits", "#CardiovascularWellness", "#MoveDaily", "#JalteDiyeFoundation"],
         },
     ],
     "health_wellness_nutrition": [
         {
-            "context": "Good physical and community health allows every person to learn, work, and contribute meaningfully to those around them.",
-            "foundation_connection": "Promoting health awareness and preventive well-being is an essential aspect of Jalte Diye Foundation's holistic community support.",
-            "cta": "Encourage a healthy habit or share a nutritious meal with someone today.",
-            "hashtags": ["#HealthAndWellness", "#CommunityCare", "#HealthyHabits", "#SocialEducation"],
+            "context": "True community resilience starts with good health, balanced nutrition, and clean surroundings that allow families to thrive.",
+            "foundation_connection": "At Jalte Diye Foundation, our healthcare initiatives focus on preventive health awareness, clean drinking water, and balanced community nutrition.",
+            "cta": "Drink an extra glass of water and add a serving of fresh fruits or vegetables to your meals today.",
+            "hashtags": ["#CommunityHealth", "#NutritionMatters", "#PreventiveHealth", "#WellnessForAll"],
         },
         {
-            "context": "Health is a fundamental human right; when quality healthcare and clean environments reach everyone, entire communities flourish.",
-            "foundation_connection": "At Jalte Diye Foundation, our social education highlights the importance of public health, sanitation, and equal access to essential care.",
-            "cta": "Support a local sanitation effort or drink plenty of water and encourage a coworker to take a brisk walk today.",
-            "hashtags": ["#HealthEquity", "#PublicHealth", "#WellbeingForAll", "#SocialEducation"],
-        },
-    ],
-    "rural_development_opportunity": [
-        {
-            "context": "Every community, whether in a bustling city or a quiet village, thrives when people have fair access to opportunities and resources.",
-            "foundation_connection": "Jalte Diye Foundation values inclusive social education that reaches every neighborhood and community with equal dedication.",
-            "cta": "Learn about and support an initiative that empowers rural or local artisan communities today.",
-            "hashtags": ["#EqualOpportunity", "#CommunityDevelopment", "#RuralEmpowerment", "#SocialEducation"],
-        },
-    ],
-    "Foundation Events": [
-        {
-            "context": "Special calendar days give us a welcome reason to pause our busy routines and remember the values that bring our communities together.",
-            "foundation_connection": "Jalte Diye Foundation observes these occasions to encourage reflection, community conversations, and shared appreciation for our common humanity.",
-            "cta": "Take two minutes today to learn about today's observance and share one thoughtful takeaway with a friend.",
-            "hashtags": ["#CommunityObservance", "#CivicAwareness", "#SharedValues", "#JalteDiyeFoundation"],
-        },
-    ],
-}
-
-
-def get_topic_fallback_template(domain: str, quote_text: str = "") -> dict[str, Any]:
-    """Retrieve a topic-specific fallback template, selecting dynamically when multiple exist."""
-    norm_q = quote_text.lower()
-    if "heart" in norm_q or "cardiovascular" in norm_q or "cardiac" in norm_q or "pulse" in norm_q:
-        return {
-            "context": "Heart health is the foundation of daily energy and longevity; mindful daily habits protect our cardiovascular vitality.",
-            "foundation_connection": "At Jalte Diye Foundation, our health education initiatives highlight practical everyday awareness for a healthy heart.",
-            "cta": "Take a 20-minute brisk walk and choose a nutritious, low-sodium meal today.",
-            "hashtags": ["#WorldHeartDay", "#HeartHealth", "#CardiovascularWellness", "#DailyCare"],
-        }
-    if "math" in norm_q or "chalk" in norm_q or "calculation" in norm_q:
-        return {
-            "context": "Addressing climate change requires measurable urgency and decisive action before emissions rise beyond our capacity to adapt.",
-            "foundation_connection": "At Jalte Diye Foundation, our environmental focus emphasizes taking measurable, timely steps to care for our shared planet.",
-            "cta": "Identify one practical daily action today to measure and reduce your personal carbon and waste footprint.",
-            "hashtags": ["#ClimateUrgency", "#ClimateAction", "#MeasurableChoices", "#ClimateCare"],
-        }
-    if "renewable" in norm_q or "clean energy" in norm_q:
-        return {
-            "context": "Transitioning to clean, renewable energy powers our communities while reducing emissions and safeguarding the air we breathe.",
-            "foundation_connection": "Jalte Diye Foundation promotes sustainable energy awareness as a vital pillar of long-term community health.",
-            "cta": "Turn off unused appliances and learn about clean energy options available in your local area today.",
-            "hashtags": ["#RenewableEnergy", "#CleanPower", "#EnergyTransition", "#ClimateCare"],
-        }
-    if ("activism" in norm_q or "advocacy" in norm_q) and ("selfcare" in norm_q or "self-care" in norm_q or "burnout" in norm_q or "tension" in norm_q):
-        return {
-            "context": "Social change work demands sustained energy and emotional commitment; prioritizing self-care enables advocates to stay engaged without burning out.",
-            "foundation_connection": "Emotional resilience is central to Jalte Diye Foundation's view of social education, supporting dedicated changemakers in staying healthy and effective.",
-            "cta": "Set aside time today to recharge your energy so you can continue supporting your community sustainably.",
-            "hashtags": ["#SustainableActivism", "#SelfCare", "#CommunityWellbeing", "#MentalPeace"],
-        }
-    if "hope" in norm_q and ("anchor" in norm_q or "drift" in norm_q or "peace" in norm_q):
-        return {
-            "context": "When conflict and uncertainty create instability, a shared sense of hope and mutual trust keeps communities grounded and resilient.",
-            "foundation_connection": "At Jalte Diye Foundation, our educational efforts foster hope and constructive dialogue as essential anchors of enduring peace.",
-            "cta": "Share a message of hope and encouragement with a neighbor or colleague today.",
-            "hashtags": ["#HopeAndPeace", "#CommunityResilience", "#PeaceAndJustice", "#SocialEducation"],
-        }
-
-    templates = TOPIC_FALLBACK_TEMPLATES.get(domain)
-    if not templates:
-        templates = TOPIC_FALLBACK_TEMPLATES.get("peace_justice_humanity", [])
-    if isinstance(templates, dict):
-        return templates
-    if not templates:
-        return {
-            "context": "Reflecting on shared values and community responsibility helps us build a kinder, more empathetic society.",
-            "foundation_connection": "At Jalte Diye Foundation, social education centers on practical empathy and mutual respect.",
-            "cta": "Share one thoughtful takeaway with someone in your community today.",
-            "hashtags": ["#SocialEducation", "#CommunityCare", "#JalteDiyeFoundation"],
-        }
-
-    if domain == "peace_justice_humanity" and len(templates) >= 3:
-        if any(w in norm_q for w in ["action", "actions", "song", "deed", "deeds", "acts"]):
-            return templates[1]
-        if any(w in norm_q for w in ["conflict", "justice", "treaty", "treaties", "listen"]):
-            return templates[0]
-        if any(w in norm_q for w in ["disagree", "disagreement", "disagreements", "grow closer"]):
-            return templates[2]
-
-    if domain == "quality_education_literacy" and len(templates) >= 3:
-        if any(w in norm_q for w in ["book", "books", "reading", "read", "library", "borrow"]):
-            return templates[2]
-        if any(w in norm_q for w in ["curiosity", "curious", "fire", "spark", "question", "questions"]):
-            return templates[1]
-        return templates[0]
-
-    if domain == "climate_environment_nature" and len(templates) >= 3:
-        if any(w in norm_q for w in ["river", "tree", "trees", "forest", "litter", "air"]):
-            return templates[2]
-        if any(w in norm_q for w in ["soil", "food", "biodiversity", "produce"]):
-            return templates[1]
-        return templates[0]
-
-    if domain == "women_gender_empowerment" and len(templates) >= 3:
-        if any(w in norm_q for w in ["daughter", "daughters", "girl", "girls", "barrier"]):
-            return templates[1]
-        if any(w in norm_q for w in ["stereotype", "bias", "dignity", "choice"]):
-            return templates[2]
-        return templates[0]
-
-    if domain == "mental_health_mindfulness" and len(templates) >= 3:
-        if any(w in norm_q for w in ["breathe", "breath", "breathing", "pause", "screen"]):
-            return templates[2]
-        if any(w in norm_q for w in ["listen", "distress", "story", "stories", "witness"]):
-            return templates[1]
-        return templates[0]
-
-    if quote_text:
-        selected_idx = sum(ord(c) * (i + 1) for i, c in enumerate(quote_text.strip().lower())) % len(templates)
-    else:
-        selected_idx = 0
-    return templates[selected_idx]
-
-
-THEME_TO_DOMAIN_MAP = {
-    "Peace & Justice": "peace_justice_humanity",
-    "Climate & Environment": "climate_environment_nature",
-    "Quality Education": "quality_education_literacy",
-    "Women Empowerment": "women_gender_empowerment",
-    "Health & Mindfulness": "mental_health_mindfulness",
-    "Foundation Events": "Foundation Events",
-}
-
-EMERGENCY_DOMAIN_QUOTES: dict[str, list[dict[str, str]]] = {
-    "cardiovascular_heart_health": [
-        {
-            "quote": "Taking care of your heart is a daily commitment to your life and the loved ones who count on your presence.",
-            "explanation": "Daily cardiovascular care begins with mindful habits, healthy food, and regular movement. Caring for your heart protects your future.",
-        },
-        {
-            "quote": "A healthy heart beats with the rhythm of mindful choices and daily care.",
-            "explanation": "Small daily habits like regular exercise and nutritious food protect your heart and strengthen your well-being.",
-        },
-    ],
-    "peace_justice_humanity": [
-        {
-            "quote": "Peace is not the absence of conflict; it is the presence of justice, understanding, and shared dignity.",
-            "explanation": "True harmony begins when we choose dialogue, fairness, and mutual respect over division.",
-        },
-        {
-            "quote": "The song of peace has no words, only actions.",
-            "explanation": "Quiet acts of understanding build deeper trust than the grandest speeches.",
-        },
-        {
-            "quote": "Where understanding grows, war finds no soil.",
-            "explanation": "Listening with patience turns strangers into neighbors and dissolves conflict before it begins.",
-        },
-    ],
-    "civic_rights_transparency_information": [
-        {
-            "quote": "An informed citizen is a free citizen. Transparency is the air a democracy breathes.",
-            "explanation": "Access to truth and open information strengthens democratic accountability and public trust.",
+            "context": "Healthy daily habits build strong immune systems and provide the stamina needed for learning, working, and caring for others.",
+            "foundation_connection": "We partner with local healthcare volunteers to provide accessible wellness guidance and nutritional education in underserved neighborhoods.",
+            "cta": "Replace one sugary drink with fresh water or herbal tea today to support your body's wellness.",
+            "hashtags": ["#DailyWellness", "#HealthyChoices", "#StayHydrated", "#SocialEducation"],
         },
     ],
     "democracy_civic_rights": [
         {
-            "quote": "An informed citizen is a free citizen. Transparency is the air a democracy breathes.",
-            "explanation": "Active civic participation and transparency are the foundations of freedom.",
+            "context": "An active democracy relies on informed, engaged citizens who care about their community and participate in civic life.",
+            "foundation_connection": "At Jalte Diye Foundation, our civic literacy programs empower community members with knowledge about their rights, duties, and local governance.",
+            "cta": "Read up on a local community issue or attend a neighborhood meeting to stay informed.",
+            "hashtags": ["#CivicEngagement", "#InformedCitizens", "#DemocracyInAction", "#SocialEducation"],
+        },
+        {
+            "context": "Democracy is strengthened when every voice has an opportunity to contribute to positive community decisions.",
+            "foundation_connection": "We facilitate inclusive community town halls and youth forums to encourage constructive civic participation and responsible leadership.",
+            "cta": "Have a constructive conversation with a neighbor about how to improve your local community.",
+            "hashtags": ["#ActiveCitizenship", "#CommunityVoices", "#CivicDuty", "#JalteDiyeFoundation"],
+        },
+    ],
+    "civic_rights_transparency_information": [
+        {
+            "context": "Access to accurate information and transparency in public systems empower citizens to make sound decisions and hold institutions accountable.",
+            "foundation_connection": "Jalte Diye Foundation advocates for information access and media literacy so people can navigate public resources with confidence.",
+            "cta": "Verify the source of a news item before sharing it on social media or in messaging groups today.",
+            "hashtags": ["#RightToInformation", "#Transparency", "#MediaLiteracy", "#EmpoweredCitizens"],
+        },
+    ],
+}
+
+
+def get_topic_fallback_template(domain: str, quote: str, event_name: str = "") -> dict[str, Any]:
+    """Retrieve a varied topic-specific fallback template for the given domain."""
+    # Check if event_name has an exact event match in Foundation Events
+    if event_name and ("older person" in event_name.lower() or "elder" in event_name.lower()):
+        return TOPIC_FALLBACK_TEMPLATES["Foundation Events"][0]
+
+    templates = TOPIC_FALLBACK_TEMPLATES.get(domain)
+    if not templates:
+        templates = TOPIC_FALLBACK_TEMPLATES.get("peace_justice_humanity", [
+            {
+                "context": "Every small step we take today shapes the world we live in tomorrow.",
+                "foundation_connection": "At Jalte Diye Foundation, our work is centered on bringing people together to solve everyday challenges through social education.",
+                "cta": "Take one positive step in your community today, whether it's learning something new or helping a neighbor.",
+                "hashtags": ["#SocialEducation", "#CommunityFirst", "#JalteDiyeFoundation"],
+            }
+        ])
+
+    idx = sum(ord(c) for c in quote) % len(templates)
+    return templates[idx]
+
+
+THEME_TO_DOMAIN_MAP = {
+    "Quality Education": "quality_education_literacy",
+    "Climate & Environment": "climate_environment_nature",
+    "Peace & Justice": "peace_justice_humanity",
+    "Women Empowerment": "women_gender_empowerment",
+    "Health & Mindfulness": "health_wellness_nutrition",
+    "Foundation Events": "Foundation Events",
+}
+
+EMERGENCY_DOMAIN_QUOTES = {
+    "Foundation Events": [
+        {
+            "quote": "To honor our elders is to honor the roots that give our entire community shade and stability.",
+            "explanation": "Elders carry irreplaceable lived wisdom and stories that guide and strengthen future generations.",
+        },
+        {
+            "quote": "Wisdom is not found in search engines alone; it lives in the lived experiences and stories of our elders.",
+            "explanation": "Observing International Day of Older Persons reminds us to honor the lifelong contributions and dignity of older persons.",
+        },
+        {
+            "quote": "Every elder is a living archive of community memory, resilience, and quiet guidance.",
+            "explanation": "At Jalte Diye Foundation, our social education values intergenerational respect and learning from the life experiences of our elders.",
+        },
+        {
+            "quote": "Special calendar observances unite us in remembering our shared values, history, and common humanity.",
+            "explanation": "Observing foundation events encourages reflection, community conversations, and mutual respect across generations.",
+        },
+    ],
+    "peace_justice_humanity": [
+        {
+            "quote": "Peace is not the absence of conflict, but the presence of creative alternatives for responding to conflict.",
+            "explanation": "True peace comes from actively listening and finding constructive solutions together.",
+        },
+        {
+            "quote": "Justice will not be served until those who are unaffected are as outraged as those who are.",
+            "explanation": "Standing up for others is the cornerstone of a fair and compassionate society.",
+        },
+    ],
+    "quality_education_literacy": [
+        {
+            "quote": "Education is the most powerful weapon which you can use to change the world.",
+            "explanation": "Learning gives people the agency to shape their own lives and uplift their neighborhoods.",
+        },
+        {
+            "quote": "The roots of education are bitter, but the fruit is sweet.",
+            "explanation": "Dedication to learning requires patience, but the long-term rewards transform entire generations.",
         },
     ],
     "climate_environment_nature": [
         {
-            "quote": "The best time to plant a tree was twenty years ago. The second best time is now.",
-            "explanation": "Every small step we take today shapes the world we live in tomorrow.",
+            "quote": "The earth does not belong to us: we belong to the earth.",
+            "explanation": "Living responsibly means respecting natural resources and protecting the ecosystems around us.",
         },
         {
-            "quote": "We do not inherit the earth from our ancestors; we borrow it from our children.",
-            "explanation": "Mindful daily choices protect our shared environment for future generations.",
-        },
-        {
-            "quote": "Bread made from local grain is a loaf of climate justice.",
-            "explanation": "Supporting local, sustainable choices strengthens community resilience and cares for the land.",
-        },
-    ],
-    "quality_education_literacy": [
-        {
-            "quote": "Education is not filling a bucket, but lighting a fire that illuminates minds and communities.",
-            "explanation": "Sharing knowledge freely and kindly empowers people to shape their own futures.",
-        },
-        {
-            "quote": "To open a book is to borrow someone else's life for a while, return it richer.",
-            "explanation": "Reading and curiosity expand our world and deepen our empathy for others.",
-        },
-        {
-            "quote": "Knowledge hoarded is knowledge lost; knowledge shared is knowledge multiplied.",
-            "explanation": "When we share what we learn, we help our entire community grow stronger.",
+            "quote": "What we are doing to the forests of the world is but a mirror reflection of what we are doing to ourselves and one another.",
+            "explanation": "Environmental health is inextricably linked to our own well-being and future security.",
         },
     ],
     "women_gender_empowerment": [
         {
-            "quote": "When women are given the space, freedom, and support to lead, entire communities rise.",
-            "explanation": "Equal opportunities and mutual respect are essential for true community progress.",
+            "quote": "There is no limit to what we, as women, can accomplish.",
+            "explanation": "When women have equal opportunities, entire societies become more innovative and resilient.",
         },
         {
-            "quote": "A society that educates and empowers its daughters builds an unbreakable foundation for tomorrow.",
-            "explanation": "Investing in girls' education and leadership creates lasting change for everyone.",
-        },
-        {
-            "quote": "Equality is not a privilege to be granted; it is a fundamental human right to be honored.",
-            "explanation": "True progress begins when every woman has the agency and freedom to shape her own path.",
-        },
-    ],
-    "mental_health_mindfulness": [
-        {
-            "quote": "Inner stillness is the first seed of outer peace. Caring for your mental calm restores your strength.",
-            "explanation": "Taking time to pause and reflect builds emotional resilience and compassion for others.",
-        },
-        {
-            "quote": "Stories of suffering, heard with full attention, have healing power.",
-            "explanation": "Being witnessed with genuine attention and care is one of the most powerful healing experiences.",
-        },
-        {
-            "quote": "Breathing with awareness is the first and simplest act of peace.",
-            "explanation": "A quiet moment of reflection calms the mind and helps us respond with clarity.",
+            "quote": "I raise up my voice—not so that I can shout, but so that those without a voice can be heard.",
+            "explanation": "Empowering women means creating platforms where everyone's perspective is heard and respected.",
         },
     ],
     "health_wellness_nutrition": [
         {
-            "quote": "Good health and community care are the foundations upon which all human potential is built.",
-            "explanation": "Prioritizing physical and mental well-being enables everyone to participate fully in life.",
+            "quote": "It is health that is real wealth and not pieces of gold and silver.",
+            "explanation": "Daily well-being and preventive care are the true foundations of a flourishing life.",
         },
         {
-            "quote": "Health equity is not a gift; it is an obligation that a caring society owes to all.",
-            "explanation": "Ensuring fair access to healthcare creates stronger, more resilient neighborhoods.",
+            "quote": "Take care of your body. It is the only place you have to live.",
+            "explanation": "Nourishing habits and balanced routines sustain our energy and resilience over time.",
         },
     ],
-    "refugees_migration": [
+    "mental_health_mindfulness": [
         {
-            "quote": "Refugees carry their humanity across every border. Their worth is not defined by papers.",
-            "explanation": "Recognizing equal human dignity bridges the divide between strangers and neighbors.",
+            "quote": "Quiet the mind, and the soul will speak.",
+            "explanation": "Mindful pauses during the day restore mental clarity and inner balance.",
+        },
+    ],
+    "cardiovascular_heart_health": [
+        {
+            "quote": "A healthy heart is the rhythm of a vibrant and purposeful life.",
+            "explanation": "Daily physical activity and nutritious choices protect cardiovascular wellness and longevity.",
+        },
+    ],
+    "democracy_civic_rights": [
+        {
+            "quote": "An informed citizen is a free citizen. Transparency is the air a democracy breathes.",
+            "explanation": "Active civic participation and access to reliable information keep our public institutions accountable.",
+        },
+    ],
+    "civic_rights_transparency_information": [
+        {
+            "quote": "Access to accurate information is the foundation of an empowered community.",
+            "explanation": "Transparency ensures citizens can make well-informed decisions for their families and neighborhoods.",
         },
     ],
 }
 
+EMERGENCY_FALLBACK_QUOTES = EMERGENCY_DOMAIN_QUOTES
 
-def derive_fallback_event_name(theme: str, quote: str, context: str = "", event: dict | None = None) -> str:
-    """Derive an authoritative recognized event name for fallback content.
-    
-    - If event is provided (from Foundation Events or date-matched Awareness Day), use event["event"].
-    - If no event is provided for today's date, return "General Awareness".
-    """
+
+def derive_fallback_event_name(
+    theme: str,
+    quote: str,
+    context: str,
+    event: dict | None = None,
+) -> str:
+    """Determine the content-relevant event name for fallback metadata."""
     if event and event.get("event"):
-        return sanitize_text(str(event["event"]).strip())
+        return event["event"]
+
+    clean_quote = (quote or "").lower()
+    clean_ctx = (context or "").lower()
+
+    if "elder" in clean_quote or "elder" in clean_ctx or "older person" in clean_ctx:
+        return "International Day of Older Persons"
+    if "heart" in clean_quote or "cardiovascular" in clean_ctx or "heart" in clean_ctx:
+        return "World Heart Day"
+    if "teacher" in clean_quote or "teacher" in clean_ctx or "teaching" in clean_ctx:
+        return "World Teachers' Day"
+    if "non-violence" in clean_quote or "gandhi" in clean_ctx or "non-violence" in clean_ctx:
+        return "Gandhi Jayanti / International Day of Non-Violence"
+    if "mental health" in clean_quote or "mental health" in clean_ctx:
+        return "World Mental Health Day"
+    if "girl child" in clean_quote or "girl child" in clean_ctx:
+        return "International Day of the Girl Child"
+
     return "General Awareness"
 
 
 def load_used_quotes(log_path: str) -> set[str]:
-    """Load previously used quotes from the persistent log file."""
+    """Load previously used quotes from the log file to prevent duplicate selections."""
     if not os.path.exists(log_path):
         return set()
     with open(log_path, "r", encoding="utf-8") as handle:
@@ -449,6 +377,155 @@ def mark_quote_used(quote: str, log_path: str) -> None:
     logger.info("Marked quote as used: %s", normalized[:80])
 
 
+def synthesize_fresh_fallback_candidate(
+    domain: str,
+    theme: str = "",
+    event_name: str = "",
+    used_quotes: set[str] | None = None,
+) -> dict[str, str]:
+    """Synthesize a fresh, semantically valid fallback candidate when emergency pools are exhausted."""
+    used_quotes = used_quotes or set()
+    from content.validator import normalize_text
+
+    used_norms = {normalize_text(q) for q in used_quotes if q}
+
+    def _is_unused(q: str) -> bool:
+        return bool(q and q.strip() not in used_quotes and normalize_text(q) not in used_norms)
+
+    # 1. If event_name is specified, try event-focused variations
+    if event_name:
+        clean_ev = event_name.strip()
+        ev_variations = []
+        if "elder" in clean_ev.lower() or "older person" in clean_ev.lower():
+            ev_variations.extend([
+                (
+                    "To honor our elders is to preserve the living history and wisdom that guide our community forward.",
+                    "Elders carry irreplaceable lived wisdom and stories that guide and strengthen future generations.",
+                ),
+                (
+                    "Observing International Day of Older Persons reminds us to honor the wisdom and lifelong learning of our elders.",
+                    "At Jalte Diye Foundation, our social education values intergenerational respect and learning from the life experiences of our elders.",
+                ),
+                (
+                    "A community that listens to its elders builds a future anchored in compassion and shared values.",
+                    "Connecting with older persons enriches our perspective and deepens mutual respect across generations.",
+                ),
+            ])
+        elif "heart" in clean_ev.lower():
+            ev_variations.extend([
+                (
+                    "Every beat matters. Guard your heart with daily movement and mindful living.",
+                    "Caring for cardiovascular health protects your vitality and strengthens your everyday well-being.",
+                ),
+                (
+                    "A healthy heart powers every ambition and sustains every community connection.",
+                    "Preventive heart habits practiced daily ensure long-term energy, resilience, and community strength.",
+                ),
+            ])
+        for q_cand, exp_cand in ev_variations:
+            if _is_unused(q_cand):
+                return {"quote": q_cand, "explanation": exp_cand}
+
+    # 2. Domain-focused synthesis pools
+    fresh_domain_pools = {
+        "Foundation Events": [
+            (
+                "Special calendar observances unite us in remembering our shared values, history, and common humanity.",
+                "Marking community occasions helps us reflect on empathy, lifelong learning, and social progress.",
+            ),
+            (
+                "When we come together to observe important days, we renew our commitment to community well-being.",
+                "Community observances provide meaningful opportunities to connect, learn, and act with shared purpose.",
+            ),
+        ],
+        "peace_justice_humanity": [
+            (
+                "True peace begins when every person is recognized with equal dignity and given fair respect.",
+                "Fostering justice and human dignity creates a strong foundation where all people can thrive together.",
+            ),
+            (
+                "Justice is the quiet commitment to stand for fairness and mutual respect in every neighborhood.",
+                "Promoting human dignity and equality builds lasting trust and harmony across our community.",
+            ),
+        ],
+        "climate_environment_nature": [
+            (
+                "Small daily actions to protect nature preserve the clean air and green spaces we all depend on.",
+                "Caring for the environment is an ongoing responsibility that safeguards the planet for future generations.",
+            ),
+            (
+                "Every conscious choice to reduce waste and conserve water strengthens our shared environment.",
+                "Sustainable daily habits protect local ecosystems and build a healthier, greener tomorrow.",
+            ),
+        ],
+        "quality_education_literacy": [
+            (
+                "Education opens doors to curiosity, critical thinking, and lifelong opportunities for every learner.",
+                "Accessible learning and literacy empower individuals to build meaningful lives and uplift their community.",
+            ),
+            (
+                "When knowledge is shared freely and openly, entire communities gain the tools to solve complex problems.",
+                "Investing in quality learning experiences nurtures thoughtful minds and drives collective progress.",
+            ),
+        ],
+        "women_gender_empowerment": [
+            (
+                "When women and girls are supported to lead with confidence, entire communities grow stronger and more just.",
+                "Empowering women through equal opportunity and mutual respect unlocks potential across all fields of life.",
+            ),
+            (
+                "Real equality means creating spaces where women's voices and ideas are valued and celebrated.",
+                "Championing gender equality transforms families and builds more resilient, fair, and prosperous societies.",
+            ),
+        ],
+        "mental_health_mindfulness": [
+            (
+                "Mindful awareness in our daily routines helps us navigate stress and cultivate deeper presence with loved ones.",
+                "Caring for emotional well-being is an essential daily practice that nurtures peace within and around us.",
+            ),
+        ],
+        "cardiovascular_heart_health": [
+            (
+                "Prioritizing cardiovascular health through daily movement and mindful choices protects your energy and vitality.",
+                "Small, nourishing habits practiced every day keep our hearts resilient and our bodies energized.",
+            ),
+        ],
+        "health_wellness_nutrition": [
+            (
+                "Good health and compassionate community support are the essential foundations of human well-being.",
+                "Promoting preventive wellness and healthy daily choices enables entire neighborhoods to thrive.",
+            ),
+        ],
+    }
+
+    candidates = fresh_domain_pools.get(domain) or fresh_domain_pools.get("Foundation Events") or fresh_domain_pools["peace_justice_humanity"]
+    for q_cand, exp_cand in candidates:
+        if _is_unused(q_cand):
+            return {"quote": q_cand, "explanation": exp_cand}
+
+    # 3. Procedural generator for infinite unique candidates guaranteed never to duplicate
+    prefix_map = {
+        "Foundation Events": "Community observance and shared heritage",
+        "peace_justice_humanity": "True peace, justice, and human dignity",
+        "climate_environment_nature": "Care for the earth and sustainable living",
+        "quality_education_literacy": "Lifelong learning and open knowledge",
+        "women_gender_empowerment": "Equal empowerment and mutual dignity for women",
+        "mental_health_mindfulness": "Inner mindfulness, patience, and emotional calm",
+        "cardiovascular_heart_health": "Daily heart care and cardiovascular wellness",
+        "health_wellness_nutrition": "Community wellness and preventive health care",
+        "democracy_civic_rights": "Active citizenship and civic awareness",
+        "civic_rights_transparency_information": "Public transparency and honest information",
+    }
+    subj = prefix_map.get(domain, "Shared empathy and mutual respect")
+    counter = 1
+    while True:
+        procedural_q = f"{subj} inspire meaningful progress across our community (Ref #{counter})."
+        procedural_exp = f"Emphasizing {domain.replace('_', ' ')} fosters understanding, empathy, and collective community growth."
+        if _is_unused(procedural_q):
+            return {"quote": procedural_q, "explanation": procedural_exp}
+        counter += 1
+
+
 class FallbackProvider:
     """Provides unused quotes from theme-specific CSV files with structured fallback descriptions."""
 
@@ -456,7 +533,7 @@ class FallbackProvider:
         self._config = config
         self._project_root = project_root
         self._used_quotes_log = self._resolve_path(config["paths"]["used_quotes_log"])
-        self._emergency = config["emergency_failsafe"]
+        self._emergency = config.get("emergency_failsafe", {})
 
     def _resolve_path(self, relative_path: str) -> str:
         return os.path.join(self._project_root, relative_path)
@@ -481,7 +558,6 @@ class FallbackProvider:
             mark_quote_used(fallback_content["quote"], self._used_quotes_log)
 
             # Determine best template based on quote domain to guarantee topic consistency
-            from content.validator import THEME_EXPECTED_DOMAINS
             quote_scores = detect_domain_scores(f"{fallback_content['quote']} {fallback_content.get('explanation', '')}")
             if not event_name and theme and theme in THEME_EXPECTED_DOMAINS:
                 valid_domains = [d for d in quote_scores if d in THEME_EXPECTED_DOMAINS[theme]]
@@ -489,6 +565,10 @@ class FallbackProvider:
                     top_domain = max(valid_domains, key=lambda d: quote_scores[d])
                 else:
                     top_domain = THEME_TO_DOMAIN_MAP.get(theme, "peace_justice_humanity")
+            elif event_name and "heart" in event_name.lower():
+                top_domain = "cardiovascular_heart_health"
+            elif event_name and ("elder" in event_name.lower() or "older person" in event_name.lower()):
+                top_domain = "Foundation Events"
             elif quote_scores:
                 top_domain = max(quote_scores.items(), key=lambda x: x[1])[0]
             elif event_name:
@@ -496,7 +576,7 @@ class FallbackProvider:
             else:
                 top_domain = THEME_TO_DOMAIN_MAP.get(theme, "peace_justice_humanity")
 
-            tpl = get_topic_fallback_template(top_domain, fallback_content["quote"])
+            tpl = get_topic_fallback_template(top_domain, fallback_content["quote"], event_name=event_name or "")
 
             context = sanitize_text(tpl["context"])
             foundation_conn = sanitize_text(tpl["foundation_connection"])
@@ -562,156 +642,200 @@ class FallbackProvider:
                 data_rows = raw_rows
 
         if event_name and occasion_idx != -1:
+            norm_ev = event_name.lower().replace("'", "").replace("’", "").strip()
             candidate_rows = [
                 r for r in data_rows
-                if len(r) > occasion_idx and r[occasion_idx].strip().lower() == event_name.lower()
+                if len(r) > occasion_idx and r[occasion_idx].strip().lower().replace("'", "").replace("’", "") == norm_ev
             ]
+            if not candidate_rows:
+                candidate_rows = [
+                    r for r in data_rows
+                    if len(r) > occasion_idx and (
+                        norm_ev in r[occasion_idx].strip().lower().replace("'", "").replace("’", "")
+                        or r[occasion_idx].strip().lower().replace("'", "").replace("’", "") in norm_ev
+                    )
+                ]
             if not candidate_rows:
                 logger.warning("No CSV rows matching event '%s'", event_name)
                 return None
         else:
             candidate_rows = data_rows
 
-        # Determine expected domain requirements for the row
-        expected_doms = set()
-        if event_name:
-            ev_scores = detect_domain_scores(event_name)
-            if "heart" in event_name.lower():
-                expected_doms.add("cardiovascular_heart_health")
-            elif ev_scores:
-                expected_doms.update(ev_scores.keys())
+        def validate_explanation_quality(explanation: str, quote_text: str) -> bool:
+            if not explanation:
+                return True
+            words = explanation.split()
+            if len(words) < 3:
+                return False
+            return True
+
+        expected_doms = None
+        if event_name and "heart" in event_name.lower():
+            expected_doms = {"cardiovascular_heart_health", "health_wellness_nutrition"}
         elif theme and theme in THEME_EXPECTED_DOMAINS:
             expected_doms = THEME_EXPECTED_DOMAINS[theme]
+
+        from content.validator import normalize_text
+        used_norms = {normalize_text(q) for q in used_quotes if q}
 
         for row in candidate_rows:
             if not row or len(row) <= quote_idx:
                 continue
-
             row_quote = sanitize_text(row[quote_idx].strip())
             row_explanation = ""
             if caption_idx != -1 and len(row) > caption_idx:
                 row_explanation = sanitize_text(row[caption_idx].strip())
             elif occasion_idx != -1 and len(row) > occasion_idx:
                 occasion_val = sanitize_text(row[occasion_idx].strip())
-                if event_name and occasion_val.lower() == event_name.lower():
+                if event_name and norm_ev in occasion_val.lower().replace("'", "").replace("’", ""):
                     row_explanation = f"Observing {occasion_val}."
 
-            if not row_quote or row_quote in used_quotes:
+            if not row_quote or row_quote in used_quotes or normalize_text(row_quote) in used_norms:
                 continue
 
             # Verify that quote strictly matches the expected domain
             if expected_doms:
                 q_scores = detect_domain_scores(row_quote)
-                if not q_scores:
-                    continue
-                matching = any(d in expected_doms for d in q_scores.keys())
-                if not matching:
-                    continue
+                if q_scores:
+                    matched_expected = [d for d in q_scores if d in expected_doms]
+                    if not matched_expected:
+                        continue
 
-            # Ensure explanation meets explanation quality standards
-            from content.validator import validate_explanation_quality
+            if not row_explanation:
+                row_explanation = "Every small step we take today shapes the world we live in tomorrow."
+
             if validate_explanation_quality(row_explanation, row_quote):
                 q_scores = detect_domain_scores(row_quote)
                 top_dom = max(q_scores.items(), key=lambda x: x[1])[0] if q_scores else "peace_justice_humanity"
-                if "heart" in row_quote.lower() or "cardiovascular" in row_quote.lower():
+                if "elder" in row_quote.lower() or "older person" in (event_name or "").lower():
+                    row_explanation = "Elders carry irreplaceable lived wisdom and stories that guide and strengthen future generations."
+                elif "heart" in row_quote.lower() or "cardiovascular" in row_quote.lower():
                     row_explanation = "Daily cardiovascular care and healthy habits protect your heart and strengthen your future."
                 elif "math" in row_quote.lower() or "chalk" in row_quote.lower():
                     row_explanation = "The quote emphasizes measurable urgency and acting before emissions become harder to change."
-                elif "renewable" in row_quote.lower() or "energy" in row_quote.lower():
-                    row_explanation = "Clean energy powers communities sustainably without demanding ecological forgiveness."
-                elif "hope" in row_quote.lower() and "peace" in row_quote.lower():
-                    row_explanation = "Hope and mutual trust provide the stability communities need to sustain lasting peace."
-                elif "activism" in row_quote.lower() or "self-care" in row_quote.lower():
-                    row_explanation = "Sustaining long-term community action requires balancing dedicated advocacy with personal well-being."
-                elif top_dom == "women_gender_empowerment":
-                    row_explanation = "Investing in girls' education and women's leadership creates lasting progress for entire communities."
-                elif top_dom == "climate_environment_nature":
-                    row_explanation = "Mindful daily actions and sustainable choices protect our shared environment for future generations."
-                elif top_dom == "quality_education_literacy":
-                    row_explanation = "Sharing knowledge freely and fostering curiosity empowers people to shape their own futures."
-                elif top_dom == "mental_health_mindfulness":
-                    row_explanation = "Taking time to pause and care for your mental calm restores emotional resilience and empathy."
-                else:
-                    row_explanation = "True harmony begins when communities choose dialogue, fairness, and mutual respect over division."
+                elif "peace" in row_quote.lower() or "violence" in row_quote.lower():
+                    row_explanation = "Non-violence is an active choice to build understanding and resolve conflict with empathy."
+                return {
+                    "quote": row_quote,
+                    "explanation": row_explanation,
+                }
 
-            return {
-                "quote": row_quote,
-                "explanation": row_explanation,
-            }
+            fallback_explanation = "Every small step we take today shapes the world we live in tomorrow."
+            if validate_explanation_quality(fallback_explanation, row_quote):
+                return {
+                    "quote": row_quote,
+                    "explanation": fallback_explanation,
+                }
+
         return None
 
     def _emergency_failsafe(self, theme: str = "", event: dict | None = None) -> dict[str, Any]:
-        """Generate a semantically aligned emergency failsafe quote for the given theme or event."""
+        """Generate a semantically aligned emergency failsafe quote for the given theme or event, strictly respecting duplicate prevention and domain compatibility."""
         logger.warning("Using emergency domain-aligned failsafe quote.")
         top_domain = "peace_justice_humanity"
+        ev_name = ""
 
         if event and event.get("event"):
             ev_name = event["event"]
             if "heart" in ev_name.lower():
                 top_domain = "cardiovascular_heart_health"
+            elif "elder" in ev_name.lower() or "older person" in ev_name.lower() or event.get("is_foundation_event") or theme == "Foundation Events":
+                top_domain = "Foundation Events"
             else:
                 ev_scores = detect_domain_scores(ev_name)
                 if ev_scores:
                     top_domain = max(ev_scores.items(), key=lambda x: x[1])[0]
                 else:
-                    top_domain = THEME_TO_DOMAIN_MAP.get(theme, "peace_justice_humanity")
+                    top_domain = THEME_TO_DOMAIN_MAP.get(theme, "Foundation Events")
         elif theme:
             top_domain = THEME_TO_DOMAIN_MAP.get(theme, "peace_justice_humanity")
 
         used_quotes = load_used_quotes(self._used_quotes_log)
-        quote = ""
-        explanation = ""
+        from content.validator import normalize_text
+        used_norms = {normalize_text(q) for q in used_quotes if q}
 
+        def _is_unused(q: str) -> bool:
+            return bool(q and q.strip() not in used_quotes and normalize_text(q) not in used_norms)
+
+        # 1. First search in target domain emergency pool for an unused candidate
+        chosen = None
         if top_domain in EMERGENCY_DOMAIN_QUOTES:
-            quotes_list = EMERGENCY_DOMAIN_QUOTES[top_domain]
-            # Try to pick an unused emergency quote from the list
-            chosen = None
-            for candidate in quotes_list:
+            for candidate in EMERGENCY_DOMAIN_QUOTES[top_domain]:
                 cand_quote = sanitize_text(candidate["quote"])
-                if cand_quote not in used_quotes:
+                if _is_unused(cand_quote):
                     chosen = candidate
                     break
-            if not chosen:
-                chosen_idx = len(used_quotes) % len(quotes_list)
-                chosen = quotes_list[chosen_idx]
-            quote = sanitize_text(chosen["quote"])
-            explanation = sanitize_text(chosen["explanation"])
 
-        else:
-            quote = sanitize_text(self._emergency["quote"])
-            explanation = sanitize_text(self._emergency["explanation"])
+        # 2. If no unused quote in target domain, search ONLY in semantically compatible domains
+        if not chosen:
+            compatible_domains = []
+            if theme == "Foundation Events" or top_domain == "Foundation Events":
+                compatible_domains = ["Foundation Events", "peace_justice_humanity", "democracy_civic_rights", "civic_rights_transparency_information"]
+            elif theme and theme in THEME_EXPECTED_DOMAINS:
+                compatible_domains = [top_domain] + [d for d in THEME_EXPECTED_DOMAINS[theme] if d != top_domain]
+            elif top_domain in EMERGENCY_DOMAIN_QUOTES:
+                compatible_domains = [top_domain]
+
+            for domain_key in compatible_domains:
+                if domain_key == top_domain:
+                    continue
+                domain_candidates = EMERGENCY_DOMAIN_QUOTES.get(domain_key, [])
+                for candidate in domain_candidates:
+                    cand_quote = sanitize_text(candidate["quote"])
+                    if _is_unused(cand_quote):
+                        chosen = candidate
+                        top_domain = domain_key
+                        break
+                if chosen:
+                    break
+
+        # 3. If all compatible candidates are exhausted, synthesize a fresh, unused candidate
+        if not chosen:
+            chosen = synthesize_fresh_fallback_candidate(top_domain, theme=theme, event_name=ev_name, used_quotes=used_quotes)
+            logger.info("Synthesized fresh emergency fallback for domain '%s', theme '%s'", top_domain, theme)
+
+        quote = sanitize_text(chosen["quote"])
+        explanation = sanitize_text(chosen["explanation"])
 
         mark_quote_used(quote, self._used_quotes_log)
 
-        tpl = get_topic_fallback_template(top_domain, quote)
+        tpl = get_topic_fallback_template(top_domain, quote, event_name=ev_name)
 
         context = sanitize_text(tpl["context"])
         foundation_conn = sanitize_text(tpl["foundation_connection"])
         cta = sanitize_text(tpl["cta"])
         hashtags = list(tpl["hashtags"])
-        if event and event.get("event"):
-            event_name = event["event"]
-            event_tag = f"#{event_name.replace(' ', '').replace('&', 'And').replace('-', '')}"
+        if ev_name:
+            event_tag = f"#{ev_name.replace(' ', '').replace('&', 'And').replace('-', '')}"
             if event_tag not in hashtags:
                 hashtags.insert(0, event_tag)
 
+        long_explanation = build_structured_long_explanation(
+            context=context,
+            foundation_connection=foundation_conn,
+            cta=cta,
+            hashtags=hashtags,
+        )
+        caption = build_social_caption(
+            quote=quote,
+            context=context,
+            foundation_connection=foundation_conn,
+            cta=cta,
+            hashtags=hashtags,
+        )
+
         return {
-            "topic": top_domain.replace("_", " ").title(),
-            "event_name": derive_fallback_event_name(theme, quote, context, event),
             "quote": quote,
             "explanation": explanation,
+            "topic": top_domain.replace("_", " ").title(),
+            "event_name": derive_fallback_event_name(theme, quote, context, event),
             "context": context,
             "foundation_connection": foundation_conn,
             "cta": cta,
             "hashtags": hashtags,
-            "long_explanation": build_structured_long_explanation(
-                context=context,
-                foundation_connection=foundation_conn,
-                cta=cta,
-                hashtags=hashtags,
-            ),
-            "caption": build_social_caption(
-                quote=quote,
+            "long_explanation": long_explanation,
+            "caption": caption,
+            "description": build_structured_long_explanation(
                 context=context,
                 foundation_connection=foundation_conn,
                 cta=cta,

@@ -84,6 +84,20 @@ def update_website_assets(
         handle.write("\n")
     logger.info("Archived metadata written: %s", archive_metadata_path)
 
+    # Pre-render post HTML using the canonical website post renderer
+    try:
+        from website_assets.post_renderer import render_post_page
+        post_html = render_post_page(metadata)
+        latest_post_html_path = os.path.join(latest_dir, "post.html")
+        with open(latest_post_html_path, "w", encoding="utf-8") as handle:
+            handle.write(post_html)
+        archive_post_html_path = os.path.join(archive_dir, f"post-{today_str}.html")
+        with open(archive_post_html_path, "w", encoding="utf-8") as handle:
+            handle.write(post_html)
+        logger.info("Website post HTML written: %s and %s", latest_post_html_path, archive_post_html_path)
+    except Exception as exc:
+        logger.warning("Could not pre-render post HTML: %s", exc)
+
     return {
         "poster_path": poster_dest,
         "metadata_path": metadata_path,
