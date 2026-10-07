@@ -10,6 +10,7 @@ from typing import Any
 from content.generator import (
     build_social_caption,
     build_structured_long_explanation,
+    default_social_hook,
     sanitize_text,
 )
 from content.validator import THEME_EXPECTED_DOMAINS, detect_domain_scores
@@ -509,6 +510,7 @@ class FallbackProvider:
 
             fallback_content["topic"] = top_domain.replace("_", " ").title()
             fallback_content["event_name"] = derive_fallback_event_name(theme, fallback_content["quote"], context, event)
+            fallback_content["hook"] = default_social_hook(theme)
             fallback_content["quote"] = sanitize_text(fallback_content["quote"])
             fallback_content["explanation"] = sanitize_text(fallback_content.get("explanation", ""))
             fallback_content["context"] = context
@@ -520,6 +522,7 @@ class FallbackProvider:
                 foundation_connection=foundation_conn,
                 cta=cta,
                 hashtags=hashtags,
+                hook=fallback_content["hook"],
             )
             fallback_content["caption"] = build_social_caption(
                 quote=fallback_content["quote"],
@@ -527,6 +530,7 @@ class FallbackProvider:
                 foundation_connection=foundation_conn,
                 cta=cta,
                 hashtags=hashtags,
+                hook=fallback_content["hook"],
             )
             logger.info("Retrieved fallback quote from CSV: %s", csv_file)
             return fallback_content
@@ -698,6 +702,7 @@ class FallbackProvider:
         return {
             "topic": top_domain.replace("_", " ").title(),
             "event_name": derive_fallback_event_name(theme, quote, context, event),
+            "hook": default_social_hook(theme),
             "quote": quote,
             "explanation": explanation,
             "context": context,
@@ -709,6 +714,7 @@ class FallbackProvider:
                 foundation_connection=foundation_conn,
                 cta=cta,
                 hashtags=hashtags,
+                hook=default_social_hook(theme),
             ),
             "caption": build_social_caption(
                 quote=quote,
@@ -716,5 +722,6 @@ class FallbackProvider:
                 foundation_connection=foundation_conn,
                 cta=cta,
                 hashtags=hashtags,
+                hook=default_social_hook(theme),
             ),
         }

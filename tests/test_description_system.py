@@ -134,19 +134,21 @@ class TestCogenticDescriptionSystem(unittest.TestCase):
         self.assertTrue(any("quote text repeated" in err.lower() for err in errors))
 
     def test_07_no_unnecessary_event_line_repetition(self):
-        """TEST 7: Generated long explanation formats cleanly without redundant event lines or markdown asterisks."""
+        """TEST 7: Generated long explanation uses a clean hook-first social format."""
         long_expl = build_structured_long_explanation(
             context="World Ozone Day reminds us of the fragile atmospheric shield.",
             foundation_connection="Jalte Diye Foundation links ecological awareness to community well-being.",
             cta="Make conscious choices about emissions.",
             hashtags=["#WorldOzoneDay", "#CleanAir"],
+            hook="Clean air is not a luxury.",
         )
         # Verify clean structure without literal asterisks
         self.assertNotIn('""', long_expl)
         self.assertNotIn("**", long_expl)
         self.assertNotIn("#", long_expl)  # Hashtags must NOT be inside long_explanation
-        self.assertIn("How this connects with our mission:\nJalte Diye Foundation", long_expl)
-        self.assertIn("Take Action:\nMake conscious choices", long_expl)
+        self.assertTrue(long_expl.startswith("Clean air is not a luxury."))
+        self.assertNotIn("How this connects with our mission:", long_expl)
+        self.assertIn("Make conscious choices", long_expl)
 
     def test_08_non_event_days_contain_no_event_content(self):
         """TEST 8: Non-event days reject event-specific observation phrasing."""
@@ -276,9 +278,39 @@ class TestCogenticDescriptionSystem(unittest.TestCase):
             foundation_connection="Jalte Diye Foundation promotes ethical civic principles.",
             cta="Speak up against injustice.",
             hashtags=["#Justice", "#Integrity"],
+            hook="Justice starts with how we treat people.",
         )
-        self.assertTrue(caption.startswith('"Stand for justice."'))
+        self.assertTrue(caption.startswith("Justice starts with how we treat people."))
+        self.assertNotIn('"Stand for justice."', caption)
         self.assertIn("#Justice #Integrity", caption)
+
+    def test_human_caption_rejects_banned_phrase_and_invalid_hook(self):
+        """Human-first captions reject AI phrasing, greetings, and oversized hooks."""
+        candidate = {
+            "hook": "Happy World Education Day to every learner and teacher everywhere today.",
+            "quote": "Learning changes lives.",
+            "explanation": "Learning gives people the confidence to ask questions and shape their future.",
+            "context": "In today's fast-paced world, people need space to learn and think.",
+            "foundation_connection": "We at Jalte Diye Foundation link learning with empathy and everyday dignity.",
+            "cta": "Share one useful learning resource with someone today.",
+            "hashtags": ["#QualityEducation", "#Learning", "#SocialEducation"],
+        }
+        errors = self.validator.validate_deterministic(candidate, "Quality Education")
+        self.assertTrue(any("hook" in error.lower() for error in errors))
+        self.assertTrue(any("banned ai-style" in error.lower() for error in errors))
+
+    def test_human_caption_uses_hook_before_body(self):
+        """Captions lead with an opinion and keep the poster quote on the graphic."""
+        caption = build_social_caption(
+            quote="Education opens doors.",
+            context="A good question can change the direction of a day.",
+            foundation_connection="We at Jalte Diye Foundation see real education in curiosity and respect.",
+            cta="What did someone teach you that stayed with you?",
+            hashtags=["#QualityEducation", "#Curiosity", "#SocialEducation"],
+            hook="Real education changes how we treat people.",
+        )
+        self.assertEqual(caption.split("\n\n")[0], "Real education changes how we treat people.")
+        self.assertNotIn("Education opens doors.", caption)
 
     def test_20_existing_poster_generation_remains_unchanged(self):
         """TEST 20: Regression test: Poster generator renders successfully."""
@@ -1217,7 +1249,5 @@ class TestCogenticDescriptionSystem(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-
-
 
 
