@@ -26,21 +26,16 @@ def _read_latest_metadata(project_root: str, config: dict[str, Any]) -> dict[str
 
 
 def _build_post_text(metadata: dict[str, Any]) -> str:
-    quote = metadata.get("quote", "").strip()
-    explanation = metadata.get("explanation", "").strip()
-    long_explanation = metadata.get("long_explanation", "").strip()
     caption = metadata.get("caption", "").strip()
     hashtags = metadata.get("hashtags", [])
 
-    parts: list[str] = []
-    if quote:
-        parts.append(f'"{quote}"')
-    if long_explanation:
-        parts.append(long_explanation)
-    elif explanation:
-        parts.append(explanation)
-    elif caption and not quote:
-        parts.append(caption)
+    if caption:
+        return caption
+
+    quote = metadata.get("quote", "").strip()
+    explanation = metadata.get("explanation", "").strip()
+    long_explanation = metadata.get("long_explanation", "").strip()
+    parts: list[str] = [part for part in (f'"{quote}"' if quote else "", long_explanation or explanation) if part]
 
     if hashtags:
         tag_line = " ".join(

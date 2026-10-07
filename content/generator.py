@@ -91,6 +91,7 @@ def build_structured_long_explanation(
     foundation_connection: str,
     cta: str,
     hashtags: list[str] | None = None,
+    hook: str = "",
 ) -> str:
     """Assemble the web-facing long explanation from structured components.
 
@@ -98,14 +99,16 @@ def build_structured_long_explanation(
     - Does NOT contain markdown asterisks (**).
     - Does NOT append hashtags (hashtags are rendered separately downstream via metadata.json).
     """
+    clean_hook = sanitize_text(hook)
     clean_context = sanitize_text(context)
     clean_foundation = sanitize_text(foundation_connection)
     clean_cta = sanitize_text(cta)
 
     sections = [
+        clean_hook,
         clean_context,
-        f"How this connects with our mission:\n{clean_foundation}",
-        f"Take Action:\n{clean_cta}",
+        clean_foundation,
+        clean_cta,
     ]
     return "\n\n".join(s for s in sections if s)
 
@@ -116,15 +119,16 @@ def build_social_caption(
     foundation_connection: str,
     cta: str,
     hashtags: list[str] | None = None,
+    hook: str = "",
 ) -> str:
-    """Assemble a clean social media caption without redundant duplication."""
-    clean_quote = sanitize_text(quote)
+    """Assemble a human-first social caption for social channels."""
+    clean_hook = sanitize_text(hook)
     clean_context = sanitize_text(context)
     clean_foundation = sanitize_text(foundation_connection)
     clean_cta = sanitize_text(cta)
 
     sections = [
-        f'"{clean_quote}"',
+        clean_hook,
         clean_context,
         clean_foundation,
         clean_cta,
@@ -132,6 +136,19 @@ def build_social_caption(
     if hashtags:
         sections.append(" ".join(hashtags))
     return "\n\n".join(s for s in sections if s)
+
+
+def default_social_hook(theme: str) -> str:
+    """Provide a human-led fallback opening when AI generation is unavailable."""
+    hooks = {
+    "Peace & Justice": "Peace is tested in the small moments, not the speeches.",
+    "Climate & Environment": "The environment pays attention to our everyday habits.",
+    "Quality Education": "Real education changes how we treat people.",
+    "Women Empowerment": "Equality cannot wait for permission.",
+    "Health & Mindfulness": "Caring for ourselves changes how we show up for others.",
+    "Foundation Events": "A day of observance should lead to an honest conversation.",
+    }
+    return hooks.get(theme, "The way we treat people is part of what we teach.")
 
 
 class ContentGenerator:
@@ -292,6 +309,7 @@ Return ONLY valid JSON matching this exact structure:
     "topic_keywords": ["keyword1", "keyword2", "keyword3"],
     "topic_domains": ["domain_label"],
     "event_name": "{event_name}",
+    "hook": "A strong, human first line of 14 words or fewer. Start with a relatable question, clear opinion, or counter-intuitive observation. Never start with a greeting, a holiday name, or a quote.",
     "quote": "10 to 20 word memorable, inspiring quote (for poster)",
     "explanation": "Short 2-sentence explanation for the poster (maximum 35 words)",
     "context": "Why this specific quote topic matters to everyday people (2 to 3 sentences, 40 to 70 words). Must address the quote's topic directly. Do NOT repeat the quote text. Do NOT write like an academic textbook or NGO report.",
@@ -301,9 +319,12 @@ Return ONLY valid JSON matching this exact structure:
 }}
 
 Key Style & Human-Writing Rules:
-1. Tone: Warm, human, thoughtful, conversational, and grounded. Sound like a real person writing a meaningful post, not a corporate press release or robotic AI generator.
-2. Quote-Specific Depth: The long explanation must directly unpack the exact meaning and imagery of the quote. Answer naturally: What does this specific quote mean? What real-world behavior or challenge does it point toward? Why does it matter to ordinary people? What can someone realistically do today?
-3. Strict Cliché & Robotic Phrase Ban: You must NOT use repetitive AI templates and formulaic phrases, including:
+1. LinkedIn Caption Structure: The hook is the first line of the LinkedIn caption. Follow it with the context, foundation connection, CTA, and hashtags as separate paragraphs. Do not include the poster quote in the caption; the graphic already carries it.
+2. White Space: Every caption section must be one or two short sentences. Use bullet points only when presenting a genuine framework, never a generic list.
+3. Voice: Write in first-person plural when referring to the Foundation: "We at Jalte Diye Foundation..." or "Our team...". Write as an empathetic, professional founder who opposes discrimination and believes real education changes how people treat one another.
+4. Tone: Warm, human, thoughtful, conversational, and grounded. Sound like a real person writing a meaningful post, not a corporate press release or robotic AI generator.
+5. Quote-Specific Depth: The long explanation must directly unpack the exact meaning and imagery of the quote. Answer naturally: What does this specific quote mean? What real-world behavior or challenge does it point toward? Why does it matter to ordinary people? What can someone realistically do today?
+6. Strict Cliché & Robotic Phrase Ban: You must NOT use repetitive AI templates and formulaic phrases, including:
    - "is at the heart of..."
    - "isn't just..." / "is not just..."
    - "for us at Jalte Diye Foundation..."
@@ -315,12 +336,13 @@ Key Style & Human-Writing Rules:
    - "let us all..."
    - "this quote..."
    - "essential foundations" / "collective responsibility" / "fostering" / "cultivating" / "holistic development"
-4. Sentence Style: Use short and medium sentences, active voice, and varied openings. Avoid formulaic openings.
-5. Grounded Foundation Connection: Answer 'Why does THIS specific topic matter to Jalte Diye Foundation?' specifically, grounded in verified social education and empathy values. Vary openings naturally.
-6. Actionable CTA: Give the reader something concrete and realistic they can do in their day-to-day routine for this specific topic.
-7. Distinctiveness: Every section must be unique. Never repeat the quote inside context, foundation connection, or CTA.
-8. Hashtags: Provide 3 to 6 valid hashtags starting with '#' matching the quote's actual topic. At least 2 must be strongly topic/event-specific.
-9. Punctuation & Formatting: Use proper standard punctuation (commas, periods, colons). Never use double spaces or leave sentences unpunctuated. Output plain text values. Do NOT include markdown formatting (such as **bold**, *italic*, or markdown headings) in any JSON values.
+   Also never use: "In today's fast-paced world", "It is important to remember", "A testament to", "Delve deep into", "Fostering a sense of", "Look no further", "Furthermore", "Moreover", "In conclusion", "Revolutionize", "Tap into", "Synergy", "Beacon", "Pivotal", "Unlocking", "Catalyst", "Transformative", "Harnessing", "Let's explore", "Here's how", or "Let's unpack this".
+7. Sentence Style: Use short and medium sentences, active voice, and varied openings. Avoid formulaic openings.
+8. Grounded Foundation Connection: Answer 'Why does THIS specific topic matter to Jalte Diye Foundation?' specifically, grounded in verified social education and empathy values. Vary openings naturally.
+9. Actionable CTA: Give the reader something concrete and realistic they can do in their day-to-day routine for this specific topic.
+10. Distinctiveness: Every section must be unique. Never repeat the quote inside context, foundation connection, or CTA.
+11. Hashtags: Provide 3 to 6 valid hashtags starting with '#' matching the quote's actual topic. At least 2 must be strongly topic/event-specific.
+12. Punctuation & Formatting: Use proper standard punctuation (commas, periods, colons). Never use double spaces or leave sentences unpunctuated. Output plain text values. Do NOT include markdown formatting (such as **bold**, *italic*, or markdown headings) in any JSON values.
 """
 
         try:
@@ -338,6 +360,7 @@ Key Style & Human-Writing Rules:
             # Enforce pre-determined authoritative event_name
             final_event_name = event_name
 
+            hook = sanitize_text(str(parsed.get("hook", "")).strip())
             quote = sanitize_text(str(parsed.get("quote", "")).strip())
             explanation = sanitize_text(str(parsed.get("explanation", "")).strip())
             context = sanitize_text(str(parsed.get("context", "")).strip())
@@ -371,7 +394,7 @@ Key Style & Human-Writing Rules:
                 if not explanation.endswith((".", "!", "?", '"', "'")):
                     explanation = explanation + "."
 
-            if not quote or not explanation or not context or not foundation_conn or not cta:
+            if not hook or not quote or not explanation or not context or not foundation_conn or not cta:
                 raise ValueError("Gemini response missing one or more required fields.")
 
             long_explanation = build_structured_long_explanation(
@@ -379,6 +402,7 @@ Key Style & Human-Writing Rules:
                 foundation_connection=foundation_conn,
                 cta=cta,
                 hashtags=hashtags,
+                hook=hook,
             )
 
             caption = build_social_caption(
@@ -387,11 +411,13 @@ Key Style & Human-Writing Rules:
                 foundation_connection=foundation_conn,
                 cta=cta,
                 hashtags=hashtags,
+                hook=hook,
             )
 
             return {
                 "topic": topic,
                 "event_name": final_event_name,
+                "hook": hook,
                 "quote": quote,
                 "explanation": explanation,
                 "context": context,

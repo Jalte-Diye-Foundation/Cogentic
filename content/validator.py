@@ -61,6 +61,30 @@ CORPORATE_NGO_BUZZWORDS = [
     "catalyst for change",
 ]
 
+BANNED_AI_PHRASES = [
+    "in today's fast-paced world",
+    "it is important to remember",
+    "a testament to",
+    "delve deep into",
+    "fostering a sense of",
+    "look no further",
+    "furthermore",
+    "moreover",
+    "in conclusion",
+    "revolutionize",
+    "tap into",
+    "synergy",
+    "beacon",
+    "pivotal",
+    "unlocking",
+    "catalyst",
+    "transformative",
+    "harnessing",
+    "let's explore",
+    "here's how",
+    "let's unpack this",
+]
+
 # Disallowed empty slogan CTAs without concrete action
 EMPTY_SLOGAN_CTAS = [
     "be the change",
@@ -915,7 +939,22 @@ class ContentValidator:
         context = str(content.get("context", "")).strip()
         foundation_conn = str(content.get("foundation_connection", "")).strip()
         cta = str(content.get("cta", "")).strip()
-        combined_text_lower = f"{context} {foundation_conn} {cta}".lower()
+        hook = str(content.get("hook", "")).strip()
+        combined_text_lower = f"{hook} {context} {foundation_conn} {cta}".lower()
+
+        if hook:
+            if len(hook.split()) > 14:
+                errors.append("Hook must contain 14 words or fewer")
+            if hook.startswith(('"', "'")):
+                errors.append("Hook must not start with a quotation")
+            if re.match(r"^(happy|wishing you|today we celebrate)\b", hook, re.IGNORECASE):
+                errors.append("Hook must not start with a greeting or holiday announcement")
+
+        found_banned_phrases = [phrase for phrase in BANNED_AI_PHRASES if phrase in combined_text_lower]
+        if found_banned_phrases:
+            errors.append(
+                "Detected banned AI-style phrase(s): " + ", ".join(found_banned_phrases)
+            )
 
         # 1. Check corporate/NGO buzzword density
         found_buzzwords = [bw for bw in CORPORATE_NGO_BUZZWORDS if bw in combined_text_lower]
