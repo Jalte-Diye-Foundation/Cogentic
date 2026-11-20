@@ -1,13 +1,13 @@
 {
-  "date": "2026-11-19",
+  "date": "2026-11-20",
   "theme": "Foundation Events",
-  "event_name": "World Toilet Day",
-  "quote": "Sanitation is dignity. Dignity is a right. No development goal means much when 2 billion people still lack access to a clean, safe toilet.",
-  "explanation": "Observing World Toilet Day.",
+  "event_name": "Universal Children's Day",
+  "quote": "Every child deserves a childhood worth remembering. Protect their wonder it is the raw material of the world's next great ideas.",
+  "explanation": "Observing Universal Children's Day.",
   "long_explanation": "Human dignity is universal; treating every individual with respect creates the bedrock of safe and flourishing neighborhoods.\n\nHow this connects with our mission:\nJalte Diye Foundation fosters inclusive community platforms that celebrate diverse backgrounds and protect the fundamental dignity of all.\n\nTake Action:\nPerform one deliberate act of kindness for a neighbor or service worker in your locality today.",
-  "caption": "\"Sanitation is dignity. Dignity is a right. No development goal means much when 2 billion people still lack access to a clean, safe toilet.\"\n\nHuman dignity is universal; treating every individual with respect creates the bedrock of safe and flourishing neighborhoods.\n\nJalte Diye Foundation fosters inclusive community platforms that celebrate diverse backgrounds and protect the fundamental dignity of all.\n\nPerform one deliberate act of kindness for a neighbor or service worker in your locality today.\n\n#WorldToiletDay #HumanDignity #KindnessMatters #InclusiveSociety #JalteDiyeFoundation",
+  "caption": "\"Every child deserves a childhood worth remembering. Protect their wonder it is the raw material of the world's next great ideas.\"\n\nHuman dignity is universal; treating every individual with respect creates the bedrock of safe and flourishing neighborhoods.\n\nJalte Diye Foundation fosters inclusive community platforms that celebrate diverse backgrounds and protect the fundamental dignity of all.\n\nPerform one deliberate act of kindness for a neighbor or service worker in your locality today.\n\n#UniversalChildren'sDay #HumanDignity #KindnessMatters #InclusiveSociety #JalteDiyeFoundation",
   "hashtags": [
-    "#WorldToiletDay",
+    "#UniversalChildren'sDay",
     "#HumanDignity",
     "#KindnessMatters",
     "#InclusiveSociety",
@@ -15,5 +15,5 @@
   ],
   "image": "latest/poster.jpg",
   "source": "Cogentic AI",
-  "event": "World Toilet Day"
+  "event": "Universal Children's Day"
 }
